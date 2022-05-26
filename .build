@@ -1,5 +1,7 @@
 404.html
+F1Bot.ExternalApi.Discord.Commands.Definition.html
 F1Bot.ExternalApi.Discord.Commands.Graph.html
+F1Bot.ExternalApi.Discord.Commands.OptionValidator.html
 F1Bot.ExternalApi.Discord.Commands.Response.html
 F1Bot.ExternalApi.Discord.Commands.html
 F1Bot.ExternalApi.Discord.Console.html
@@ -57,8 +59,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-783cee3b55.js
-dist/sidebar_items-5455484d1e.js
+dist/search_items-17146cd12d.js
+dist/sidebar_items-2f10fbce4d.js
 index.html
 license.html
 readme.html
