@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.28.4">
+    <meta name="project" content="f1_bot v0.1.0">
+
+    <title>Race Bot — f1_bot v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
+
+    <script src="dist/sidebar_items-be4c6c9ffe.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-bd1cb213813bf4825aa2.js"></script>
+
+
+  </head>
+  <body data-type="extras">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+
+<section class="sidebar">
+  <button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+  </button>
+
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+    <div class="sidebar-projectDetails">
+      <a href="https://github.com/recursiveGecko/race_bot" class="sidebar-projectName" translate="no">
+f1_bot
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v0.1.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+        <li><a id="tasks-list-link" href="#full-list"><span translate="no">Mix</span> Tasks</a></li>
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/README.md#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span>Race Bot</span>
+</h1>
+
+<p><a href="https://recursivegecko.github.io/race_bot"><img src="https://img.shields.io/badge/pages-docs-informational" alt="Docs"/></a> 
+<a href="license.html"><img src="https://img.shields.io/github/license/recursiveGecko/race_bot" alt="License"/></a> 
+<a href="https://twitter.com/LiveRaceBot"><img src="https://img.shields.io/twitter/follow/LiveRaceBot?style=social" alt="Twitter"/></a></p><p>An <a href="https://elixir-lang.org/">Elixir</a> project dedicated to processing live data from Formula 1 races.</p><h4><a href="https://twitter.com/LiveRaceBot/status/1528040470961692673">Guide for end users (Twitter)</a></h4><h4><a href="https://recursivegecko.github.io/race_bot">Documentation</a></h4><p><em>All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.</em></p><h2 id="license" class="section-heading">
+  <a href="#license" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">license</p>
+  </a>
+  License
+</h2>
+<p>This project is licensed under GNU Affero General Public License version 3, see <code class="inline">LICENSE.md</code> for details.</p><h2 id="basic-usage" class="section-heading">
+  <a href="#basic-usage" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">basic-usage</p>
+  </a>
+  Basic usage
+</h2>
+<pre><code class="makeup bash" translate="no"><span class=""># Install dependencies
+</span><span class="">mix deps.get
+</span><span class="">
+</span><span class=""># Configuration file `.env` must be created by copying `.env.example`
+</span><span class="">cp .env.example .env
+</span><span class="">
+</span><span class=""># Copy .env into your environment variables - the application doesn&#39;t read .env file on its own 
+</span><span class=""># Only works on fish terminal at the moment
+</span><span class="">source env.fish
+</span><span class="">
+</span><span class=""># Generate documentation
+</span><span class="">mix docs
+</span><span class="">
+</span><span class=""># Run locally
+</span><span class="">iex -S mix
+</span><span class="">
+</span><span class=""># Run a backtest on an old session
+</span><span class="">iex -S mix backtest --url &quot;http://livetiming.formula1.com/static/2022/2022-05-08_Miami_Grand_Prix/2022-05-07_Qualifying&quot;
+</span></code></pre><h2 id="intro" class="section-heading">
+  <a href="#intro" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">intro</p>
+  </a>
+  Intro
+</h2>
+<p>To get a general overview of the data flow and processing in this project, you can explore the project in this order:</p><p>Example event: <code class="inline">SessionStatus</code> event with status <code class="inline">started</code></p><ol><li><a href="F1Bot.ExternalApi.SignalR.Client.html"><code class="inline">F1Bot.ExternalApi.SignalR.Client</code></a> receives the event from live timing API</li><li><a href="F1Bot.LiveTimingHandlers.html"><code class="inline">F1Bot.LiveTimingHandlers</code></a> determines the handler module for this event</li><li><a href="F1Bot.LiveTimingHandlers.SessionStatus.html"><code class="inline">F1Bot.LiveTimingHandlers.SessionStatus</code></a> handles parsing/pre-processing</li><li><a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> passes the event to the running F1 session instance</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> calls the functional code to process this event</li><li><a href="F1Bot.F1Session.Impl.html"><code class="inline">F1Bot.F1Session.Impl</code></a> updates its state with new session status and returns an event that represents a side effect</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> broadcasts the event via <a href="F1Bot.PubSub.html"><code class="inline">F1Bot.PubSub</code></a></li><li><a href="F1Bot.Output.Twitter.html"><code class="inline">F1Bot.Output.Twitter</code></a> receives the session status change event and composes a Tweet</li><li><a href="F1Bot.ExternalApi.Twitter.html"><code class="inline">F1Bot.ExternalApi.Twitter</code></a> chooses the configured Twitter client module (live or console for local testing)</li><li><a href="F1Bot.ExternalApi.Twitter.Console.html"><code class="inline">F1Bot.ExternalApi.Twitter.Console</code></a> outputs composed Tweet (&quot;F1 Session just started&quot;) to your console</li></ol>
+<div class="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="license.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+LICENSE
+        </span>
+      </a>
+
+  </div>
+</div>
+
+      <footer class="footer">
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.4) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>
