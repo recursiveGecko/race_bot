@@ -136,7 +136,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
 
   @impl true
   def handle_info(
-        {:gun_down, _pid, _proto, reason, _, _},
+        {:gun_down, _pid, _proto, reason, _},
         state
       ) do
     {:stop, {:gun_down, reason}, state}
