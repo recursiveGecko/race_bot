@@ -26,7 +26,5 @@ if config_env() != :test do
     ],
     discord_channel_ids_messages:
       list_from_env.("DISCORD_CHANNEL_IDS_MESSAGES") |> list_to_int.(),
-    discord_channel_ids_commands:
-      list_from_env.("DISCORD_CHANNEL_IDS_COMMANDS") |> list_to_int.(),
     discord_server_ids_commands: list_from_env.("DISCORD_SERVER_IDS_COMMANDS") |> list_to_int.()
 end

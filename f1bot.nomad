@@ -40,7 +40,6 @@ job "f1bot" {
           TWITTER_ACCESS_TOKEN_SECRET="{{key "apps/f1bot/TWITTER_ACCESS_TOKEN_SECRET"}}"
 
           DISCORD_CHANNEL_IDS_MESSAGES="{{key "apps/f1bot/DISCORD_CHANNEL_IDS_MESSAGES" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
-          DISCORD_CHANNEL_IDS_COMMANDS="{{key "apps/f1bot/DISCORD_CHANNEL_IDS_COMMANDS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
           DISCORD_SERVER_IDS_COMMANDS="{{key "apps/f1bot/DISCORD_SERVER_IDS_COMMANDS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
         EOH
 

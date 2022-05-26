@@ -47,7 +47,7 @@ defmodule F1Bot.Application do
       })
       |> add_if_external_apis_enabled(F1Bot.ExternalApi.Discord.Live)
       |> add_if_external_apis_enabled(F1Bot.ExternalApi.Twitter.Live)
-      |> add_if_external_apis_enabled(F1Bot.ExternalApi.Discord.ApplicationCommands)
+      |> add_if_external_apis_enabled(F1Bot.ExternalApi.Discord.Commands)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

@@ -11,7 +11,11 @@ defmodule F1Bot.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
-      dialyzer: [plt_add_deps: :apps_direct, plt_add_apps: [:nostrum, :mix]],
+      dialyzer: [
+        plt_add_deps: :apps_direct,
+        plt_add_apps: [:nostrum, :mix],
+        list_unused_filters: true
+      ],
       releases: [
         f1bot: [
           include_executables_for: [:unix],
@@ -38,7 +42,7 @@ defmodule F1Bot.MixProject do
       main: "readme",
       extras: [
         "README.md",
-        "LICENSE.md",
+        "LICENSE.md"
       ],
       groups_for_modules: [
         "Live Timing API": ~r/^F1Bot.ExternalApi.SignalR/,
