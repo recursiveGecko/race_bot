@@ -7,6 +7,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
   alias Nostrum.Api
   alias Nostrum.Struct.Interaction
   alias F1Bot.ExternalApi.Discord.Commands
+  alias F1Bot.ExternalApi.Discord.Commands.Definition
 
   @type internal_args :: %{
           required(:flags) => [Commands.Response.flags()]
@@ -29,6 +30,8 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
   end
 
   def handle_event({:INTERACTION_CREATE, interaction, _ws_state}) do
+    Logger.info("Handling Discord interaction: #{inspect(interaction)}")
+
     handle_interaction(interaction)
   end
 
@@ -64,68 +67,16 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
 
   defp commands do
     [
-      graph_command(
+      Definition.cmd_graph(
         name: "f1graph",
         description: "Create a graph for the current F1 session (responds privately)",
         default_permission: false
       ),
-      graph_command(
+      Definition.cmd_graph(
         name: "f1graphall",
         description: "Create a graph for the current F1 session (responds publicly)",
         default_permission: false
       )
     ]
-  end
-
-  defp graph_command(options) do
-    name = Keyword.get(options, :name)
-    description = Keyword.fetch!(options, :description)
-    default_permission = Keyword.fetch!(options, :default_permission)
-
-    %{
-      name: name,
-      description: description,
-      default_permission: default_permission,
-      options: [
-        %{
-          type: @option_type.string,
-          name: "metric",
-          description: "Metric to plot",
-          choices: [
-            %{
-              name: "Gap to first driver",
-              value: "gap"
-            },
-            %{
-              name: "Lap times",
-              value: "lap_time"
-            }
-          ],
-          required: true
-        },
-        %{
-          type: @option_type.string,
-          name: "drivers",
-          description: "Comma-separated list of drivers (number or 3 letter abbrv.)",
-          required: true
-        },
-        %{
-          type: @option_type.string,
-          name: "style",
-          description: "Plot style",
-          choices: [
-            %{
-              name: "Points",
-              value: "points"
-            },
-            %{
-              name: "Line",
-              value: "lines"
-            }
-          ],
-          required: true
-        }
-      ]
-    }
   end
 end

@@ -7,7 +7,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Graph do
   alias Nostrum.Struct.Interaction
   alias F1Bot
   alias F1Bot.ExternalApi.Discord
-  alias F1Bot.ExternalApi.Discord.Commands.Response
+  alias F1Bot.ExternalApi.Discord.Commands.{Response, OptionValidator}
   alias F1Bot.Plotting
 
   @behaviour Discord.Commands
@@ -78,9 +78,9 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Graph do
       }
     } = interaction
 
-    with {:ok, metric} <- validate_graph_metric(options),
-         {:ok, drivers} <- validate_driver_list(options),
-         {:ok, style} <- validate_graph_style(options) do
+    with {:ok, metric} <- OptionValidator.validate_graph_metric(options, "metric"),
+         {:ok, drivers} <- OptionValidator.validate_driver_list(options, "drivers"),
+         {:ok, style} <- OptionValidator.validate_graph_style(options, "style") do
       opts = %{
         metric: metric,
         drivers: drivers,
@@ -88,79 +88,6 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Graph do
       }
 
       {:ok, opts}
-    end
-  end
-
-  defp validate_graph_metric(options) do
-    metric_option = Enum.find(options, fn opt -> opt.name == "metric" end)
-
-    case metric_option do
-      %{value: x} when x in ["gap", "lap_time"] -> {:ok, String.to_atom(x)}
-      nil -> {:error, "Metric option not provided"}
-      _ -> {:error, "Invalid metric option"}
-    end
-  end
-
-  defp validate_graph_style(options) do
-    metric_option = Enum.find(options, fn opt -> opt.name == "style" end)
-
-    case metric_option do
-      %{value: x} when x in ["points", "lines"] -> {:ok, String.to_atom(x)}
-      nil -> {:ok, :line}
-      _ -> {:error, "Invalid style option"}
-    end
-  end
-
-  defp validate_driver_list(options) do
-    drivers_option = Enum.find(options, fn opt -> opt.name == "drivers" end)
-
-    if drivers_option != nil do
-      drivers =
-        drivers_option.value
-        |> String.split([",", " "])
-        |> Enum.map(&String.replace(&1, ~r/[., ]/, ""))
-        |> Enum.filter(fn x -> String.length(x) > 0 end)
-
-      drivers =
-        for str <- drivers do
-          find_driver_number(str)
-        end
-
-      errors =
-        for {status, err} <- drivers,
-            status == :error do
-          err
-        end
-
-      drivers =
-        for {status, driver} <- drivers,
-            status == :ok do
-          driver
-        end
-
-      if length(errors) > 0 do
-        {:error, errors |> Enum.join(", ")}
-      else
-        {:ok, drivers}
-      end
-    else
-      {:error, "Drivers option not provided"}
-    end
-  end
-
-  defp find_driver_number(str) do
-    driver_number =
-      case Integer.parse(str) do
-        :error -> -1
-        {int, _} -> int
-      end
-
-    with {:error, _} <- F1Bot.driver_info_by_abbr(str),
-         {:error, _} <- F1Bot.driver_info(driver_number) do
-      {:error, "Unknown driver #{str}"}
-    else
-      {:ok, %{driver_number: num}} ->
-        {:ok, num}
     end
   end
 end

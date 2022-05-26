@@ -1,4 +1,7 @@
 defmodule F1Bot.ExternalApi.Discord.Commands.Response do
+  @moduledoc """
+  Functions for composing and sending responses to slash commands.
+  """
   use Bitwise
   alias Nostrum.Api
 
@@ -19,6 +22,8 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Response do
     Api.create_interaction_response(interaction, response)
   end
 
+  # Silence Dialyzer warnings due to bad Nostrum API types
+  @dialyzer {:nowarn_function, send_followup_response: 2}
   def send_followup_response(response, interaction) do
     Api.create_followup_message(interaction.token, response)
   end
