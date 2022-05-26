@@ -7,10 +7,10 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.1.0">
 
-    <title>F1Bot.ExternalApi.Discord.ApplicationCommands — f1_bot v0.1.0</title>
+    <title>F1Bot.ExternalApi.Discord.Commands.Response — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-be4c6c9ffe.js"></script>
+    <script src="dist/sidebar_items-5455484d1e.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -96,20 +96,16 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/application_commands.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands/response.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.ExternalApi.Discord.ApplicationCommands</span> 
+  <span translate="no">F1Bot.ExternalApi.Discord.Commands.Response</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.1.0)</small>
 
 </h1>
 
-
-  <section id="moduledoc">
-<p>Handles Discord command management and event processing.</p>
-  </section>
 
 
   <section id="summary" class="details-list">
@@ -121,6 +117,21 @@ f1_bot
       Summary
     </h1>
 
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:flags/0" translate="no">flags()</a>
+
+        </div>
+
+      </div>
+
+  </div>
+
   <div class="summary-functions summary">
     <h2>
       <a href="#functions">Functions</a>
@@ -128,7 +139,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#child_spec/1" translate="no">child_spec(arg)</a>
+          <a href="#combine_flags/1" translate="no">combine_flags(flags)</a>
 
         </div>
 
@@ -136,17 +147,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#handle_event/1" translate="no">handle_event(arg1)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/nostrum/0.5.1/Nostrum.Consumer.html#c:handle_event/1"><code class="inline">Nostrum.Consumer.handle_event/1</code></a>.</p></div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#start_link/0" translate="no">start_link()</a>
+          <a href="#make_deferred_message/1" translate="no">make_deferred_message(flags)</a>
 
         </div>
 
@@ -154,7 +155,31 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#start_link/1" translate="no">start_link(event)</a>
+          <a href="#make_followup_message/3" translate="no">make_followup_message(flags, content, files \\ [])</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#make_message/2" translate="no">make_message(flags, message)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#send_followup_response/2" translate="no">send_followup_response(response, interaction)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#send_interaction_response/2" translate="no">send_interaction_response(response, interaction)</a>
 
         </div>
 
@@ -164,6 +189,47 @@ f1_bot
 
   </section>
 
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Types
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:flags/0">
+
+  <div class="detail-header">
+    <a href="#t:flags/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">flags()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands/response.ex#L5" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> flags() :: :ephemeral</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
 
   <section id="functions" class="details-list">
     <h1 class="section-heading">
@@ -174,16 +240,16 @@ f1_bot
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="child_spec/1">
+<section class="detail" id="combine_flags/1">
 
   <div class="detail-header">
-    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+    <a href="#combine_flags/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">child_spec(arg)</h1>
+    <h1 class="signature" translate="no">combine_flags(flags)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/application_commands.ex#L5" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands/response.ex#L53" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -196,38 +262,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="handle_event/1">
+<section class="detail" id="make_deferred_message/1">
 
   <div class="detail-header">
-    <a href="#handle_event/1" class="detail-link" title="Link to this function">
+    <a href="#make_deferred_message/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">handle_event(arg1)</h1>
+    <h1 class="signature" translate="no">make_deferred_message(flags)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/application_commands.ex#L20" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Callback implementation for <a href="https://hexdocs.pm/nostrum/0.5.1/Nostrum.Consumer.html#c:handle_event/1"><code class="inline">Nostrum.Consumer.handle_event/1</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="start_link/0">
-
-  <div class="detail-header">
-    <a href="#start_link/0" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">start_link()</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/application_commands.ex#L16" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands/response.ex#L36" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -240,16 +284,84 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="start_link/1">
+<section class="detail" id="make_followup_message/3">
+
+    <span id="make_followup_message/2"></span>
 
   <div class="detail-header">
-    <a href="#start_link/1" class="detail-link" title="Link to this function">
+    <a href="#make_followup_message/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">start_link(event)</h1>
+    <h1 class="signature" translate="no">make_followup_message(flags, content, files \\ [])</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/application_commands.ex#L5" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands/response.ex#L45" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="make_message/2">
+
+  <div class="detail-header">
+    <a href="#make_message/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">make_message(flags, message)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands/response.ex#L26" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="send_followup_response/2">
+
+  <div class="detail-header">
+    <a href="#send_followup_response/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">send_followup_response(response, interaction)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands/response.ex#L22" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="send_interaction_response/2">
+
+  <div class="detail-header">
+    <a href="#send_interaction_response/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">send_interaction_response(response, interaction)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands/response.ex#L18" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
