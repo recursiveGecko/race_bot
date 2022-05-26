@@ -1,0 +1,10 @@
+version: "3.7"
+services: 
+    f1bot:
+        build:
+            context: "."
+        image: f1bot
+        # network_mode: host
+        env_file: .env
+        restart: unless-stopped
+        container_name: "f1bot"

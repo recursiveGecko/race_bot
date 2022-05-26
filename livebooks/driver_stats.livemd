@@ -1,0 +1,242 @@
+# Driver stats
+
+## Run the node
+
+```bash
+iex --cookie livebook --sname f1bot -S mix backtest --url "http://livetiming.formula1.com/static/2021/2021-12-05_Saudi_Arabian_Grand_Prix/2021-12-05_Race"
+```
+
+```elixir
+alias Timex.Duration
+alias F1Bot.F1Session.Common.TimeSeriesStore
+```
+
+## Fetch stats
+
+```elixir
+drivers = [
+  # Abu Dhabi Quali
+  # {"VER @ 16", "33", 16}, 
+  # {"VER @ 19", "33", 19}, 
+  # {"HAM @ 18", "44", 18},
+  # {"HAM @ 15", "44", 15},
+
+  {"HAM", "44", 12},
+  {"VER", "33", 12}
+]
+
+stats =
+  for {abbr, num, lap} <- drivers do
+    {:ok, stats} = F1Bot.driver_stats(num)
+
+    {
+      abbr,
+      %{
+        laps: stats.laps,
+        telemetry: stats.telemetry_hist,
+        position: stats.position_hist,
+        lap_number: lap
+      }
+    }
+  end
+  |> Enum.into(%{})
+```
+
+```elixir
+lap_data =
+  for {abbr, data} <- stats do
+    lap =
+      data
+      |> get_in([Access.key(:laps), Access.key(:data)])
+      |> Enum.find(fn x -> x.number == data.lap_number end)
+
+    time_from = Duration.sub(lap.timestamp, lap.time)
+    time_to = lap.timestamp
+
+    telemetry =
+      stats[abbr].telemetry
+      |> TimeSeriesStore.find_samples_between(time_from, time_to)
+
+    position =
+      stats[abbr].position
+      |> TimeSeriesStore.find_samples_between(time_from, time_to)
+
+    {abbr,
+     %{
+       time_from: time_from,
+       time_to: time_to,
+       time: lap.time,
+       telemetry: telemetry,
+       position: position
+     }}
+  end
+  |> Enum.into(%{})
+```
+
+## Plot position
+
+```elixir
+{min_y, max_y, min_x, max_x} =
+  lap_data
+  |> Map.values()
+  |> List.first()
+  |> Map.get(:position)
+  |> Enum.reduce(
+    {nil, nil, nil, nil},
+    fn %{x: x, y: y}, {min_y, max_y, min_x, max_x} ->
+      if min_y == nil do
+        {y, y, x, x}
+      else
+        min_y = min(min_y, y)
+        max_y = max(max_y, y)
+        min_x = min(min_x, x)
+        max_x = max(max_x, x)
+
+        {min_y, max_y, min_x, max_x}
+      end
+    end
+  )
+
+{min_y, max_y, min_x, max_x} = {min_y / 10, max_y / 10, min_x / 10, max_x / 10}
+
+# Get a square chart
+max_range = max(max_y - min_y, max_x - min_x)
+max_y = min_y + max_range
+max_x = min_x + max_range
+
+padding = 50
+
+y_range = [min_y - padding, max_y + padding]
+x_range = [min_x - padding, max_x + padding]
+
+alias VegaLite, as: Vl
+
+size = 1000
+
+widget =
+  Vl.new(width: size, height: size)
+  |> Vl.mark(:point)
+  |> Vl.encode_field(:x, "x", title: "X (meters)", type: :quantitative, scale: [domain: x_range])
+  |> Vl.encode_field(:y, "y", title: "Y (meters)", type: :quantitative, scale: [domain: y_range])
+  |> Vl.encode_field(:color, "Driver", type: :nominal)
+  |> Vl.encode_field(:shape, "Driver", type: :nominal)
+  |> Kino.VegaLite.new()
+  |> Kino.render()
+
+display = [
+  # "VER @ 16",
+  # "VER @ 19",
+  "VER @ 45",
+  "HAM @ 45"
+]
+
+for {abbr, _num} <- lap_data, abbr in display do
+  for %{x: x, y: y} <- lap_data[abbr].position |> Enum.slice(1..2000) do
+    point = %{x: x / 10, y: y / 10, Driver: abbr}
+    Kino.VegaLite.push(widget, point)
+  end
+end
+
+:ok
+```
+
+## Plot speed / acceleration
+
+```elixir
+integrated =
+  for {abbr, _data} <- lap_data do
+    first_ts = lap_data[abbr].time_from
+    [%{speed: first_speed} | _] = lap_data[abbr].telemetry
+
+    {_total_distance, _last_ts, _last_speed, points} =
+      lap_data[abbr].telemetry
+      |> Enum.reduce(
+        {0, first_ts, first_speed, []},
+        fn point = %{timestamp: ts, speed: speed},
+           {total_distance, last_ts, last_speed, points} ->
+          delta_ms =
+            ts
+            |> Duration.sub(last_ts)
+            |> Duration.to_milliseconds()
+
+          distance_m = delta_ms * speed / 3.6 / 1000
+
+          delta_speed = (speed - last_speed) / 3.6
+          accel = delta_speed / (delta_ms / 1000)
+
+          average_accel =
+            case points do
+              [a, b, c | _] ->
+                (a.accel + b.accel + c.accel + accel) / 4
+
+              # g_accel
+
+              _ ->
+                0
+            end
+
+          total_distance = total_distance + distance_m
+
+          p =
+            point
+            |> Map.put(:distance, total_distance)
+            |> Map.put(:accel, accel)
+            |> Map.put(:accel_avg, average_accel)
+            |> Map.put(:delta_ms, delta_ms)
+
+          {total_distance, ts, speed, [p | points]}
+        end
+      )
+
+    {abbr, Enum.reverse(points)}
+  end
+  |> Enum.into(%{})
+
+#
+# Plot
+#
+alias VegaLite, as: Vl
+
+widget =
+  Vl.new(width: 1000, height: 1000)
+  |> Vl.mark(:line)
+  |> Vl.encode_field(
+    :x,
+    "x",
+    title: "Distance (meters)",
+    type: :quantitative
+  )
+  |> Vl.encode_field(
+    :y,
+    "y",
+    title: "Y",
+    type: :quantitative,
+    scale:
+      %{
+        # domain: [0, 20]
+      }
+  )
+  |> Vl.encode_field(:color, "Driver", type: :nominal)
+  # |> Vl.encode_field(:shape, "Driver", type: :nominal)
+  |> Kino.VegaLite.new()
+  |> Kino.render()
+
+include_drivers = [
+  # "VER @ 16",
+  # "HAM @ 18"
+  "HAM",
+  "VER"
+]
+
+for {abbr, data} <- lap_data, abbr in include_drivers do
+  %{speed: max_speed} = Enum.max_by(integrated[abbr], fn p -> p.speed end)
+  IO.inspect("Max speed: #{abbr} @ #{max_speed} km/h")
+  # IO.inspect({abbr, data.time})
+  for p <- integrated[abbr], y = p.speed, y >= 0 do
+    point = %{x: p.distance, y: y, Driver: abbr}
+    Kino.VegaLite.push(widget, point)
+  end
+end
+
+:ok
+```
