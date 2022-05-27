@@ -79,22 +79,17 @@ defmodule F1Bot.LiveTimingHandlers.RaceControlMessages do
        ""}
     ]
 
-    {source, message} =
-      Enum.find_value(sources, {:race_control, message}, fn {source, regex, replace_regex,
-                                                             replace_with} ->
-        if message =~ regex do
-          if regex != nil do
-            message = String.replace(message, replace_regex, replace_with)
-            {source, message}
-          else
-            {source, message}
-          end
-        else
-          nil
-        end
-      end)
+    default = {:race_control, message}
 
-    {source, message}
+    sources
+    |> Enum.find_value(default, fn {source, regex, replace_regex, replace_with} ->
+      if message =~ regex do
+        message = String.replace(message, replace_regex, replace_with)
+        {source, message}
+      else
+        nil
+      end
+    end)
   end
 
   defp recapitalize(msg) do
