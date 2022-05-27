@@ -13,7 +13,7 @@ defmodule F1Bot.ExternalApi.Twitter.Live do
 
   @impl GenServer
   def init(_) do
-    configuration = F1Bot.fetch_env(:extwitter_config)
+    {:ok, configuration} = F1Bot.fetch_env(:extwitter_config)
     ExTwitter.configure(:process, configuration)
 
     {:ok, nil}
