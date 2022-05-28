@@ -10,7 +10,7 @@
     <title>F1Bot.F1Session.DriverDataRepo.SessionData — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-2f10fbce4d.js"></script>
+    <script src="dist/sidebar_items-2d7b36e701.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -178,6 +178,14 @@ car telemetry, stint data and more.</p>
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#push_sector_time/4" translate="no">push_sector_time(self, sector, sector_time, timestamp)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#push_stint_data/2" translate="no">push_stint_data(self, stint_data)</a>
 
         </div>
@@ -228,8 +236,8 @@ Types
       <div class="specs">
 
           <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.DriverDataRepo.SessionData{
+  current_lap_number: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
   fastest_lap: <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>(),
-  lap_number: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
   laps: <a href="F1Bot.F1Session.DriverDataRepo.Laps.html#t:t/0">F1Bot.F1Session.DriverDataRepo.Laps.t</a>(),
   number: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   position_hist: <a href="F1Bot.F1Session.Common.TimeSeriesStore.html#t:t/0">F1Bot.F1Session.Common.TimeSeriesStore.t</a>(),
@@ -288,7 +296,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_lap_number(self, lap_number, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L56" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L70" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -297,6 +305,12 @@ Functions
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> push_lap_number(<a href="#t:t/0">t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>() | nil, <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
 
 
   </section>
@@ -332,7 +346,29 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_position(self, position)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L80" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L101" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="push_sector_time/4">
+
+  <div class="detail-header">
+    <a href="#push_sector_time/4" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">push_sector_time(self, sector, sector_time, timestamp)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L56" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -354,7 +390,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_stint_data(self, stint_data)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L89" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L110" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -376,7 +412,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_telemetry(self, telemetry)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L69" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/session_data.ex#L90" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

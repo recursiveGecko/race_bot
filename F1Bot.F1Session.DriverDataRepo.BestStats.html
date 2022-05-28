@@ -10,7 +10,7 @@
     <title>F1Bot.F1Session.DriverDataRepo.BestStats — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-2f10fbce4d.js"></script>
+    <script src="dist/sidebar_items-2d7b36e701.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -128,6 +128,14 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#t:fastest_sectors/0" translate="no">fastest_sectors()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#t:t/0" translate="no">t()</a>
 
         </div>
@@ -161,6 +169,14 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#push_sector_time/3" translate="no">push_sector_time(self, sector, sector_time)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#push_top_speed/2" translate="no">push_top_speed(self, speed)</a>
 
         </div>
@@ -181,14 +197,14 @@ f1_bot
 Types
     </h1>
     <div class="types-list">
-<section class="detail" id="t:t/0">
+<section class="detail" id="t:fastest_sectors/0">
 
   <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
+    <a href="#t:fastest_sectors/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">t()</h1>
+    <h1 class="signature" translate="no">fastest_sectors()</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L7" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -202,8 +218,41 @@ Types
 
       <div class="specs">
 
+          <pre translate="no"><span class="attribute">@type</span> fastest_sectors() :: %{
+  required(1) =&gt; <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>() | nil,
+  required(2) =&gt; <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>() | nil,
+  required(3) =&gt; <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>() | nil
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">t()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L13" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
           <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.DriverDataRepo.BestStats{
   fastest_lap: <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>(),
+  fastest_sectors: <a href="#t:fastest_sectors/0">fastest_sectors</a>(),
   top_speed: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()
 }</pre>
 
@@ -234,7 +283,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L14" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L21" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -256,7 +305,29 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_lap_time(self, lap_time)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L18" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L25" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="push_sector_time/3">
+
+  <div class="detail-header">
+    <a href="#push_sector_time/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">push_sector_time(self, sector, sector_time)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L64" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -278,7 +349,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_top_speed(self, speed)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L38" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L45" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

@@ -20,7 +20,7 @@ F1Bot.F1Session.DriverCache.DriverInfo.html
 F1Bot.F1Session.DriverCache.html
 F1Bot.F1Session.DriverDataRepo.BestStats.html
 F1Bot.F1Session.DriverDataRepo.Events.html
-F1Bot.F1Session.DriverDataRepo.Laps.Lap.html
+F1Bot.F1Session.DriverDataRepo.Lap.html
 F1Bot.F1Session.DriverDataRepo.Laps.html
 F1Bot.F1Session.DriverDataRepo.SessionData.html
 F1Bot.F1Session.DriverDataRepo.Stints.Stint.html
@@ -59,8 +59,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-17146cd12d.js
-dist/sidebar_items-2f10fbce4d.js
+dist/search_items-14e796b778.js
+dist/sidebar_items-2d7b36e701.js
 index.html
 license.html
 readme.html

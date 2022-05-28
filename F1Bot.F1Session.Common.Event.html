@@ -10,7 +10,7 @@
     <title>F1Bot.F1Session.Common.Event — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-2f10fbce4d.js"></script>
+    <script src="dist/sidebar_items-2d7b36e701.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -230,7 +230,13 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> event_type() :: :fastest_lap | :top_speed | :tyre_change | :started | :message</pre>
+          <pre translate="no"><span class="attribute">@type</span> event_type() ::
+  :fastest_lap
+  | :fastest_sector
+  | :top_speed
+  | :tyre_change
+  | :started
+  | :message</pre>
 
       </div>
 
@@ -246,7 +252,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L14" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -291,7 +297,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new(scope, type, payload)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L22" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L23" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

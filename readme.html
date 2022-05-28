@@ -10,7 +10,7 @@
     <title>Race Bot — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-2f10fbce4d.js"></script>
+    <script src="dist/sidebar_items-2d7b36e701.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -142,7 +142,14 @@ f1_bot
   </a>
   Intro
 </h2>
-<p>To get a general overview of the data flow and processing in this project, you can explore the project in this order:</p><p>Example event: <code class="inline">SessionStatus</code> event with status <code class="inline">started</code></p><ol><li><a href="F1Bot.ExternalApi.SignalR.Client.html"><code class="inline">F1Bot.ExternalApi.SignalR.Client</code></a> receives the event from live timing API</li><li><a href="F1Bot.LiveTimingHandlers.html"><code class="inline">F1Bot.LiveTimingHandlers</code></a> determines the handler module for this event</li><li><a href="F1Bot.LiveTimingHandlers.SessionStatus.html"><code class="inline">F1Bot.LiveTimingHandlers.SessionStatus</code></a> handles parsing/pre-processing</li><li><a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> passes the event to the running F1 session instance</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> calls the functional code to process this event</li><li><a href="F1Bot.F1Session.Impl.html"><code class="inline">F1Bot.F1Session.Impl</code></a> updates its state with new session status and returns an event that represents a side effect</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> broadcasts the event via <a href="F1Bot.PubSub.html"><code class="inline">F1Bot.PubSub</code></a></li><li><a href="F1Bot.Output.Twitter.html"><code class="inline">F1Bot.Output.Twitter</code></a> receives the session status change event and composes a Tweet</li><li><a href="F1Bot.ExternalApi.Twitter.html"><code class="inline">F1Bot.ExternalApi.Twitter</code></a> chooses the configured Twitter client module (live or console for local testing)</li><li><a href="F1Bot.ExternalApi.Twitter.Console.html"><code class="inline">F1Bot.ExternalApi.Twitter.Console</code></a> outputs composed Tweet (&quot;F1 Session just started&quot;) to your console</li></ol>
+<p>To get a general overview of the data flow and processing in this project, you can explore the project in this order:</p><p>Example event: <code class="inline">SessionStatus</code> event with status <code class="inline">started</code></p><ol><li><a href="F1Bot.ExternalApi.SignalR.Client.html"><code class="inline">F1Bot.ExternalApi.SignalR.Client</code></a> receives the event from live timing API</li><li><a href="F1Bot.LiveTimingHandlers.html"><code class="inline">F1Bot.LiveTimingHandlers</code></a> determines the handler module for this event</li><li><a href="F1Bot.LiveTimingHandlers.SessionStatus.html"><code class="inline">F1Bot.LiveTimingHandlers.SessionStatus</code></a> handles parsing/pre-processing</li><li><a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> passes the event to the running F1 session instance</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> calls the functional code to process this event</li><li><a href="F1Bot.F1Session.Impl.html"><code class="inline">F1Bot.F1Session.Impl</code></a> updates its state with new session status and returns an event that represents a side effect</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> broadcasts the event via <a href="F1Bot.PubSub.html"><code class="inline">F1Bot.PubSub</code></a></li><li><a href="F1Bot.Output.Twitter.html"><code class="inline">F1Bot.Output.Twitter</code></a> receives the session status change event and composes a Tweet</li><li><a href="F1Bot.ExternalApi.Twitter.html"><code class="inline">F1Bot.ExternalApi.Twitter</code></a> chooses the configured Twitter client module (live or console for local testing)</li><li><a href="F1Bot.ExternalApi.Twitter.Console.html"><code class="inline">F1Bot.ExternalApi.Twitter.Console</code></a> outputs composed Tweet (&quot;F1 Session just started&quot;) to your console</li></ol><h2 id="thanks" class="section-heading">
+  <a href="#thanks" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">thanks</p>
+  </a>
+  Thanks
+</h2>
+<p>💙 <a href="https://github.com/theOehrly/Fast-F1">theOehrly/Fast-F1</a>: For inspiration, their effort and
+documentation. Fast-F1 was extremely valuable in quickly understanding how F1's live timing service works. </p>
 <div class="bottom-actions">
   <div class="bottom-actions-item">
 
