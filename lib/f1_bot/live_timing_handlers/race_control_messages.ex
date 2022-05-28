@@ -68,7 +68,7 @@ defmodule F1Bot.LiveTimingHandlers.RaceControlMessages do
     # |> Enum.reject(fn m -> m.message =~ ~r/TIME.*DELETED/iu end)
     |> Stream.reject(fn m -> m.message =~ ~r/OFF TRACK AND CONTINUED/iu end)
     |> Stream.reject(fn m -> m.message =~ ~r/MISSED THE APEX/iu end)
-    |> Stream.reject(fn m -> m.message =~ ~r/^ (FOR|OF) (F3|F2)\s.*SESSION/iu end)
+    |> Stream.reject(fn m -> m.message =~ ~r/(^|\s)(F3|F2)\s/iu end)
     |> Enum.to_list()
   end
 
