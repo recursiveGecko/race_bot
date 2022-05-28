@@ -3,15 +3,27 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Definition do
   Factory functions for composable Discord commands
   """
 
+  alias Nostrum.Struct.ApplicationCommand
+
+  @type application_command_map :: ApplicationCommand.application_command_map()
+  @type command_option :: ApplicationCommand.command_option()
+
+  @type command_params :: %{
+          name: String.t(),
+          description: String.t(),
+          default_permission: boolean()
+        }
+
   @option_type %{
     string: 3,
     integer: 4
   }
 
+  @spec cmd_graph(command_params()) :: application_command_map()
   def cmd_graph(options) do
-    name = Keyword.get(options, :name)
-    description = Keyword.fetch!(options, :description)
-    default_permission = Keyword.fetch!(options, :default_permission)
+    name = Map.fetch!(options, :name)
+    description = Map.fetch!(options, :description)
+    default_permission = Map.fetch!(options, :default_permission)
 
     %{
       name: name,
@@ -44,6 +56,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Definition do
     }
   end
 
+  @spec option_plot_style(String.t(), boolean()) :: command_option()
   def option_plot_style(name, required) do
     %{
       type: @option_type.string,
@@ -63,6 +76,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Definition do
     }
   end
 
+  @spec option_driver_list(String.t(), boolean()) :: command_option()
   def option_driver_list(name, required) do
     %{
       type: @option_type.string,

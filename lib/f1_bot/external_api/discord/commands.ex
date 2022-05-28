@@ -62,12 +62,12 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
 
   defp commands do
     [
-      Definition.cmd_graph(
+      Definition.cmd_graph(%{
         name: "f1graph",
         description: "Create a graph for the current F1 session (responds privately)",
         default_permission: false
-      ),
-      Definition.cmd_graph(
+      }),
+      Definition.cmd_graph(%{
         name: "f1graphall",
         description: "Create a graph for the current F1 session (responds publicly)",
         default_permission: false
