@@ -15,11 +15,6 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
 
   @callback handle_interaction(Interaction.t(), internal_args()) :: any()
 
-  @option_type %{
-    string: 3,
-    integer: 4
-  }
-
   def start_link do
     Consumer.start_link(__MODULE__)
   end
