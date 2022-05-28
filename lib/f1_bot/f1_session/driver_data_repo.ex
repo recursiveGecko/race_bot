@@ -85,6 +85,16 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     {repo, events}
   end
 
+  def push_sector_time(repo, driver_number, sector, sector_time, timestamp) do
+    driver =
+      repo
+      |> fetch_or_create_driver_from_repo(driver_number)
+      |> SessionData.push_sector_time(sector, sector_time, timestamp)
+
+    repo = update_driver(repo, driver)
+    {repo, []}
+  end
+
   def push_lap_number(repo, driver_number, lap_number, timestamp) do
     driver =
       repo

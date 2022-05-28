@@ -40,6 +40,11 @@ defmodule F1Bot.F1Session do
     call_genserver({:push_lap_time, driver_number, lap_time, timestamp})
   end
 
+  def push_sector_time(driver_number, sector, sector_time, timestamp)
+      when is_integer(driver_number) do
+    call_genserver({:push_sector_time, driver_number, sector, sector_time, timestamp})
+  end
+
   def push_lap_number(driver_number, lap_number, timestamp) when is_integer(driver_number) do
     call_genserver({:push_lap_number, driver_number, lap_number, timestamp})
   end

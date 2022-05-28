@@ -94,6 +94,22 @@ defmodule F1Bot.F1Session.Server do
 
   @impl true
   def handle_call(
+        {:push_sector_time, driver_number, sector, sector_time, timestamp},
+        _from,
+        state = %{session: session}
+      ) do
+    {session, events} =
+      Impl.push_sector_time(session, driver_number, sector, sector_time, timestamp)
+
+    state = %{state | session: session}
+
+    Helpers.publish_events(events)
+
+    {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_call(
         {:push_lap_number, driver_number, lap_number, timestamp},
         _from,
         state = %{session: session}

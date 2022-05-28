@@ -8,6 +8,7 @@ defmodule F1Bot.LiveTimingHandlers.LapData do
   @behaviour F1Bot.LiveTimingHandlers
 
   alias F1Bot.LiveTimingHandlers.Event
+  alias F1Bot.DataTransform.Parse
   @scope "TimingData"
 
   @impl F1Bot.LiveTimingHandlers
@@ -25,7 +26,7 @@ defmodule F1Bot.LiveTimingHandlers.LapData do
 
     handle_lap_numbers(drivers, timestamp)
     handle_lap_times(drivers, timestamp)
-    handle_last_sectors(drivers, timestamp)
+    handle_sector_times(drivers, timestamp)
 
     :ok
   end
@@ -37,7 +38,7 @@ defmodule F1Bot.LiveTimingHandlers.LapData do
       driver_number = String.trim(driver_number) |> String.to_integer()
       lap_time_str = data["LastLapTime"]["Value"]
 
-      case F1Bot.DataTransform.Parse.parse_lap_time(lap_time_str) do
+      case Parse.parse_lap_time(lap_time_str) do
         {:ok, lap_time} ->
           F1Bot.F1Session.push_lap_time(driver_number, lap_time, timestamp)
 
@@ -58,14 +59,30 @@ defmodule F1Bot.LiveTimingHandlers.LapData do
     end)
   end
 
-  defp handle_last_sectors(drivers, timestamp) do
+  defp handle_sector_times(drivers, timestamp) do
     drivers
     |> Stream.filter(fn {_, data} -> is_map(data["Sectors"]) end)
-    |> Stream.filter(fn {_, data} -> is_binary(data["Sectors"]["2"]["Value"]) end)
-    |> Stream.each(fn {driver_number, _data} ->
+    |> Stream.each(fn {driver_number, _data = %{"Sectors" => sectors = %{}}} ->
       driver_number = String.trim(driver_number) |> String.to_integer()
 
-      F1Bot.F1Session.push_lap_number(driver_number, nil, timestamp)
+      valid_sectors = ["0", "1", "2"]
+
+      for {sector, data} <- sectors,
+          sector in valid_sectors,
+          sector_time_str = data["Value"],
+          is_binary(sector_time_str) and sector_time_str != "" do
+        sector = String.to_integer(sector) + 1
+
+        case Parse.parse_lap_time(sector_time_str) do
+          {:ok, sector_time} ->
+            F1Bot.F1Session.push_sector_time(driver_number, sector, sector_time, timestamp)
+
+          {:error, _error} ->
+            nil
+            Logger.error("Error parsing sector time #{inspect(sector_time_str)}")
+        end
+      end
     end)
+    |> Stream.run()
   end
 end

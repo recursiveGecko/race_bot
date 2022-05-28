@@ -53,19 +53,26 @@ defmodule F1Bot.F1Session.DriverDataRepo.SessionData do
     {self, result}
   end
 
-  @doc """
-  #### Notes:
+  def push_sector_time(
+        self = %__MODULE__{},
+        sector,
+        sector_time = %Timex.Duration{},
+        timestamp
+      ) do
+    laps =
+      self.laps
+      |> Laps.fill_sector_times(sector, sector_time, timestamp, 5000)
 
-  `lap_number` can be `nil` if we don't know the lap number that was just completed,
-  but we do know that it has been completed (e.g. we receive timings for S3 before we receive other information)
-  """
+    %{self | laps: laps}
+  end
+
   @spec push_lap_number(t(), pos_integer() | nil, DateTime.t()) :: t()
   def push_lap_number(
         self = %__MODULE__{},
         lap_number,
         timestamp
       )
-      when is_integer(lap_number) or lap_number == nil do
+      when is_integer(lap_number) do
     laps =
       self.laps
       |> Laps.fill_by_close_timestamp([number: lap_number], timestamp, 5000)

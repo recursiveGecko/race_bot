@@ -52,6 +52,16 @@ defmodule F1Bot.F1Session.Impl do
     {session, events}
   end
 
+  def push_sector_time(session, driver_number, sector, sector_time, timestamp)
+      when is_integer(driver_number) do
+    {repo, events} =
+      session.driver_data_repo
+      |> F1Session.DriverDataRepo.push_sector_time(driver_number, sector, sector_time, timestamp)
+
+    session = %{session | driver_data_repo: repo}
+    {session, events}
+  end
+
   def push_telemetry(session, driver_number, channels) when is_integer(driver_number) do
     repo =
       session.driver_data_repo
