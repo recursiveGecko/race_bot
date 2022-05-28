@@ -71,7 +71,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
         name: "f1graphall",
         description: "Create a graph for the current F1 session (responds publicly)",
         default_permission: false
-      )
+      })
     ]
   end
 end
