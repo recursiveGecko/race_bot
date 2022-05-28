@@ -53,8 +53,8 @@ defmodule Mix.Tasks.Backtest do
     Logger.info("Creating lap time graph.")
 
     # F1Bot.Plotting.plot_gap([16, 1], style: :lines) |> IO.inspect()
-    F1Bot.Plotting.plot_lap_times([16, 1], style: :lines, x_axis: :timestamp) |> IO.inspect()
-    F1Bot.Plotting.plot_lap_times([16, 1], style: :lines) |> IO.inspect()
+    # F1Bot.Plotting.plot_lap_times([16, 1], style: :lines, x_axis: :timestamp) |> IO.inspect()
+    # F1Bot.Plotting.plot_lap_times([16, 1], style: :lines) |> IO.inspect()
 
     F1Bot.session_info()
     |> IO.inspect()
