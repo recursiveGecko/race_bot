@@ -56,3 +56,7 @@ Example event: `SessionStatus` event with status `started`
 1. `F1Bot.ExternalApi.Twitter` chooses the configured Twitter client module (live or console for local testing)
 1. `F1Bot.ExternalApi.Twitter.Console` outputs composed Tweet ("F1 Session just started") to your console
 
+## Thanks
+
+💙 [theOehrly/Fast-F1](https://github.com/theOehrly/Fast-F1): For inspiration, their effort and
+documentation. Fast-F1 was extremely valuable in quickly understanding how F1's live timing service works. 
