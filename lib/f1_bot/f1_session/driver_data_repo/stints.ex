@@ -18,6 +18,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
       field(:compound, atom(), enforce: true)
       field(:age, non_neg_integer(), enforce: true)
       field(:tyres_changed, boolean(), enforce: true)
+      field(:lap_number, non_neg_integer(), enforce: true)
     end
 
     def new(stint_data) do
@@ -39,7 +40,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
     %__MODULE__{}
   end
 
-  def push_stint_data(self = %__MODULE__{}, stint_data) do
+  def push_stint_data(self = %__MODULE__{}, stint_data, current_lap_number) do
     stint_number = stint_data.number
 
     {update_type, new_data} =
@@ -73,6 +74,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
         {:no_changes, self}
 
       nil ->
+        stint_data = Map.put(stint_data, :lap_number, current_lap_number)
         stint = Stint.new(stint_data)
         self = %{self | data: [stint | self.data]}
         {:new, self}

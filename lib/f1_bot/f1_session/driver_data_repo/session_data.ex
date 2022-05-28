@@ -11,7 +11,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.SessionData do
     @typedoc "Driver session data"
 
     field(:number, pos_integer(), enforce: true)
-    field(:lap_number, non_neg_integer(), default: nil)
+    field(:current_lap_number, non_neg_integer(), default: 1)
     field(:fastest_lap, Timex.Duration.t(), default: nil)
     field(:top_speed, non_neg_integer(), default: nil)
     field(:top_speed_curr_lap, non_neg_integer(), default: nil)
@@ -53,6 +53,13 @@ defmodule F1Bot.F1Session.DriverDataRepo.SessionData do
     {self, result}
   end
 
+  @doc """
+  #### Notes:
+
+  `lap_number` can be `nil` if we don't know the lap number that was just completed,
+  but we do know that it has been completed (e.g. we receive timings for S3 before we receive other information)
+  """
+  @spec push_lap_number(t(), pos_integer() | nil, DateTime.t()) :: t()
   def push_lap_number(
         self = %__MODULE__{},
         lap_number,
@@ -63,7 +70,14 @@ defmodule F1Bot.F1Session.DriverDataRepo.SessionData do
       self.laps
       |> Laps.fill_by_close_timestamp([number: lap_number], timestamp, 5000)
 
-    %{self | laps: laps}
+    new_lap_number =
+      if lap_number == nil do
+        self.current_lap_number
+      else
+        lap_number + 1
+      end
+
+    %{self | laps: laps, current_lap_number: new_lap_number}
   end
 
   def push_telemetry(
@@ -90,7 +104,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.SessionData do
         self = %__MODULE__{stints: stints},
         stint_data
       ) do
-    {change_type, new_stints} = Stints.push_stint_data(stints, stint_data)
+    {change_type, new_stints} =
+      stints
+      |> Stints.push_stint_data(stint_data, self.current_lap_number)
+
     self = %{self | stints: new_stints}
 
     if stint_data.tyres_changed and change_type in [:new, :updated_current] do

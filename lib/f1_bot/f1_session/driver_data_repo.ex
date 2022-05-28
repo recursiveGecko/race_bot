@@ -125,7 +125,10 @@ defmodule F1Bot.F1Session.DriverDataRepo do
   end
 
   defp fetch_or_create_driver_from_repo(_repo = %{drivers: drivers}, driver_number) do
-    Map.get(drivers, driver_number, SessionData.new(driver_number))
+    case Map.fetch(drivers, driver_number) do
+      {:ok, val} -> val
+      :error -> SessionData.new(driver_number)
+    end
   end
 
   defp update_driver(repo, driver_struct) do
