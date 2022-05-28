@@ -17,6 +17,7 @@ defmodule F1Bot.Output.Discord do
   @impl true
   def init(_init_arg) do
     Helpers.subscribe_to_event(:aggregate_stats, :fastest_lap)
+    Helpers.subscribe_to_event(:aggregate_stats, :fastest_sector)
     Helpers.subscribe_to_event(:aggregate_stats, :top_speed)
     Helpers.subscribe_to_event(:driver, :tyre_change)
     Helpers.subscribe_to_event(:session_status, :started)
@@ -60,6 +61,39 @@ defmodule F1Bot.Output.Discord do
         end
 
       msg = "#{type}: `#{driver}` of `#{lap_time}` `(#{lap_delta})`"
+
+      F1Bot.ExternalApi.Discord.post_message(msg)
+    end
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(
+        %{
+          scope: :aggregate_stats,
+          type: :fastest_sector,
+          payload: %{
+            driver_number: driver_number,
+            sector: sector,
+            sector_time: sector_time,
+            sector_delta: sector_delta,
+            type: :overall
+          }
+        },
+        state
+      )
+      when sector_delta != nil do
+    if should_post_stats() do
+      driver = get_driver_name_by_number(driver_number)
+
+      sector_time = Format.format_lap_time(sector_time)
+      sector_delta = Format.format_lap_delta(sector_delta)
+
+      emoji = F1Bot.ExternalApi.Discord.get_emoji_or_default(:quick, ":zap:")
+      type = "#{emoji}  **Fastest Sector #{sector}**"
+
+      msg = "#{type}: `#{driver}` of `#{sector_time}` `(#{sector_delta})`"
 
       F1Bot.ExternalApi.Discord.post_message(msg)
     end

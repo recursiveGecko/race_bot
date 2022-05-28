@@ -91,8 +91,30 @@ defmodule F1Bot.F1Session.DriverDataRepo do
       |> fetch_or_create_driver_from_repo(driver_number)
       |> SessionData.push_sector_time(sector, sector_time, timestamp)
 
+    best_stats = repo.best_stats
+
+    {best_stats, is_fastest_sector_overall, delta} =
+      BestStats.push_sector_time(best_stats, sector, sector_time)
+
+    events =
+      if is_fastest_sector_overall do
+        event =
+          Events.make_agg_fastest_sector_event(
+            driver.number,
+            :overall,
+            sector,
+            sector_time,
+            delta
+          )
+
+        [event]
+      else
+        []
+      end
+
+    repo = %{repo | best_stats: best_stats}
     repo = update_driver(repo, driver)
-    {repo, []}
+    {repo, events}
   end
 
   def push_lap_number(repo, driver_number, lap_number, timestamp) do

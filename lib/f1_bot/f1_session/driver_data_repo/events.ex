@@ -13,6 +13,16 @@ defmodule F1Bot.F1Session.DriverDataRepo.Events do
     })
   end
 
+  def make_agg_fastest_sector_event(driver_number, type, sector, sector_time, sector_delta) do
+    make_aggregate_stats_event(:fastest_sector, %{
+      driver_number: driver_number,
+      sector: sector,
+      sector_time: sector_time,
+      sector_delta: sector_delta,
+      type: type
+    })
+  end
+
   def make_agg_top_speed_event(driver_number, type, speed, speed_delta) do
     make_aggregate_stats_event(:top_speed, %{
       driver_number: driver_number,

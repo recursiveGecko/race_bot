@@ -78,10 +78,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.SessionData do
       |> Laps.fill_by_close_timestamp([number: lap_number], timestamp, 5000)
 
     new_lap_number =
-      if lap_number == nil do
-        self.current_lap_number
-      else
+      if lap_number >= self.current_lap_number do
         lap_number + 1
+      else
+        self.current_lap_number
       end
 
     %{self | laps: laps, current_lap_number: new_lap_number}

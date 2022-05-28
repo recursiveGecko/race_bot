@@ -19,6 +19,7 @@ defmodule F1Bot.Output.Twitter do
   @impl true
   def init(_init_arg) do
     Helpers.subscribe_to_event(:aggregate_stats, :fastest_lap)
+    Helpers.subscribe_to_event(:aggregate_stats, :fastest_sector)
     Helpers.subscribe_to_event(:aggregate_stats, :top_speed)
     Helpers.subscribe_to_event(:driver, :tyre_change)
     Helpers.subscribe_to_event(:session_status, :started)
@@ -65,6 +66,41 @@ defmodule F1Bot.Output.Twitter do
         """
         #{driver} just set #{type} of #{lap_time} (Δ #{lap_delta})
         #{type_hashtag} ##{get_driver_abbr_by_number(driver_number)} #{@common_hashtags} #{ts_hashtag()}
+        """
+        |> String.trim()
+
+      F1Bot.ExternalApi.Twitter.post_tweet(msg)
+    end
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(
+        %{
+          scope: :aggregate_stats,
+          type: :fastest_sector,
+          payload: %{
+            driver_number: driver_number,
+            sector: sector,
+            sector_time: sector_time,
+            sector_delta: sector_delta,
+            type: :overall
+          }
+        },
+        state
+      )
+      when sector_delta != nil do
+    if should_post_stats() do
+      driver = get_driver_name_by_number(driver_number)
+
+      sector_time = Format.format_lap_time(sector_time)
+      sector_delta = Format.format_lap_delta(sector_delta)
+
+      msg =
+        """
+        #{driver} just set the fastest sector #{sector} of #{sector_time} (Δ #{sector_delta})
+        #FastestSector ##{get_driver_abbr_by_number(driver_number)} #{@common_hashtags} #{ts_hashtag()}
         """
         |> String.trim()
 

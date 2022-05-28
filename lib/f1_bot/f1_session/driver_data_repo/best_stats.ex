@@ -4,11 +4,18 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStats do
   """
   use TypedStruct
 
+  @type fastest_sectors :: %{
+          1 => Timex.Duration.t() | nil,
+          2 => Timex.Duration.t() | nil,
+          3 => Timex.Duration.t() | nil
+        }
+
   typedstruct do
     @typedoc "Session-wide stats for fastest laps, top speed across all drivers"
 
     field(:fastest_lap, Timex.Duration.t(), default: nil)
     field(:top_speed, non_neg_integer(), default: nil)
+    field(:fastest_sectors, fastest_sectors(), default: %{1 => nil, 2 => nil, 3 => nil})
   end
 
   def new() do
@@ -47,6 +54,33 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStats do
 
       if delta > 0 do
         self = %{self | top_speed: speed}
+        {self, true, delta}
+      else
+        {self, false, nil}
+      end
+    end
+  end
+
+  def push_sector_time(
+        self = %__MODULE__{fastest_sectors: fastest_sectors},
+        sector,
+        sector_time = %Timex.Duration{}
+      )
+      when sector in [1, 2, 3] do
+    curr_fastest_time = fastest_sectors[sector]
+
+    if curr_fastest_time == nil do
+      fastest_sectors = Map.put(fastest_sectors, sector, sector_time)
+      self = %{self | fastest_sectors: fastest_sectors}
+      {self, true, nil}
+    else
+      delta = Timex.Duration.diff(sector_time, curr_fastest_time)
+      delta_ms = Timex.Duration.to_milliseconds(delta)
+
+      if delta_ms < 0 do
+        fastest_sectors = Map.put(fastest_sectors, sector, sector_time)
+
+        self = %{self | fastest_sectors: fastest_sectors}
         {self, true, delta}
       else
         {self, false, nil}

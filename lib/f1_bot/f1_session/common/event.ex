@@ -5,6 +5,7 @@ defmodule F1Bot.F1Session.Common.Event do
   @type event_scope :: :driver | :aggregate_stats | :session_status | :race_control
   @type event_type ::
           :fastest_lap
+          | :fastest_sector
           | :top_speed
           | :tyre_change
           | :started
