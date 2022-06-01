@@ -1,4 +1,4 @@
-defmodule F1Bot.F1Session.DriverDataRepo.SessionData do
+defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
   @moduledoc """
   Coordinates processing and stores data for a driver, e.g. laps, fastest lap,
   car telemetry, stint data and more.

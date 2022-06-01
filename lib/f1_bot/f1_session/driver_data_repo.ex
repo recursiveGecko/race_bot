@@ -1,12 +1,12 @@
 defmodule F1Bot.F1Session.DriverDataRepo do
   @moduledoc """
-  Coordinates processing, generates events and holds data (`F1Bot.F1Session.DriverDataRepo.SessionData`)
+  Coordinates processing, generates events and holds data (`F1Bot.F1Session.DriverDataRepo.DriverData`)
   belonging to each driver (e.g. laps, top speeds, car telemetry, car position), as well as the overall
   session statistics, such as the overall fastest lap and top speed.
   """
   use TypedStruct
   alias F1Bot.F1Session.DriverDataRepo
-  alias F1Bot.F1Session.DriverDataRepo.{SessionData, BestStats, Events}
+  alias F1Bot.F1Session.DriverDataRepo.{DriverData, BestStats, Events}
 
   typedstruct do
     @typedoc "Repository for all car, lap time, and stint-related data"
@@ -28,7 +28,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     {driver, result} =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
-      |> SessionData.push_lap_time(lap_time, timestamp)
+      |> DriverData.push_lap_time(lap_time, timestamp)
 
     best_stats = repo.best_stats
 
@@ -89,7 +89,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     driver =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
-      |> SessionData.push_sector_time(sector, sector_time, timestamp)
+      |> DriverData.push_sector_time(sector, sector_time, timestamp)
 
     best_stats = repo.best_stats
 
@@ -121,7 +121,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     driver =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
-      |> SessionData.push_lap_number(lap_number, timestamp)
+      |> DriverData.push_lap_number(lap_number, timestamp)
 
     update_driver(repo, driver)
   end
@@ -130,7 +130,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     driver =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
-      |> SessionData.push_telemetry(telemetry)
+      |> DriverData.push_telemetry(telemetry)
 
     update_driver(repo, driver)
   end
@@ -139,7 +139,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     driver =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
-      |> SessionData.push_position(position)
+      |> DriverData.push_position(position)
 
     update_driver(repo, driver)
   end
@@ -148,7 +148,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     {driver, result} =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
-      |> SessionData.push_stint_data(stint_data)
+      |> DriverData.push_stint_data(stint_data)
 
     events = Events.make_tyre_change_events(driver, result)
 
@@ -159,7 +159,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
   defp fetch_or_create_driver_from_repo(_repo = %{drivers: drivers}, driver_number) do
     case Map.fetch(drivers, driver_number) do
       {:ok, val} -> val
-      :error -> SessionData.new(driver_number)
+      :error -> DriverData.new(driver_number)
     end
   end
 
