@@ -30,7 +30,6 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-
 
       - run: mix deps.get
-      - run: mix deps.compile --force
       - run: mix compile --force --warnings-as-errors
       - run: mix test
 
