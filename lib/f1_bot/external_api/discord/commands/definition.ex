@@ -37,6 +37,23 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Definition do
     }
   end
 
+  @spec cmd_driver_summary(command_params()) :: application_command_map()
+  def cmd_driver_summary(options) do
+    name = Map.fetch!(options, :name)
+    description = Map.fetch!(options, :description)
+    default_permission = Map.fetch!(options, :default_permission)
+
+    %{
+      name: name,
+      description: description,
+      default_permission: default_permission,
+      options: [
+        option_driver("driver", true)
+      ]
+    }
+  end
+
+  @spec option_plot_metric(String.t(), boolean()) :: command_option()
   def option_plot_metric(name, required) do
     %{
       type: @option_type.string,
@@ -81,7 +98,17 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Definition do
     %{
       type: @option_type.string,
       name: name,
-      description: "Comma-separated list of drivers (number or 3 letter abbrv.)",
+      description: "Comma-separated list of drivers (number or 3 letter abbreviation)",
+      required: required
+    }
+  end
+
+  @spec option_driver(String.t(), boolean()) :: command_option()
+  def option_driver(name, required) do
+    %{
+      type: @option_type.string,
+      name: name,
+      description: "Driver number or 3 letter abbreviation",
       required: required
     }
   end

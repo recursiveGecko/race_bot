@@ -57,4 +57,13 @@ defmodule F1Bot.F1Session.DriverCache.DriverInfo do
 
     struct!(__MODULE__, data)
   end
+
+  def team_color_int(%__MODULE__{team_color: color_hex}) when is_binary(color_hex) do
+    case Integer.parse(color_hex, 16) do
+      {int, _} -> int
+      _ -> 0
+    end
+  end
+
+  def team_color_int(%__MODULE__{}), do: 0
 end

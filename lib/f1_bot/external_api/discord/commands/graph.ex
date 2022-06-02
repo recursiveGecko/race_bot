@@ -2,7 +2,6 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Graph do
   @moduledoc """
   Handles Discord command for creating graphs
   """
-  use Bitwise
   require Logger
   alias Nostrum.Struct.Interaction
   alias F1Bot

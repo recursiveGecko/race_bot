@@ -48,6 +48,22 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
     Commands.Graph.handle_interaction(interaction, args)
   end
 
+  defp handle_interaction(interaction = %Interaction{data: %{name: "f1summary"}}) do
+    args = %{
+      flags: [:ephemeral]
+    }
+
+    Commands.Summary.handle_interaction(interaction, args)
+  end
+
+  defp handle_interaction(interaction = %Interaction{data: %{name: "f1summaryall"}}) do
+    args = %{
+      flags: []
+    }
+
+    Commands.Summary.handle_interaction(interaction, args)
+  end
+
   defp handle_interaction(unknown_interaction = %Interaction{data: %{name: name}}) do
     Logger.error("Received unknown interaction #{inspect(name)}: #{inspect(unknown_interaction)}")
   end
@@ -70,6 +86,16 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
       Definition.cmd_graph(%{
         name: "f1graphall",
         description: "Create a graph for the current F1 session (responds publicly)",
+        default_permission: false
+      }),
+      Definition.cmd_driver_summary(%{
+        name: "f1summary",
+        description: "Display driver's fastest lap, top speed and detailed stint information (responds privately)",
+        default_permission: false
+      }),
+      Definition.cmd_driver_summary(%{
+        name: "f1summaryall",
+        description: "Display driver's fastest lap, top speed and detailed stint information (responds privately)",
         default_permission: false
       })
     ]

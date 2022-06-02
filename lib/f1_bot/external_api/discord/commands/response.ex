@@ -47,9 +47,11 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Response do
     }
   end
 
-  def make_followup_message(flags, content, files \\ []) when is_list(flags) do
+  def make_followup_message(flags, content, files \\ [], embeds \\ [])
+      when is_list(flags) and is_list(embeds) do
     %{
       content: content,
+      embeds: embeds,
       files: files,
       flags: combine_flags(flags)
     }

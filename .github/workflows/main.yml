@@ -4,27 +4,34 @@ on:
   push:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
   IMAGE_REGISTRY: ghcr.io
   NOMAD_VERSION: "1.2.2"
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-    # The type of runner that the job will run on
+  test:
     runs-on: ubuntu-latest
+    steps:
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "24"
+          elixir-version: "1.13"
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+      - run: mix deps.get
+      - run: mix deps.compile --force
+      - run: mix compile --force --warnings-as-errors
+      - run: mix test
+
+  build:
+    runs-on: ubuntu-latest
     steps:
       - name: Set environment variables
         run: |
           # Lowercases GITHUB_REGISTRY, docker build breaks with tags that contain uppercase letters
           echo "IMAGE_ID=${IMAGE_REGISTRY}/${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       -
