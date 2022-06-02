@@ -19,6 +19,8 @@ jobs:
           otp-version: "24"
           elixir-version: "1.13"
 
+      - uses: actions/checkout@v2
+
       - run: mix deps.get
       - run: mix deps.compile --force
       - run: mix compile --force --warnings-as-errors
@@ -26,6 +28,8 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    needs: 
+      - test
     steps:
       - name: Set environment variables
         run: |
@@ -75,7 +79,6 @@ jobs:
           # Lowercases GITHUB_REGISTRY, docker build breaks with tags that contain uppercase letters
           echo "IMAGE_ID=${IMAGE_REGISTRY}/${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       - name: Set up WireGuard
