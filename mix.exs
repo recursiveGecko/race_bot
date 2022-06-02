@@ -23,7 +23,8 @@ defmodule F1Bot.MixProject do
             runtime_tools: :permanent,
             observer: :load,
             nostrum: :load
-          ]
+          ],
+          strip_beams: false
         ]
       ]
     ]
