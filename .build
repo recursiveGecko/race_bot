@@ -3,6 +3,7 @@ F1Bot.ExternalApi.Discord.Commands.Definition.html
 F1Bot.ExternalApi.Discord.Commands.Graph.html
 F1Bot.ExternalApi.Discord.Commands.OptionValidator.html
 F1Bot.ExternalApi.Discord.Commands.Response.html
+F1Bot.ExternalApi.Discord.Commands.Summary.html
 F1Bot.ExternalApi.Discord.Commands.html
 F1Bot.ExternalApi.Discord.Console.html
 F1Bot.ExternalApi.Discord.Live.html
@@ -19,11 +20,12 @@ F1Bot.F1Session.Common.TimeSeriesStore.html
 F1Bot.F1Session.DriverCache.DriverInfo.html
 F1Bot.F1Session.DriverCache.html
 F1Bot.F1Session.DriverDataRepo.BestStats.html
+F1Bot.F1Session.DriverDataRepo.DriverData.Summary.html
+F1Bot.F1Session.DriverDataRepo.DriverData.html
 F1Bot.F1Session.DriverDataRepo.Events.html
 F1Bot.F1Session.DriverDataRepo.Lap.html
 F1Bot.F1Session.DriverDataRepo.Laps.html
-F1Bot.F1Session.DriverDataRepo.SessionData.html
-F1Bot.F1Session.DriverDataRepo.Stints.Stint.html
+F1Bot.F1Session.DriverDataRepo.Stint.html
 F1Bot.F1Session.DriverDataRepo.Stints.html
 F1Bot.F1Session.DriverDataRepo.html
 F1Bot.F1Session.Impl.html
@@ -59,8 +61,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-14e796b778.js
-dist/sidebar_items-2d7b36e701.js
+dist/search_items-847183c5ae.js
+dist/sidebar_items-f13c9f476e.js
 index.html
 license.html
 readme.html
