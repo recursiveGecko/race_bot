@@ -4,7 +4,7 @@ defmodule F1Bot.MixProject do
   def project do
     [
       app: :f1_bot,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.13",
       source_url: "https://github.com/recursiveGecko/race_bot",
       homepage_url: "https://github.com/recursiveGecko/race_bot",
@@ -47,8 +47,7 @@ defmodule F1Bot.MixProject do
       ],
       groups_for_modules: [
         "Live Timing API": ~r/^F1Bot.ExternalApi.SignalR/,
-        "F1 Live Timing Handlers": ~r/^F1Bot.LiveTimingHandlers/,
-        "F1 Session (boundary)": ~r/^F1Bot.F1Session(.Server|$)/,
+        "F1 Session (boundary)": ~r/^F1Bot.F1Session.Server/,
         "F1 Session (functional)": ~r/^F1Bot.F1Session/,
         "Output servers": ~r/^F1Bot.Output/,
         Plotting: ~r/^F1Bot.Plotting/,
@@ -58,7 +57,6 @@ defmodule F1Bot.MixProject do
       source_ref: "master",
       nest_modules_by_prefix: [
         F1Bot.F1Session,
-        F1Bot.LiveTimingHandlers,
         F1Bot.Output,
         F1Bot.Plotting,
         F1Bot.ExternalApi.Discord,
