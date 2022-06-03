@@ -97,7 +97,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
       Definition.cmd_driver_summary(%{
         name: "f1summaryall",
         description:
-          "Display driver's fastest lap, top speed and detailed stint information (responds privately)",
+          "Display driver's fastest lap, top speed and detailed stint information (responds publicly)",
         default_permission: false
       })
     ]
