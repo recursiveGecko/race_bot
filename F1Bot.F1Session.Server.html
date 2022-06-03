@@ -10,7 +10,7 @@
     <title>F1Bot.F1Session.Server — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-f13c9f476e.js"></script>
+    <script src="dist/sidebar_items-49054702c6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -108,8 +108,8 @@ f1_bot
 
 
   <section id="moduledoc">
-<p>GenServer that holds the live <a href="F1Bot.F1Session.Impl.html"><code class="inline">F1Bot.F1Session.Impl</code></a> instance, coordinates data processing
-for incoming live timing events and executes all side effects by passing event messages to
+<p>GenServer that holds the live <a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> instance, acts as an entrypoint for
+incoming live timing packets and executes all side effects by passing event messages to
 <a href="F1Bot.Output.Discord.html"><code class="inline">F1Bot.Output.Discord</code></a> and <a href="F1Bot.Output.Twitter.html"><code class="inline">F1Bot.Output.Twitter</code></a> via PubSub.</p>
   </section>
 
@@ -140,7 +140,63 @@ for incoming live timing events and executes all side effects by passing event m
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#driver_info_by_abbr/1" translate="no">driver_info_by_abbr(driver_abbr)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#driver_info_by_number/1" translate="no">driver_info_by_number(driver_number)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#driver_session_data/1" translate="no">driver_session_data(driver_number)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#push_live_timing_packet/1" translate="no">push_live_timing_packet(packet)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#replace_session/1" translate="no">replace_session(session)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#server_via/0" translate="no">server_via()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#session_info/0" translate="no">session_info()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#session_status/0" translate="no">session_status()</a>
 
         </div>
 
@@ -190,6 +246,116 @@ Functions
 <p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
   </section>
 </section>
+<section class="detail" id="driver_info_by_abbr/1">
+
+  <div class="detail-header">
+    <a href="#driver_info_by_abbr/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">driver_info_by_abbr(driver_abbr)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L43" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="driver_info_by_number/1">
+
+  <div class="detail-header">
+    <a href="#driver_info_by_number/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">driver_info_by_number(driver_number)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L38" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="driver_session_data/1">
+
+  <div class="detail-header">
+    <a href="#driver_session_data/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">driver_session_data(driver_number)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L48" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="push_live_timing_packet/1">
+
+  <div class="detail-header">
+    <a href="#push_live_timing_packet/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">push_live_timing_packet(packet)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L53" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="replace_session/1">
+
+  <div class="detail-header">
+    <a href="#replace_session/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">replace_session(session)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L58" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="server_via/0">
 
   <div class="detail-header">
@@ -199,7 +365,51 @@ Functions
     </a>
     <h1 class="signature" translate="no">server_via()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L172" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L145" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="session_info/0">
+
+  <div class="detail-header">
+    <a href="#session_info/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">session_info()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L28" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="session_status/0">
+
+  <div class="detail-header">
+    <a href="#session_status/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">session_status()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L33" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -221,7 +431,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">start_link(init_arg)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/server.ex#L15" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

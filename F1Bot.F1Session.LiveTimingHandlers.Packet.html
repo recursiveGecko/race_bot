@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.1.0">
 
-    <title>F1Bot.Output.Discord — f1_bot v0.1.0</title>
+    <title>F1Bot.F1Session.LiveTimingHandlers.Packet — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
     <script src="dist/sidebar_items-49054702c6.js"></script>
@@ -96,20 +96,21 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/output/discord.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/packet.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.Output.Discord</span> 
+  <span translate="no">F1Bot.F1Session.LiveTimingHandlers.Packet</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.1.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Listens for events published by <a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a>, composes messages for Discord
-and calls a configured Discord client (live or console) to send them.</p>
+<p>Struct that contains information about every packet received from the live timing API.</p><p>Fields:</p><ul><li><code class="inline">topic</code>: Websocket feed that the packet came from (e.g. car telemetry, lap times)</li><li><code class="inline">data</code>: Topic-specific payload</li><li><code class="inline">timestamp</code>: Timestamp of the packet, determined by the API</li><li><code class="inline">init</code>: Flag that determines whether this is an initialization packet received
+immediately after establishing websocket connection. This is useful for topics that
+contain static information, like driver names and session information.</li></ul>
   </section>
 
 
@@ -122,24 +123,14 @@ and calls a configured Discord client (live or console) to send them.</p>
       Summary
     </h1>
 
-  <div class="summary-functions summary">
+  <div class="summary-types summary">
     <h2>
-      <a href="#functions">Functions</a>
+      <a href="#types">Types</a>
     </h2>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#child_spec/1" translate="no">child_spec(init_arg)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#start_link/1" translate="no">start_link(init_arg)</a>
+          <a href="#t:t/0" translate="no">t()</a>
 
         </div>
 
@@ -150,25 +141,25 @@ and calls a configured Discord client (live or console) to send them.</p>
   </section>
 
 
-  <section id="functions" class="details-list">
+  <section id="types" class="details-list">
     <h1 class="section-heading">
-      <a class="hover-link" href="#functions">
+      <a class="hover-link" href="#types">
         <i class="ri-link-m" aria-hidden="true"></i>
         <span class="sr-only">Link to this section</span>
       </a>
-Functions
+Types
     </h1>
-    <div class="functions-list">
-<section class="detail" id="child_spec/1">
+    <div class="types-list">
+<section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">child_spec(init_arg)</h1>
+    <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/output/discord.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/packet.ex#L16" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -178,27 +169,16 @@ Functions
 
   <section class="docstring">
 
-<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="start_link/1">
+      <div class="specs">
 
-  <div class="detail-header">
-    <a href="#start_link/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">start_link(init_arg)</h1>
+          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.LiveTimingHandlers.Packet{
+  data: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
+  init: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  timestamp: DateTime,
+  topic: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()
+}</pre>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/output/discord.ex#L13" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
+      </div>
 
 
   </section>

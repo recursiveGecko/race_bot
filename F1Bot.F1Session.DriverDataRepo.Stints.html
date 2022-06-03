@@ -10,7 +10,7 @@
     <title>F1Bot.F1Session.DriverDataRepo.Stints — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-f13c9f476e.js"></script>
+    <script src="dist/sidebar_items-49054702c6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -160,6 +160,14 @@ e.g. tyre compount and tyre age.</p>
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#fix_lap_numbers/1" translate="no">fix_lap_numbers(stints)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#last_stint/1" translate="no">last_stint(self)</a>
 
         </div>
@@ -177,6 +185,14 @@ e.g. tyre compount and tyre age.</p>
       <div class="summary-row">
         <div class="summary-signature">
           <a href="#push_stint_data/3" translate="no">push_stint_data(self, stint_data, current_lap_number)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#sort_by_number/2" translate="no">sort_by_number(stints, direction \\ :asc)</a>
 
         </div>
 
@@ -248,7 +264,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">current_stint_number?(self, stint_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L59" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L74" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -270,7 +286,29 @@ Functions
     </a>
     <h1 class="signature" translate="no">find_stint(self, stint_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L69" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L84" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="fix_lap_numbers/1">
+
+  <div class="detail-header">
+    <a href="#fix_lap_numbers/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">fix_lap_numbers(stints)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L96" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -292,7 +330,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">last_stint(self)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L66" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L81" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -337,6 +375,30 @@ Functions
     <h1 class="signature" translate="no">push_stint_data(self, stint_data, current_lap_number)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L18" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="sort_by_number/2">
+
+    <span id="sort_by_number/1"></span>
+
+  <div class="detail-header">
+    <a href="#sort_by_number/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">sort_by_number(stints, direction \\ :asc)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L91" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

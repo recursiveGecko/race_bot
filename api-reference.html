@@ -10,7 +10,7 @@
     <title>API Reference — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-f13c9f476e.js"></script>
+    <script src="dist/sidebar_items-49054702c6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -206,8 +206,8 @@ f1_bot
   </div>
 
     <div class="summary-synopsis"><p>A signalR client that establishes a websocket connection to the live timing API and handles
-all received events by forming <a href="F1Bot.LiveTimingHandlers.Event.html"><code class="inline">F1Bot.LiveTimingHandlers.Event</code></a> structs and passing them to
-<a href="F1Bot.LiveTimingHandlers.html"><code class="inline">F1Bot.LiveTimingHandlers</code></a> for processing.</p></div>
+all received events by forming <a href="F1Bot.F1Session.LiveTimingHandlers.Packet.html"><code class="inline">F1Bot.F1Session.LiveTimingHandlers.Packet</code></a> structs and passing them to
+<a href="F1Bot.F1Session.LiveTimingHandlers.html"><code class="inline">F1Bot.F1Session.LiveTimingHandlers</code></a> for processing.</p></div>
 
 </div>
 <div class="summary-row">
@@ -261,7 +261,7 @@ all received events by forming <a href="F1Bot.LiveTimingHandlers.Event.html"><co
 
   </div>
 
-    <div class="summary-synopsis"><p>Public API for a running <a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> that holds the live <a href="F1Bot.F1Session.Impl.html"><code class="inline">F1Bot.F1Session.Impl</code></a> instance.</p></div>
+    <div class="summary-synopsis"><p>Holds all state related to a given F1 session and coordinates data processing across modules in <a href="F1Bot.F1Session.html#content"><code class="inline">F1Bot.F1Session</code></a> scope.</p></div>
 
 </div>
 <div class="summary-row">
@@ -398,11 +398,92 @@ e.g. tyre compount and tyre age.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="F1Bot.F1Session.Impl.html" translate="no">F1Bot.F1Session.Impl</a>
+    <a href="F1Bot.F1Session.LiveTimingHandlers.html" translate="no">F1Bot.F1Session.LiveTimingHandlers</a>
 
   </div>
 
-    <div class="summary-synopsis"><p>Holds all state related to a given F1 session and coordinates data processing across modules in <a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> scope.</p></div>
+    <div class="summary-synopsis"><p>Router for all packets ingested from F1 SignalR websocket API</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.CarTelemetry.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.CarTelemetry</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for car telemetry received from live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.DriverList.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.DriverList</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for driver list updates received from live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.LapData.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.LapData</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for lap times and sector times received from live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.Packet.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.Packet</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Struct that contains information about every packet received from the live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.PositionData.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.PositionData</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for car position received from live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for race control messages received from live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.SessionInfo.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.SessionInfo</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for session information updates received from live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.SessionStatus.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.SessionStatus</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for session status received from live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.StintData.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.StintData</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for stint information (tyre changes) received from live timing API.</p></div>
 
 </div>
 <div class="summary-row">
@@ -429,8 +510,8 @@ e.g. tyre compount and tyre age.</p></div>
 
   </div>
 
-    <div class="summary-synopsis"><p>GenServer that holds the live <a href="F1Bot.F1Session.Impl.html"><code class="inline">F1Bot.F1Session.Impl</code></a> instance, coordinates data processing
-for incoming live timing events and executes all side effects by passing event messages to
+    <div class="summary-synopsis"><p>GenServer that holds the live <a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> instance, acts as an entrypoint for
+incoming live timing packets and executes all side effects by passing event messages to
 <a href="F1Bot.Output.Discord.html"><code class="inline">F1Bot.Output.Discord</code></a> and <a href="F1Bot.Output.Twitter.html"><code class="inline">F1Bot.Output.Twitter</code></a> via PubSub.</p></div>
 
 </div>
@@ -445,92 +526,9 @@ for incoming live timing events and executes all side effects by passing event m
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.html" translate="no">F1Bot.LiveTimingHandlers</a>
+    <a href="F1Bot.Output.Common.html" translate="no">F1Bot.Output.Common</a>
 
   </div>
-
-    <div class="summary-synopsis"><p>Entrypoint for all events ingested from F1 SignalR websocket API</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.CarTelemetry.html" translate="no">F1Bot.LiveTimingHandlers.CarTelemetry</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Handler for car telemetry received from live timing API.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.DriverList.html" translate="no">F1Bot.LiveTimingHandlers.DriverList</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Handler for driver list updates received from live timing API.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.Event.html" translate="no">F1Bot.LiveTimingHandlers.Event</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Struct that contains information about every event received from the live timing API.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.LapData.html" translate="no">F1Bot.LiveTimingHandlers.LapData</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Handler for lap times and sector times received from live timing API.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.PositionData.html" translate="no">F1Bot.LiveTimingHandlers.PositionData</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Handler for car position received from live timing API.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.RaceControlMessages.html" translate="no">F1Bot.LiveTimingHandlers.RaceControlMessages</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Handler for race control messages received from live timing API.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.SessionInfo.html" translate="no">F1Bot.LiveTimingHandlers.SessionInfo</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Handler for session information updates received from live timing API.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.SessionStatus.html" translate="no">F1Bot.LiveTimingHandlers.SessionStatus</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Handler for session status received from live timing API.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.LiveTimingHandlers.StintData.html" translate="no">F1Bot.LiveTimingHandlers.StintData</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Handler for stint information (tyre changes) received from live timing API.</p></div>
 
 </div>
 <div class="summary-row">
@@ -587,6 +585,13 @@ and calls a configured Twitter client (live or console) to send them.</p></div>
   </div>
 
     <div class="summary-synopsis"></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.Replay.html" translate="no">F1Bot.Replay</a>
+
+  </div>
 
 </div>
 

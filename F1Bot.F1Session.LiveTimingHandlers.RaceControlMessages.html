@@ -7,10 +7,10 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.1.0">
 
-    <title>F1Bot.LiveTimingHandlers.Event — f1_bot v0.1.0</title>
+    <title>F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-f13c9f476e.js"></script>
+    <script src="dist/sidebar_items-49054702c6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -96,96 +96,22 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/live_timing_handlers/event.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/race_control_messages.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.LiveTimingHandlers.Event</span> 
+  <span translate="no">F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.1.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Struct that contains information about every event received from the live timing API.</p><p>Fields:</p><ul><li><code class="inline">topic</code>: Websocket feed that the event came from (e.g. car telemetry, lap times)</li><li><code class="inline">data</code>: Topic-specific payload</li><li><code class="inline">timestamp</code>: Timestamp of the event, determined by the API</li><li><code class="inline">init</code>: Flag that determines whether this is an initialization event received
-immediately after establishing websocket connection. This is useful for topics that
-contain static information, like driver names and session information.</li></ul>
+<p>Handler for race control messages received from live timing API.</p><p>The handler parses, filters and passes the messages to the F1 session instance.</p>
   </section>
 
 
-  <section id="summary" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#summary">
-        <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
-      Summary
-    </h1>
-
-  <div class="summary-types summary">
-    <h2>
-      <a href="#types">Types</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#t:t/0" translate="no">t()</a>
-
-        </div>
-
-      </div>
-
-  </div>
-
-  </section>
-
-
-  <section id="types" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#types">
-        <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
-Types
-    </h1>
-    <div class="types-list">
-<section class="detail" id="t:t/0">
-
-  <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">t()</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/live_timing_handlers/event.ex#L16" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.LiveTimingHandlers.Event{
-  data: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
-  init: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
-  timestamp: DateTime,
-  topic: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">binary</a>()
-}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-
-    </div>
-  </section>
 
       <footer class="footer">
 

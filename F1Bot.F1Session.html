@@ -10,7 +10,7 @@
     <title>F1Bot.F1Session — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-f13c9f476e.js"></script>
+    <script src="dist/sidebar_items-49054702c6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -108,7 +108,9 @@ f1_bot
 
 
   <section id="moduledoc">
-<p>Public API for a running <a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> that holds the live <a href="F1Bot.F1Session.Impl.html"><code class="inline">F1Bot.F1Session.Impl</code></a> instance.</p>
+<p>Holds all state related to a given F1 session and coordinates data processing across modules in <a href="F1Bot.F1Session.html#content"><code class="inline">F1Bot.F1Session</code></a> scope.</p><p>All code in this scope is fully functional, without side effects. To communicate with other components
+that have side effects, such as posting to Twitter, it generates events that are processed by the caller, i.e.
+<a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a>.</p>
   </section>
 
 
@@ -121,6 +123,23 @@ f1_bot
       Summary
     </h1>
 
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:t/0" translate="no">t()</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>F1 Session State</p></div>
+
+      </div>
+
+  </div>
+
   <div class="summary-functions summary">
     <h2>
       <a href="#functions">Functions</a>
@@ -128,7 +147,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#driver_info/1" translate="no">driver_info(driver_number)</a>
+          <a href="#driver_info_by_abbr/2" translate="no">driver_info_by_abbr(session, driver_abbr)</a>
 
         </div>
 
@@ -136,7 +155,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#driver_info_by_abbr/1" translate="no">driver_info_by_abbr(driver_abbr)</a>
+          <a href="#driver_info_by_number/2" translate="no">driver_info_by_number(session, driver_number)</a>
 
         </div>
 
@@ -144,7 +163,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#driver_session_data/1" translate="no">driver_session_data(driver_number)</a>
+          <a href="#driver_session_data/2" translate="no">driver_session_data(session, driver_number)</a>
 
         </div>
 
@@ -152,7 +171,17 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_driver_list_update/1" translate="no">push_driver_list_update(drivers)</a>
+          <a href="#light_copy/1" translate="no">light_copy(self)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Callback implementation for <code class="inline">c:F1Bot.F1Session.LightCopy.light_copy/1</code>.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#new/0" translate="no">new()</a>
 
         </div>
 
@@ -160,7 +189,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_lap_number/3" translate="no">push_lap_number(driver_number, lap_number, timestamp)</a>
+          <a href="#push_driver_list_update/2" translate="no">push_driver_list_update(session, drivers)</a>
 
         </div>
 
@@ -168,7 +197,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_lap_time/3" translate="no">push_lap_time(driver_number, lap_time, timestamp)</a>
+          <a href="#push_lap_number/4" translate="no">push_lap_number(session, driver_number, lap_number, timestamp)</a>
 
         </div>
 
@@ -176,7 +205,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_position/2" translate="no">push_position(driver_number, position)</a>
+          <a href="#push_lap_time/4" translate="no">push_lap_time(session, driver_number, lap_time, timestamp)</a>
 
         </div>
 
@@ -184,7 +213,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_race_control_messages/1" translate="no">push_race_control_messages(messages)</a>
+          <a href="#push_position/3" translate="no">push_position(session, driver_number, position)</a>
 
         </div>
 
@@ -192,7 +221,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_sector_time/4" translate="no">push_sector_time(driver_number, sector, sector_time, timestamp)</a>
+          <a href="#push_race_control_messages/2" translate="no">push_race_control_messages(session, messages)</a>
 
         </div>
 
@@ -200,7 +229,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_session_info/1" translate="no">push_session_info(session_info)</a>
+          <a href="#push_sector_time/5" translate="no">push_sector_time(session, driver_number, sector, sector_time, timestamp)</a>
 
         </div>
 
@@ -208,7 +237,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_session_status/1" translate="no">push_session_status(session_status)</a>
+          <a href="#push_session_info/2" translate="no">push_session_info(session, session_info)</a>
 
         </div>
 
@@ -216,7 +245,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_stint_data/2" translate="no">push_stint_data(driver_number, stint_data)</a>
+          <a href="#push_session_status/2" translate="no">push_session_status(session, session_status)</a>
 
         </div>
 
@@ -224,7 +253,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_telemetry/2" translate="no">push_telemetry(driver_number, channels)</a>
+          <a href="#push_stint_data/3" translate="no">push_stint_data(session, driver_number, stint_data)</a>
 
         </div>
 
@@ -232,15 +261,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#session_info/0" translate="no">session_info()</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#session_status/0" translate="no">session_status()</a>
+          <a href="#push_telemetry/3" translate="no">push_telemetry(session, driver_number, channels)</a>
 
         </div>
 
@@ -250,6 +271,53 @@ f1_bot
 
   </section>
 
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Types
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">t()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L14" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session{
+  driver_cache: <a href="F1Bot.F1Session.DriverCache.html#t:t/0">F1Bot.F1Session.DriverCache.t</a>(),
+  driver_data_repo: <a href="F1Bot.F1Session.DriverDataRepo.html#t:t/0">F1Bot.F1Session.DriverDataRepo.t</a>(),
+  race_control: <a href="F1Bot.F1Session.RaceControl.html#t:t/0">F1Bot.F1Session.RaceControl.t</a>(),
+  session_info: <a href="F1Bot.F1Session.SessionInfo.html#t:t/0">F1Bot.F1Session.SessionInfo.t</a>(),
+  session_status: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>() | nil
+}</pre>
+
+      </div>
+
+<p>F1 Session State</p>
+  </section>
+</section>
+
+    </div>
+  </section>
 
   <section id="functions" class="details-list">
     <h1 class="section-heading">
@@ -260,16 +328,16 @@ f1_bot
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="driver_info/1">
+<section class="detail" id="driver_info_by_abbr/2">
 
   <div class="detail-header">
-    <a href="#driver_info/1" class="detail-link" title="Link to this function">
+    <a href="#driver_info_by_abbr/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">driver_info(driver_number)</h1>
+    <h1 class="signature" translate="no">driver_info_by_abbr(session, driver_abbr)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L19" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L36" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -282,16 +350,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="driver_info_by_abbr/1">
+<section class="detail" id="driver_info_by_number/2">
 
   <div class="detail-header">
-    <a href="#driver_info_by_abbr/1" class="detail-link" title="Link to this function">
+    <a href="#driver_info_by_number/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">driver_info_by_abbr(driver_abbr)</h1>
+    <h1 class="signature" translate="no">driver_info_by_number(session, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L23" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L32" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -304,16 +372,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="driver_session_data/1">
+<section class="detail" id="driver_session_data/2">
 
   <div class="detail-header">
-    <a href="#driver_session_data/1" class="detail-link" title="Link to this function">
+    <a href="#driver_session_data/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">driver_session_data(driver_number)</h1>
+    <h1 class="signature" translate="no">driver_session_data(session, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L15" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L40" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -326,14 +394,14 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_driver_list_update/1">
+<section class="detail" id="light_copy/1">
 
   <div class="detail-header">
-    <a href="#push_driver_list_update/1" class="detail-link" title="Link to this function">
+    <a href="#light_copy/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_driver_list_update(drivers)</h1>
+    <h1 class="signature" translate="no">light_copy(self)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L27" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -345,19 +413,19 @@ Functions
 
   <section class="docstring">
 
-
+<p>Callback implementation for <code class="inline">c:F1Bot.F1Session.LightCopy.light_copy/1</code>.</p>
   </section>
 </section>
-<section class="detail" id="push_lap_number/3">
+<section class="detail" id="new/0">
 
   <div class="detail-header">
-    <a href="#push_lap_number/3" class="detail-link" title="Link to this function">
+    <a href="#new/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_lap_number(driver_number, lap_number, timestamp)</h1>
+    <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L48" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L25" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -370,16 +438,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_lap_time/3">
+<section class="detail" id="push_driver_list_update/2">
 
   <div class="detail-header">
-    <a href="#push_lap_time/3" class="detail-link" title="Link to this function">
+    <a href="#push_driver_list_update/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_lap_time(driver_number, lap_time, timestamp)</h1>
+    <h1 class="signature" translate="no">push_driver_list_update(session, drivers)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L39" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L44" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -392,16 +460,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_position/2">
+<section class="detail" id="push_lap_number/4">
 
   <div class="detail-header">
-    <a href="#push_position/2" class="detail-link" title="Link to this function">
+    <a href="#push_lap_number/4" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_position(driver_number, position)</h1>
+    <h1 class="signature" translate="no">push_lap_number(session, driver_number, lap_number, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L35" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L92" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -414,14 +482,14 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_race_control_messages/1">
+<section class="detail" id="push_lap_time/4">
 
   <div class="detail-header">
-    <a href="#push_race_control_messages/1" class="detail-link" title="Link to this function">
+    <a href="#push_lap_time/4" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_race_control_messages(messages)</h1>
+    <h1 class="signature" translate="no">push_lap_time(session, driver_number, lap_time, timestamp)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L53" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -436,16 +504,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_sector_time/4">
+<section class="detail" id="push_position/3">
 
   <div class="detail-header">
-    <a href="#push_sector_time/4" class="detail-link" title="Link to this function">
+    <a href="#push_position/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_sector_time(driver_number, sector, sector_time, timestamp)</h1>
+    <h1 class="signature" translate="no">push_position(session, driver_number, position)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L43" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L84" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -458,16 +526,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_session_info/1">
+<section class="detail" id="push_race_control_messages/2">
 
   <div class="detail-header">
-    <a href="#push_session_info/1" class="detail-link" title="Link to this function">
+    <a href="#push_race_control_messages/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_session_info(session_info)</h1>
+    <h1 class="signature" translate="no">push_race_control_messages(session, messages)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L57" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L105" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -480,16 +548,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_session_status/1">
+<section class="detail" id="push_sector_time/5">
 
   <div class="detail-header">
-    <a href="#push_session_status/1" class="detail-link" title="Link to this function">
+    <a href="#push_sector_time/5" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_session_status(session_status)</h1>
+    <h1 class="signature" translate="no">push_sector_time(session, driver_number, sector, sector_time, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L61" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L64" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -502,16 +570,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_stint_data/2">
+<section class="detail" id="push_session_info/2">
 
   <div class="detail-header">
-    <a href="#push_stint_data/2" class="detail-link" title="Link to this function">
+    <a href="#push_session_info/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_stint_data(driver_number, stint_data)</h1>
+    <h1 class="signature" translate="no">push_session_info(session, session_info)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L65" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L116" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -524,16 +592,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_telemetry/2">
+<section class="detail" id="push_session_status/2">
 
   <div class="detail-header">
-    <a href="#push_telemetry/2" class="detail-link" title="Link to this function">
+    <a href="#push_session_status/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_telemetry(driver_number, channels)</h1>
+    <h1 class="signature" translate="no">push_session_status(session, session_status)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L31" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L130" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -546,16 +614,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="session_info/0">
+<section class="detail" id="push_stint_data/3">
 
   <div class="detail-header">
-    <a href="#session_info/0" class="detail-link" title="Link to this function">
+    <a href="#push_stint_data/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">session_info()</h1>
+    <h1 class="signature" translate="no">push_stint_data(session, driver_number, stint_data)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L7" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L152" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -568,16 +636,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="session_status/0">
+<section class="detail" id="push_telemetry/3">
 
   <div class="detail-header">
-    <a href="#session_status/0" class="detail-link" title="Link to this function">
+    <a href="#push_telemetry/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">session_status()</h1>
+    <h1 class="signature" translate="no">push_telemetry(session, driver_number, channels)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L11" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L76" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

@@ -7,10 +7,10 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.1.0">
 
-    <title>F1Bot.LiveTimingHandlers — f1_bot v0.1.0</title>
+    <title>F1Bot.Output.Common — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-f13c9f476e.js"></script>
+    <script src="dist/sidebar_items-49054702c6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -96,20 +96,16 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/live_timing_handlers.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/output/common.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.LiveTimingHandlers</span> <small>behaviour</small>
+  <span translate="no">F1Bot.Output.Common</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.1.0)</small>
 
 </h1>
 
-
-  <section id="moduledoc">
-<p>Entrypoint for all events ingested from F1 SignalR websocket API</p>
-  </section>
 
 
   <section id="summary" class="details-list">
@@ -121,21 +117,6 @@ f1_bot
       Summary
     </h1>
 
-  <div class="summary-callbacks summary">
-    <h2>
-      <a href="#callbacks">Callbacks</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#c:process_event/1" translate="no">process_event(t)</a>
-
-        </div>
-
-      </div>
-
-  </div>
-
   <div class="summary-functions summary">
     <h2>
       <a href="#functions">Functions</a>
@@ -143,27 +124,23 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#child_spec/1" translate="no">child_spec(init_arg)</a>
+          <a href="#get_driver_abbr_by_number/2" translate="no">get_driver_abbr_by_number(event, driver_number)</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
 
       </div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#process_live_timing_event/1" translate="no">process_live_timing_event(event)</a>
+          <a href="#get_driver_name_by_number/2" translate="no">get_driver_name_by_number(event, driver_number)</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Called by SignalR client for each received event.</p></div>
 
       </div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#start_link/1" translate="no">start_link(init_arg)</a>
+          <a href="#should_post_stats/1" translate="no">should_post_stats(event)</a>
 
         </div>
 
@@ -173,47 +150,6 @@ f1_bot
 
   </section>
 
-
-  <section id="callbacks" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#callbacks">
-        <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
-Callbacks
-    </h1>
-    <div class="callbacks-list">
-<section class="detail" id="c:process_event/1">
-
-  <div class="detail-header">
-    <a href="#c:process_event/1" class="detail-link" title="Link to this callback">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this callback</span>
-    </a>
-    <h1 class="signature" translate="no">process_event(t)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/live_timing_handlers.ex#L10" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@callback</span> process_event(<a href="F1Bot.LiveTimingHandlers.Event.html#t:t/0">F1Bot.LiveTimingHandlers.Event.t</a>()) :: :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-
-    </div>
-  </section>
 
   <section id="functions" class="details-list">
     <h1 class="section-heading">
@@ -224,16 +160,16 @@ Callbacks
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="child_spec/1">
+<section class="detail" id="get_driver_abbr_by_number/2">
 
   <div class="detail-header">
-    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+    <a href="#get_driver_abbr_by_number/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">child_spec(init_arg)</h1>
+    <h1 class="signature" translate="no">get_driver_abbr_by_number(event, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/live_timing_handlers.ex#L5" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/output/common.ex#L22" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -243,19 +179,19 @@ Functions
 
   <section class="docstring">
 
-<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
+
   </section>
 </section>
-<section class="detail" id="process_live_timing_event/1">
+<section class="detail" id="get_driver_name_by_number/2">
 
   <div class="detail-header">
-    <a href="#process_live_timing_event/1" class="detail-link" title="Link to this function">
+    <a href="#get_driver_name_by_number/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">process_live_timing_event(event)</h1>
+    <h1 class="signature" translate="no">get_driver_name_by_number(event, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/live_timing_handlers.ex#L19" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/output/common.ex#L15" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -265,19 +201,19 @@ Functions
 
   <section class="docstring">
 
-<p>Called by SignalR client for each received event.</p>
+
   </section>
 </section>
-<section class="detail" id="start_link/1">
+<section class="detail" id="should_post_stats/1">
 
   <div class="detail-header">
-    <a href="#start_link/1" class="detail-link" title="Link to this function">
+    <a href="#should_post_stats/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">start_link(init_arg)</h1>
+    <h1 class="signature" translate="no">should_post_stats(event)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/live_timing_handlers.ex#L12" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/output/common.ex#L7" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

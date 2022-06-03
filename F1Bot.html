@@ -10,7 +10,7 @@
     <title>F1Bot — f1_bot v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-f13c9f476e.js"></script>
+    <script src="dist/sidebar_items-49054702c6.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -136,14 +136,6 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#driver_info/1" translate="no">driver_info(driver_number)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
           <a href="#driver_info_by_abbr/1" translate="no">driver_info_by_abbr(driver_abbr)</a>
 
         </div>
@@ -152,7 +144,15 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#driver_stats/1" translate="no">driver_stats(driver_number)</a>
+          <a href="#driver_info_by_number/1" translate="no">driver_info_by_number(driver_number)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#driver_session_data/1" translate="no">driver_session_data(driver_number)</a>
 
         </div>
 
@@ -185,6 +185,14 @@ f1_bot
       <div class="summary-row">
         <div class="summary-signature">
           <a href="#lap_number/0" translate="no">lap_number()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#reload_live_data/2" translate="no">reload_live_data(url \\ nil, light_data)</a>
 
         </div>
 
@@ -229,29 +237,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">api_base()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L45" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="driver_info/1">
-
-  <div class="detail-header">
-    <a href="#driver_info/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">driver_info(driver_number)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L16" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L84" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -286,14 +272,36 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="driver_stats/1">
+<section class="detail" id="driver_info_by_number/1">
 
   <div class="detail-header">
-    <a href="#driver_stats/1" class="detail-link" title="Link to this function">
+    <a href="#driver_info_by_number/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">driver_stats(driver_number)</h1>
+    <h1 class="signature" translate="no">driver_info_by_number(driver_number)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L16" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="driver_session_data/1">
+
+  <div class="detail-header">
+    <a href="#driver_session_data/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">driver_session_data(driver_number)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L24" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -363,7 +371,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">is_race?()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L52" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L91" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -384,6 +392,30 @@ Functions
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature" translate="no">lap_number()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L71" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="reload_live_data/2">
+
+    <span id="reload_live_data/1"></span>
+
+  <div class="detail-header">
+    <a href="#reload_live_data/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">reload_live_data(url \\ nil, light_data)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L36" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
