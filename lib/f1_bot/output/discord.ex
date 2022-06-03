@@ -5,10 +5,10 @@ defmodule F1Bot.Output.Discord do
   """
   use GenServer
   require Logger
+
+  alias F1Bot.Output.Common
   alias F1Bot.F1Session.Common.Helpers
   alias F1Bot.DataTransform.Format
-
-  @post_after_race_lap 5
 
   def start_link(init_arg) do
     GenServer.start_link(__MODULE__, init_arg, name: server_via())
@@ -30,7 +30,7 @@ defmodule F1Bot.Output.Discord do
 
   @impl true
   def handle_info(
-        %{
+        e = %{
           scope: :aggregate_stats,
           type: :fastest_lap,
           payload: %{
@@ -42,8 +42,8 @@ defmodule F1Bot.Output.Discord do
         },
         state
       ) do
-    if should_post_stats() and overall_or_personal == :overall do
-      driver = get_driver_name_by_number(driver_number)
+    if Common.should_post_stats(e) and overall_or_personal == :overall do
+      driver = Common.get_driver_name_by_number(e, driver_number)
 
       lap_time = Format.format_lap_time(lap_time)
       lap_delta = Format.format_lap_delta(lap_delta)
@@ -70,7 +70,7 @@ defmodule F1Bot.Output.Discord do
 
   @impl true
   def handle_info(
-        %{
+        e = %{
           scope: :aggregate_stats,
           type: :fastest_sector,
           payload: %{
@@ -84,8 +84,8 @@ defmodule F1Bot.Output.Discord do
         state
       )
       when sector_delta != nil do
-    if should_post_stats() do
-      driver = get_driver_name_by_number(driver_number)
+    if Common.should_post_stats(e) do
+      driver = Common.get_driver_name_by_number(e, driver_number)
 
       sector_time = Format.format_lap_time(sector_time)
       sector_delta = Format.format_lap_delta(sector_delta)
@@ -103,7 +103,7 @@ defmodule F1Bot.Output.Discord do
 
   @impl true
   def handle_info(
-        %{
+        e = %{
           scope: :aggregate_stats,
           type: :top_speed,
           payload: %{
@@ -116,7 +116,7 @@ defmodule F1Bot.Output.Discord do
         state
       ) do
     if overall_or_personal == :overall do
-      driver = get_driver_name_by_number(driver_number)
+      driver = Common.get_driver_name_by_number(e, driver_number)
 
       emoji =
         case overall_or_personal do
@@ -139,20 +139,21 @@ defmodule F1Bot.Output.Discord do
 
   @impl true
   def handle_info(
-        %{
+        e = %{
           scope: :driver,
           type: :tyre_change,
           payload: %{
             driver_number: driver_number,
-            is_correction: _is_correction,
+            is_correction: is_correction,
             compound: compound,
             age: age
-          }
+          },
+          session_status: session_status
         },
         state
       ) do
-    with {:ok, :started} <- F1Bot.session_status() do
-      driver = get_driver_name_by_number(driver_number)
+    if session_status == :started and not is_correction do
+      driver = Common.get_driver_name_by_number(e, driver_number)
 
       age_str =
         if age == 0 do
@@ -176,7 +177,7 @@ defmodule F1Bot.Output.Discord do
 
   @impl true
   def handle_info(
-        %{
+        _e = %{
           scope: :session_status,
           type: :started,
           payload: %{
@@ -197,7 +198,7 @@ defmodule F1Bot.Output.Discord do
 
   @impl true
   def handle_info(
-        %{
+        _e = %{
           scope: :race_control,
           type: :message,
           payload: %{
@@ -234,20 +235,6 @@ defmodule F1Bot.Output.Discord do
   def handle_info(_msg, state) do
     # Logger.info("Ignored output message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  defp should_post_stats() do
-    case F1Bot.lap_number() do
-      {:ok, lap} -> lap > @post_after_race_lap or not F1Bot.is_race?()
-      _ -> not F1Bot.is_race?()
-    end
-  end
-
-  defp get_driver_name_by_number(driver_number) do
-    case F1Bot.driver_info(driver_number) do
-      {:ok, %{last_name: name}} -> name
-      {:error, _} -> "Car #{driver_number}"
-    end
   end
 
   defp server_via() do

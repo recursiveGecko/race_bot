@@ -16,8 +16,8 @@ defmodule F1Bot.F1Session.DriverCache do
     %__MODULE__{}
   end
 
-  def get_driver_by_number(%__MODULE__{drivers: drivers}, number_as_string) do
-    case Map.fetch(drivers, number_as_string) do
+  def get_driver_by_number(%__MODULE__{drivers: drivers}, driver_number) do
+    case Map.fetch(drivers, driver_number) do
       {:ok, val} -> {:ok, val}
       :error -> {:error, :not_found}
     end

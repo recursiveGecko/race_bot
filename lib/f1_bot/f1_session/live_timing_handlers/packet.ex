@@ -1,13 +1,13 @@
-defmodule F1Bot.LiveTimingHandlers.Event do
+defmodule F1Bot.F1Session.LiveTimingHandlers.Packet do
   @moduledoc """
-  Struct that contains information about every event received from the live timing API.
+  Struct that contains information about every packet received from the live timing API.
 
   Fields:
 
-  - `topic`: Websocket feed that the event came from (e.g. car telemetry, lap times)
+  - `topic`: Websocket feed that the packet came from (e.g. car telemetry, lap times)
   - `data`: Topic-specific payload
-  - `timestamp`: Timestamp of the event, determined by the API
-  - `init`: Flag that determines whether this is an initialization event received
+  - `timestamp`: Timestamp of the packet, determined by the API
+  - `init`: Flag that determines whether this is an initialization packet received
   immediately after establishing websocket connection. This is useful for topics that
   contain static information, like driver names and session information.
   """

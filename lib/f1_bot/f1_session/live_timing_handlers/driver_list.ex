@@ -1,18 +1,19 @@
-defmodule F1Bot.LiveTimingHandlers.DriverList do
+defmodule F1Bot.F1Session.LiveTimingHandlers.DriverList do
   @moduledoc """
   Handler for driver list updates received from live timing API.
 
   The handler parses driver information and passes it on to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.LiveTimingHandlers
+  @behaviour F1Bot.F1Session.LiveTimingHandlers
 
+  alias F1Bot.F1Session
   alias F1Bot.F1Session.DriverCache.DriverInfo
-  alias F1Bot.LiveTimingHandlers.Event
+  alias F1Bot.F1Session.LiveTimingHandlers.Packet
   @scope "DriverList"
 
-  @impl F1Bot.LiveTimingHandlers
-  def process_event(%Event{
+  @impl F1Bot.F1Session.LiveTimingHandlers
+  def process_packet(session, %Packet{
         topic: @scope,
         data: data
       }) do
@@ -26,8 +27,7 @@ defmodule F1Bot.LiveTimingHandlers.DriverList do
         DriverInfo.parse_from_json(driver_json)
       end
 
-    F1Bot.F1Session.push_driver_list_update(parsed_drivers)
-
-    :ok
+    session = F1Session.push_driver_list_update(session, parsed_drivers)
+    {:ok, session, []}
   end
 end

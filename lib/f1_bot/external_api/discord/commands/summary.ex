@@ -38,8 +38,8 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
     flags = Map.get(internal_args, :flags, [])
 
     {:ok, session_info} = F1Bot.session_info()
-    {:ok, driver_info} = F1Bot.driver_info(options.driver)
-    {:ok, driver_data} = F1Bot.driver_stats(options.driver)
+    {:ok, driver_info} = F1Bot.driver_info_by_number(options.driver)
+    {:ok, driver_data} = F1Bot.driver_session_data(options.driver)
 
     summary = Summary.generate(driver_data)
 
@@ -65,7 +65,9 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
           %{inline: true, name: "Top speed", value: format_speed(summary.top_speed)},
           %{inline: true, name: "Stints", value: "#{length(summary.stints)}"}
         ] ++ generate_stint_fields(summary),
-      timestamp: Timex.now() |> DateTime.to_iso8601()
+      footer: %{
+        text: "Number in parentheses - tyre age when fitted (laps)"
+      }
     }
   end
 
@@ -79,13 +81,14 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
       stint_info = "Stint #{stint.number + 1}"
       laps_info = "Lap #{stint.lap_start}-#{stint.lap_end}" |> format_width(9)
       timed_laps_info = "Timed laps: #{stint.timed_laps}" |> format_width(15)
+      age_info = "(#{stint.tyre_age || 0})"
 
-      first_row = "#{tyre_emoji}` #{stint_info}     #{laps_info}   #{timed_laps_info}`"
+      first_row = "#{tyre_emoji}`#{age_info} #{stint_info}  #{laps_info}   #{timed_laps_info}`"
 
       avg_lap = format_lap_time(stint.average_time) |> format_width(8)
       fast_lap = format_lap_time(stint.fastest_time) |> format_width(8)
 
-      second_row = "`Lap (min/avg)   #{fast_lap} /  #{avg_lap} `"
+      second_row = "`Lap (min/avg):  #{fast_lap} /  #{avg_lap} `"
 
       %{
         inline: false,

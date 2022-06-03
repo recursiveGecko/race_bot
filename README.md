@@ -43,14 +43,13 @@ iex -S mix backtest --url "http://livetiming.formula1.com/static/2022/2022-05-08
 
 To get a general overview of the data flow and processing in this project, you can explore the project in this order:
 
-Example event: `SessionStatus` event with status `started`
+Example packet: `SessionStatus` packet with status `started`
 
-1. `F1Bot.ExternalApi.SignalR.Client` receives the event from live timing API
-1. `F1Bot.LiveTimingHandlers` determines the handler module for this event
-1. `F1Bot.LiveTimingHandlers.SessionStatus` handles parsing/pre-processing
-1. `F1Bot.F1Session` passes the event to the running F1 session instance
-1. `F1Bot.F1Session.Server` calls the functional code to process this event
-1. `F1Bot.F1Session.Impl` updates its state with new session status and returns an event that represents a side effect
+1. `F1Bot.ExternalApi.SignalR.Client` receives the packet from live timing API
+1. `F1Bot.F1Session.Server` calls the functional code to process this `Packet`
+1. `F1Bot.F1Session.LiveTimingHandlers` determines and calls the handler module for this packet
+1. `F1Bot.F1Session.LiveTimingHandlers.SessionStatus` calls `F1Session` function to update the state
+1. `F1Bot.F1Session` updates its state with new session status and returns its new state + a 'session status change' event
 1. `F1Bot.F1Session.Server` broadcasts the event via `F1Bot.PubSub`
 1. `F1Bot.Output.Twitter` receives the session status change event and composes a Tweet
 1. `F1Bot.ExternalApi.Twitter` chooses the configured Twitter client module (live or console for local testing)

@@ -5,10 +5,10 @@ defmodule F1Bot.Output.Twitter do
   """
   use GenServer
   require Logger
+
+  alias F1Bot.Output.Common
   alias F1Bot.F1Session.Common.Helpers
   alias F1Bot.DataTransform.Format
-
-  @post_after_race_lap 5
 
   @common_hashtags "#f1"
 
@@ -32,7 +32,7 @@ defmodule F1Bot.Output.Twitter do
 
   @impl true
   def handle_info(
-        %{
+        e = %{
           scope: :aggregate_stats,
           type: :fastest_lap,
           payload: %{
@@ -44,8 +44,8 @@ defmodule F1Bot.Output.Twitter do
         },
         state
       ) do
-    if should_post_stats() do
-      driver = get_driver_name_by_number(driver_number)
+    if Common.should_post_stats(e) do
+      driver = Common.get_driver_name_by_number(e, driver_number)
 
       lap_time = Format.format_lap_time(lap_time)
       lap_delta = Format.format_lap_delta(lap_delta)
@@ -65,7 +65,7 @@ defmodule F1Bot.Output.Twitter do
       msg =
         """
         #{driver} just set #{type} of #{lap_time} (Δ #{lap_delta})
-        #{type_hashtag} ##{get_driver_abbr_by_number(driver_number)} #{@common_hashtags} #{ts_hashtag()}
+        #{type_hashtag} ##{Common.get_driver_abbr_by_number(e, driver_number)} #{@common_hashtags} #{ts_hashtag()}
         """
         |> String.trim()
 
@@ -77,7 +77,7 @@ defmodule F1Bot.Output.Twitter do
 
   @impl true
   def handle_info(
-        %{
+        e = %{
           scope: :aggregate_stats,
           type: :fastest_sector,
           payload: %{
@@ -91,8 +91,8 @@ defmodule F1Bot.Output.Twitter do
         state
       )
       when sector_delta != nil do
-    if should_post_stats() do
-      driver = get_driver_name_by_number(driver_number)
+    if Common.should_post_stats(e) do
+      driver = Common.get_driver_name_by_number(e, driver_number)
 
       sector_time = Format.format_lap_time(sector_time)
       sector_delta = Format.format_lap_delta(sector_delta)
@@ -100,7 +100,7 @@ defmodule F1Bot.Output.Twitter do
       msg =
         """
         #{driver} just set the fastest sector #{sector} of #{sector_time} (Δ #{sector_delta})
-        #FastestSector ##{get_driver_abbr_by_number(driver_number)} #{@common_hashtags} #{ts_hashtag()}
+        #FastestSector ##{Common.get_driver_abbr_by_number(e, driver_number)} #{@common_hashtags} #{ts_hashtag()}
         """
         |> String.trim()
 
@@ -112,7 +112,7 @@ defmodule F1Bot.Output.Twitter do
 
   @impl true
   def handle_info(
-        %{
+        e = %{
           scope: :aggregate_stats,
           type: :top_speed,
           payload: %{
@@ -125,7 +125,7 @@ defmodule F1Bot.Output.Twitter do
         state
       ) do
     if overall_or_personal == :overall do
-      driver = get_driver_name_by_number(driver_number)
+      driver = Common.get_driver_name_by_number(e, driver_number)
 
       type =
         case overall_or_personal do
@@ -136,7 +136,7 @@ defmodule F1Bot.Output.Twitter do
       msg =
         """
         #{driver} reached #{type} of #{speed} km/h (Δ +#{speed_delta} km/h) at some point in the previous lap.
-        #TopSpeed ##{get_driver_abbr_by_number(driver_number)} #{@common_hashtags} #{ts_hashtag()}
+        #TopSpeed ##{Common.get_driver_abbr_by_number(e, driver_number)} #{@common_hashtags} #{ts_hashtag()}
         """
         |> String.trim()
 
@@ -148,20 +148,21 @@ defmodule F1Bot.Output.Twitter do
 
   @impl true
   def handle_info(
-        %{
+        e = %{
           scope: :driver,
           type: :tyre_change,
           payload: %{
             driver_number: driver_number,
-            is_correction: _is_correction,
+            is_correction: is_correction,
             compound: compound,
             age: age
-          }
+          },
+          session_status: session_status
         },
         state
       ) do
-    with {:ok, :started} <- F1Bot.session_status() do
-      driver = get_driver_name_by_number(driver_number)
+    if session_status == :started and not is_correction do
+      driver = Common.get_driver_name_by_number(e, driver_number)
 
       age_str =
         if age == 0 do
@@ -173,7 +174,7 @@ defmodule F1Bot.Output.Twitter do
       msg =
         """
         #{driver} pitted for #{age_str} #{compound} tyres.
-        #PitStop ##{get_driver_abbr_by_number(driver_number)} #{@common_hashtags} #{ts_hashtag()}
+        #PitStop ##{Common.get_driver_abbr_by_number(e, driver_number)} #{@common_hashtags} #{ts_hashtag()}
         """
         |> String.trim()
 
@@ -259,27 +260,6 @@ defmodule F1Bot.Output.Twitter do
   def handle_info(_msg, state) do
     # Logger.info("Ignored output message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  defp should_post_stats() do
-    case F1Bot.lap_number() do
-      {:ok, lap} -> lap > @post_after_race_lap or not F1Bot.is_race?()
-      _ -> not F1Bot.is_race?()
-    end
-  end
-
-  defp get_driver_name_by_number(driver_number) do
-    case F1Bot.driver_info(driver_number) do
-      {:ok, %{last_name: name}} -> name
-      {:error, _} -> "Car #{driver_number}"
-    end
-  end
-
-  defp get_driver_abbr_by_number(driver_number) do
-    case F1Bot.driver_info(driver_number) do
-      {:ok, %{driver_abbr: abbr}} -> abbr
-      {:error, _} -> "Car#{driver_number}"
-    end
   end
 
   defp ts_hashtag do

@@ -1,18 +1,19 @@
-defmodule F1Bot.LiveTimingHandlers.RaceControlMessages do
+defmodule F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages do
   @moduledoc """
   Handler for race control messages received from live timing API.
 
   The handler parses, filters and passes the messages to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.LiveTimingHandlers
+  @behaviour F1Bot.F1Session.LiveTimingHandlers
 
+  alias F1Bot.F1Session
   alias F1Bot.F1Session.RaceControl
-  alias F1Bot.LiveTimingHandlers.Event
+  alias F1Bot.F1Session.LiveTimingHandlers.Packet
   @scope "RaceControlMessages"
 
-  @impl F1Bot.LiveTimingHandlers
-  def process_event(%Event{
+  @impl F1Bot.F1Session.LiveTimingHandlers
+  def process_packet(session, %Packet{
         topic: @scope,
         data: data
       }) do
@@ -22,11 +23,8 @@ defmodule F1Bot.LiveTimingHandlers.RaceControlMessages do
       |> parse_message()
       |> filter_messages()
 
-    if length(messages) > 0 do
-      F1Bot.F1Session.push_race_control_messages(messages)
-    end
-
-    :ok
+    {session, events} = F1Session.push_race_control_messages(session, messages)
+    {:ok, session, events}
   end
 
   defp extract_messages(_data = %{"Messages" => msgs = [_ | _]}), do: msgs

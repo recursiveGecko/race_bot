@@ -85,7 +85,7 @@ defmodule F1Bot.Plotting.Gap do
   end
 
   defp get_driver_short_name(driver_number) do
-    case F1Bot.driver_info(driver_number) do
+    case F1Bot.driver_info_by_number(driver_number) do
       {:ok, info} -> info.driver_abbr
       _ -> "Car #{driver_number}"
     end
@@ -100,7 +100,7 @@ defmodule F1Bot.Plotting.Gap do
 
   defp collect_driver_data(driver_numbers) do
     driver_numbers
-    |> Enum.map(&F1Bot.driver_stats/1)
+    |> Enum.map(&F1Bot.driver_session_data/1)
     |> Enum.filter(fn {x, _} -> x == :ok end)
     |> Enum.map(fn {_, data} -> data end)
     |> Enum.map(fn data = %{number: number} ->

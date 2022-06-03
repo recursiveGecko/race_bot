@@ -1,8 +1,8 @@
 defmodule F1Bot.ExternalApi.SignalR.Client do
   @moduledoc """
   A signalR client that establishes a websocket connection to the live timing API and handles
-  all received events by forming `F1Bot.LiveTimingHandlers.Event` structs and passing them to
-  `F1Bot.LiveTimingHandlers` for processing.
+  all received events by forming `F1Bot.F1Session.LiveTimingHandlers.Packet` structs and passing them to
+  `F1Bot.F1Session.LiveTimingHandlers` for processing.
 
   Useful documentation for SignalR 1.2:
   https://blog.3d-logic.com/2015/03/29/signalr-on-the-wire-an-informal-description-of-the-signalr-protocol/
@@ -10,7 +10,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
   use GenServer
   require Logger
   alias F1Bot.ExternalApi.SignalR
-  alias F1Bot.LiveTimingHandlers.Event
+  alias F1Bot.F1Session.LiveTimingHandlers.Packet
 
   # Must be a string, otherwise pattern matching won't work - server responds with a string
   @subscribe_command_id "0"
@@ -253,7 +253,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
 
       timestamp = F1Bot.DataTransform.Parse.parse_iso_timestamp(timestamp)
 
-      payload = %Event{
+      payload = %Packet{
         topic: topic,
         data: data,
         timestamp: timestamp
@@ -261,7 +261,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
 
       Logger.debug("Received data on topic #{topic}")
 
-      safe_process_event(payload)
+      process_packet(payload)
     end
   end
 
@@ -275,14 +275,14 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
          _message = %{"R" => results, "I" => @subscribe_command_id}
        ) do
     for {topic, data} <- results do
-      payload = %Event{
+      payload = %Packet{
         topic: topic,
         data: data,
         timestamp: nil,
         init: true
       }
 
-      safe_process_event(payload)
+      process_packet(payload)
     end
   end
 
@@ -290,13 +290,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
     :ignore
   end
 
-  defp safe_process_event(payload = %Event{}) do
-    try do
-      F1Bot.LiveTimingHandlers.process_live_timing_event(payload)
-    catch
-      :exit, e ->
-        err_text = Exception.format(:exit, e, __STACKTRACE__)
-        Logger.error("SignalR Client caught an exit. Details:\n#{err_text}")
-    end
+  defp process_packet(payload = %Packet{}) do
+    F1Bot.F1Session.Server.push_live_timing_packet(payload)
   end
 end

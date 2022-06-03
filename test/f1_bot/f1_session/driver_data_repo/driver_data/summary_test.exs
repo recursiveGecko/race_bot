@@ -16,6 +16,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
       lap_number: lap_number,
       compound: :soft,
       age: 0,
+      total_laps: 0,
       tyres_changed: true
     }
   end

@@ -1,4 +1,4 @@
-defmodule F1Bot.LiveTimingHandlers.SessionInfo do
+defmodule F1Bot.F1Session.LiveTimingHandlers.SessionInfo do
   @moduledoc """
   Handler for session information updates received from live timing API.
 
@@ -7,19 +7,19 @@ defmodule F1Bot.LiveTimingHandlers.SessionInfo do
   See `F1Bot.F1Session.SessionInfo` for more information.
   """
   require Logger
-  @behaviour F1Bot.LiveTimingHandlers
+  @behaviour F1Bot.F1Session.LiveTimingHandlers
 
-  alias F1Bot.LiveTimingHandlers.Event
+  alias F1Bot.F1Session
+  alias F1Bot.F1Session.LiveTimingHandlers.Packet
   @scope "SessionInfo"
 
-  @impl F1Bot.LiveTimingHandlers
-  def process_event(%Event{
+  @impl F1Bot.F1Session.LiveTimingHandlers
+  def process_packet(session, %Packet{
         topic: @scope,
         data: data
       }) do
     session_info = F1Bot.F1Session.SessionInfo.parse_from_json(data)
-    F1Bot.F1Session.push_session_info(session_info)
-
-    :ok
+    session = F1Session.push_session_info(session, session_info)
+    {:ok, session, []}
   end
 end

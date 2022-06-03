@@ -15,8 +15,7 @@ defmodule F1Bot.Application do
         {Phoenix.PubSub, name: :f1_pubsub},
         F1Bot.Output.Discord,
         F1Bot.Output.Twitter,
-        F1Bot.F1Session.Server,
-        F1Bot.LiveTimingHandlers
+        F1Bot.F1Session.Server
       ]
       |> add_if_signalr_conn_enabled({
         F1Bot.ExternalApi.SignalR.Client,
@@ -25,24 +24,10 @@ defmodule F1Bot.Application do
           path: "/signalr",
           port: 80,
           hub: "Streaming",
-          topics: [
-            "TrackStatus",
-            "TeamRadio",
-            "RaceControlMessages",
-            "SessionInfo",
-            "SessionStatus",
-            "TimingAppData",
-            "TimingData",
-            "DriverList",
-            "WeatherData",
-            # Car telemetry
-            "CarData.z",
-            # Car position (GPS)
-            "Position.z"
-            # Session time remaining and real time clock sync
-            # "ExtrapolatedClock",
-            #  "AudioStreams",
-          ]
+          topics:
+            case F1Bot.fetch_env(:signalr_topics) do
+              {:ok, topics} -> topics
+            end
         ]
       })
       |> add_if_external_apis_enabled(F1Bot.ExternalApi.Discord.Live)

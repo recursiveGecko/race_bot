@@ -81,7 +81,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.OptionValidator do
           F1Bot.driver_info_by_abbr(str)
 
         {int, _} ->
-          F1Bot.driver_info(int)
+          F1Bot.driver_info_by_number(int)
       end
 
     case lookup_result do
