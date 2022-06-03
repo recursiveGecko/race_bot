@@ -81,7 +81,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
       Definition.cmd_graph(%{
         name: "f1graph",
         description: "Create a graph for the current F1 session (responds privately)",
-        default_permission: false
+        default_permission: true
       }),
       Definition.cmd_graph(%{
         name: "f1graphall",
@@ -92,7 +92,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
         name: "f1summary",
         description:
           "Display driver's fastest lap, top speed and detailed stint information (responds privately)",
-        default_permission: false
+        default_permission: true
       }),
       Definition.cmd_driver_summary(%{
         name: "f1summaryall",
