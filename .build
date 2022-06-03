@@ -28,6 +28,7 @@ F1Bot.F1Session.DriverDataRepo.Laps.html
 F1Bot.F1Session.DriverDataRepo.Stint.html
 F1Bot.F1Session.DriverDataRepo.Stints.html
 F1Bot.F1Session.DriverDataRepo.html
+F1Bot.F1Session.LightCopy.html
 F1Bot.F1Session.LiveTimingHandlers.CarTelemetry.html
 F1Bot.F1Session.LiveTimingHandlers.DriverList.html
 F1Bot.F1Session.LiveTimingHandlers.LapData.html
@@ -62,8 +63,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-c594783f36.js
-dist/sidebar_items-f2cde0008c.js
+dist/search_items-a4736ce701.js
+dist/sidebar_items-9b4e2142dd.js
 index.html
 license.html
 readme.html
