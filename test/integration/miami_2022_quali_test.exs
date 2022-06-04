@@ -27,7 +27,7 @@ defmodule Integration.Miami2022QualiTest do
         l.number != nil and l.sectors == nil and l.time == nil
       end)
 
-    assert length(laps_with_number_only) == 0, inspect(laps_with_number_only, pretty: true)
+    assert laps_with_number_only == [], inspect(laps_with_number_only, pretty: true)
   end
 
   defp laps_for_driver(session, driver_number) do
