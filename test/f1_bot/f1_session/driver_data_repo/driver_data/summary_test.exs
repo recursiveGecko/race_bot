@@ -1,6 +1,7 @@
 defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
   use ExUnit.Case, async: true
 
+  alias F1Bot.F1Session.TrackStatusHistory
   alias F1Bot.F1Session.DriverDataRepo.{
     DriverData,
     DriverData.Summary,
@@ -102,7 +103,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
       fastest_lap: driver_data.fastest_lap
     }
 
-    actual_summary = Summary.generate(driver_data)
+    track_status_hist = TrackStatusHistory.new()
+    actual_summary = Summary.generate(driver_data, track_status_hist)
 
     assert actual_summary == expected_summary
   end
