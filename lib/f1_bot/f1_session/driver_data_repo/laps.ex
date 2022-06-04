@@ -111,6 +111,14 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     struct(Lap, args)
   end
 
+  def sort_by_number(laps, direction \\ :asc) do
+    Enum.sort_by(laps, fn l -> l.number end, direction)
+  end
+
+  def sort_by_timestamp(laps, direction \\ :asc) do
+    Enum.sort_by(laps, fn l -> l.timestamp end, {direction, DateTime})
+  end
+
   defp is_timestamp_in_range(ts1, ts2, max_ms) do
     delta = Timex.diff(ts1, ts2, :milliseconds) |> abs()
 
@@ -119,5 +127,32 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
 
   defp clear_sector_data(self = %__MODULE__{}) do
     %{self | sectors: Lap.new_clean_sector_map()}
+  end
+
+  def fix_laps_data(self = %__MODULE__{data: laps}) do
+    new_laps =
+      laps
+      |> sort_by_timestamp(:asc)
+      |> fix_laps_data([])
+      |> sort_by_timestamp(:desc)
+
+    %{self | data: new_laps}
+  end
+
+  defp fix_laps_data(_laps = [first, second | rest], acc) do
+    first_is_candidate = first.number == nil
+
+    second_is_candidate = second.number != nil and second.time == nil and second.sectors == nil
+
+    if first_is_candidate and second_is_candidate do
+      first = %{first | number: second.number}
+      fix_laps_data(rest, [first | acc])
+    else
+      fix_laps_data([second | rest], [first | acc])
+    end
+  end
+
+  defp fix_laps_data(laps, acc) do
+    acc ++ laps
   end
 end

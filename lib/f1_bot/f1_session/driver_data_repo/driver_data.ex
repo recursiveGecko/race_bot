@@ -9,6 +9,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
   alias F1Bot.F1Session.DriverDataRepo.{Laps, Stints}
   alias F1Bot.F1Session.Common.TimeSeriesStore
 
+  @max_fill_delay_ms 15_000
+
   typedstruct do
     @typedoc "Driver session data"
 
@@ -44,7 +46,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
 
     laps =
       self.laps
-      |> Laps.fill_by_close_timestamp([time: lap_time], timestamp, 5000)
+      |> Laps.fill_by_close_timestamp([time: lap_time], timestamp, @max_fill_delay_ms)
 
     result = %{
       is_fastest_lap: is_fastest_lap,
@@ -68,7 +70,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
       ) do
     laps =
       self.laps
-      |> Laps.fill_sector_times(sector, sector_time, timestamp, 5000)
+      |> Laps.fill_sector_times(sector, sector_time, timestamp, @max_fill_delay_ms)
 
     %{self | laps: laps}
   end
@@ -82,7 +84,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
       when is_integer(lap_number) do
     laps =
       self.laps
-      |> Laps.fill_by_close_timestamp([number: lap_number], timestamp, 5000)
+      |> Laps.fill_by_close_timestamp([number: lap_number], timestamp, @max_fill_delay_ms)
+      |> Laps.fix_laps_data()
 
     new_lap_number =
       if lap_number >= self.current_lap_number do
