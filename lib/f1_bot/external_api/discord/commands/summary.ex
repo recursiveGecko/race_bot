@@ -66,7 +66,12 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
           %{inline: true, name: "Stints", value: "#{length(summary.stints)}"}
         ] ++ generate_stint_fields(summary),
       footer: %{
-        text: "Number in parentheses - tyre age when fitted (laps)"
+        text:
+          """
+          Number in parentheses - tyre age when fitted (laps)
+          Timed laps - number of laps included in statistics (excludes outlaps)
+          """
+          |> String.trim()
       }
     }
   end
