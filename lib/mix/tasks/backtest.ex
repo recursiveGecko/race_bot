@@ -29,7 +29,8 @@ defmodule Mix.Tasks.Backtest do
       report_progress: false
     }
 
-    F1Bot.Replay.session_from_url(url, replay_options)
+    {:ok, session} = F1Bot.Replay.session_from_url(url, replay_options)
+    F1Bot.F1Session.Server.replace_session(session)
 
     Logger.info("Creating lap time graph.")
 
