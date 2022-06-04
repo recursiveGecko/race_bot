@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.2.0">
 
-    <title>F1Bot.F1Session.DriverDataRepo.BestStats — f1_bot v0.2.0</title>
+    <title>F1Bot.F1Session.TrackStatusHistory — f1_bot v0.2.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
     <script src="dist/sidebar_items-29dc126f44.js"></script>
@@ -96,19 +96,19 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.F1Session.DriverDataRepo.BestStats</span> 
+  <span translate="no">F1Bot.F1Session.TrackStatusHistory</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.2.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Processes and holds best-of session statistics, such as the overall fastest lap and top speed.</p>
+<p>Stores intervals when the race is neutralized (VSC, SC, red flag)</p>
   </section>
 
 
@@ -128,7 +128,15 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#t:fastest_sectors/0" translate="no">fastest_sectors()</a>
+          <a href="#t:interval/0" translate="no">interval()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#t:status/0" translate="no">status()</a>
 
         </div>
 
@@ -139,8 +147,6 @@ f1_bot
           <a href="#t:t/0" translate="no">t()</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Session-wide stats for fastest laps, top speed across all drivers</p></div>
 
       </div>
 
@@ -153,6 +159,14 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#find_intervals_with_status/2" translate="no">find_intervals_with_status(self, statuses)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#new/0" translate="no">new()</a>
 
         </div>
@@ -161,23 +175,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_lap_time/2" translate="no">push_lap_time(self, lap_time)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#push_sector_time/3" translate="no">push_sector_time(self, sector, sector_time)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#push_top_speed/2" translate="no">push_top_speed(self, speed)</a>
+          <a href="#push_track_status/3" translate="no">push_track_status(self, track_status, timestamp)</a>
 
         </div>
 
@@ -197,16 +195,16 @@ f1_bot
 Types
     </h1>
     <div class="types-list">
-<section class="detail" id="t:fastest_sectors/0">
+<section class="detail" id="t:interval/0">
 
   <div class="detail-header">
-    <a href="#t:fastest_sectors/0" class="detail-link" title="Link to this type">
+    <a href="#t:interval/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">fastest_sectors()</h1>
+    <h1 class="signature" translate="no">interval()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L7" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L9" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -218,11 +216,40 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> fastest_sectors() :: %{
-  required(1) =&gt; <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>() | nil,
-  required(2) =&gt; <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>() | nil,
-  required(3) =&gt; <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>() | nil
+          <pre translate="no"><span class="attribute">@type</span> interval() :: %{
+  starts_at: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>(),
+  ends_at: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>() | nil,
+  status: <a href="#t:status/0">status</a>()
 }</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:status/0">
+
+  <div class="detail-header">
+    <a href="#t:status/0" class="detail-link" title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">status()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L7" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> status() ::
+  :all_clear | :yellow_flag | :safety_car | :red_flag | :virtual_safety_car</pre>
 
       </div>
 
@@ -238,7 +265,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L13" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L15" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -250,15 +277,11 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.DriverDataRepo.BestStats{
-  fastest_lap: <a href="https://hexdocs.pm/timex/3.7.6/Timex.Duration.html#t:t/0">Timex.Duration.t</a>(),
-  fastest_sectors: <a href="#t:fastest_sectors/0">fastest_sectors</a>(),
-  top_speed: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()
-}</pre>
+          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.TrackStatusHistory{intervals: [<a href="#t:interval/0">interval</a>()]}</pre>
 
       </div>
 
-<p>Session-wide stats for fastest laps, top speed across all drivers</p>
+
   </section>
 </section>
 
@@ -274,6 +297,34 @@ Types
 Functions
     </h1>
     <div class="functions-list">
+<section class="detail" id="find_intervals_with_status/2">
+
+  <div class="detail-header">
+    <a href="#find_intervals_with_status/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">find_intervals_with_status(self, statuses)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L38" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> find_intervals_with_status(<a href="#t:t/0">t</a>(), [<a href="#t:status/0">status</a>()]) :: [<a href="#t:interval/0">interval</a>()]</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="new/0">
 
   <div class="detail-header">
@@ -283,7 +334,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L21" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L20" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -292,20 +343,26 @@ Functions
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> new() :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
 
 
   </section>
 </section>
-<section class="detail" id="push_lap_time/2">
+<section class="detail" id="push_track_status/3">
 
   <div class="detail-header">
-    <a href="#push_lap_time/2" class="detail-link" title="Link to this function">
+    <a href="#push_track_status/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_lap_time(self, lap_time)</h1>
+    <h1 class="signature" translate="no">push_track_status(self, track_status, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L25" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L23" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -315,49 +372,11 @@ Functions
 
   <section class="docstring">
 
+      <div class="specs">
 
-  </section>
-</section>
-<section class="detail" id="push_sector_time/3">
+          <pre translate="no"><span class="attribute">@spec</span> push_track_status(<a href="#t:t/0">t</a>(), <a href="#t:status/0">status</a>(), <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) :: <a href="#t:t/0">t</a>()</pre>
 
-  <div class="detail-header">
-    <a href="#push_sector_time/3" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">push_sector_time(self, sector, sector_time)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L64" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="push_top_speed/2">
-
-  <div class="detail-header">
-    <a href="#push_top_speed/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">push_top_speed(self, speed)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L45" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
+      </div>
 
 
   </section>

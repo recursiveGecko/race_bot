@@ -37,11 +37,13 @@ F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages.html
 F1Bot.F1Session.LiveTimingHandlers.SessionInfo.html
 F1Bot.F1Session.LiveTimingHandlers.SessionStatus.html
 F1Bot.F1Session.LiveTimingHandlers.StintData.html
+F1Bot.F1Session.LiveTimingHandlers.TrackStatus.html
 F1Bot.F1Session.LiveTimingHandlers.html
 F1Bot.F1Session.RaceControl.Message.html
 F1Bot.F1Session.RaceControl.html
 F1Bot.F1Session.Server.html
 F1Bot.F1Session.SessionInfo.html
+F1Bot.F1Session.TrackStatusHistory.html
 F1Bot.F1Session.html
 F1Bot.LightCopy.html
 F1Bot.Output.Common.html
@@ -63,8 +65,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-0b0f0b11db.js
-dist/sidebar_items-8978e44f5d.js
+dist/search_items-c08c60ea81.js
+dist/sidebar_items-29dc126f44.js
 index.html
 license.html
 readme.html
