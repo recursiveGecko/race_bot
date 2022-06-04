@@ -43,12 +43,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
         generate_lap(1, 1000),
         generate_lap(2, 80),
         generate_lap(3, 90),
-        generate_lap(4, 1000),
+        generate_lap(4, 100),
         generate_lap(5, 1000),
         generate_lap(6, 80),
         generate_lap(7, 95),
         generate_lap(8, 95),
-        generate_lap(9, 1000),
+        generate_lap(9, 130),
         generate_lap(10, 1000),
         generate_lap(11, 70),
         generate_lap(12, 90),
@@ -73,9 +73,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
           lap_end: 4,
           compound: Enum.at(stints.data, 0) |> Map.fetch!(:compound),
           tyre_age: Enum.at(stints.data, 0) |> Map.fetch!(:age),
-          average_time: Timex.Duration.from_seconds(85),
+          average_time: Timex.Duration.from_seconds(90),
           fastest_time: Timex.Duration.from_seconds(80),
-          timed_laps: 2
+          timed_laps: 3
         },
         %{
           number: 2,
@@ -83,9 +83,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
           lap_end: 9,
           compound: Enum.at(stints.data, 1) |> Map.fetch!(:compound),
           tyre_age: Enum.at(stints.data, 1) |> Map.fetch!(:age),
-          average_time: Timex.Duration.from_seconds(90),
+          average_time: Timex.Duration.from_seconds(100),
           fastest_time: Timex.Duration.from_seconds(80),
-          timed_laps: 3
+          timed_laps: 4
         },
         %{
           number: 3,
@@ -104,6 +104,6 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
 
     actual_summary = Summary.generate(driver_data)
 
-    assert expected_summary == actual_summary
+    assert actual_summary == expected_summary
   end
 end

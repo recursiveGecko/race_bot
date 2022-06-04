@@ -50,26 +50,18 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
 
   defp analyze_stint(stint = %Stint{}, next_stint, laps)
        when is_struct(next_stint, Stint) or is_nil(next_stint) do
-    # Remove inlap unless this is the final stint (and there is no timed inlap after the chequered flag)
-    {lap_end, remove_inlap} =
+    lap_end =
       if next_stint == nil do
-        lap_end = laps |> List.last() |> Map.fetch!(:number)
-        {lap_end, false}
+        laps |> List.last() |> Map.fetch!(:number)
       else
-        lap_end = next_stint.lap_number - 1
-        {lap_end, true}
+        next_stint.lap_number - 1
       end
 
     # Remove outlap
     timed_laps_start = stint.lap_number + 1
 
-    # Remove inlap
-    timed_laps_end =
-      if remove_inlap do
-        lap_end - 1
-      else
-        lap_end
-      end
+    # Keep inlap
+    timed_laps_end = lap_end
 
     relevant_laps = find_relevant_laps(laps, timed_laps_start, timed_laps_end)
 
