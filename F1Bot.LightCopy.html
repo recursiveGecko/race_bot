@@ -7,10 +7,10 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.2.0">
 
-    <title>F1Bot.F1Session.LightCopy — f1_bot v0.2.0</title>
+    <title>F1Bot.LightCopy — f1_bot v0.2.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-9b4e2142dd.js"></script>
+    <script src="dist/sidebar_items-8978e44f5d.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -96,12 +96,12 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/light_copy.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/light_copy.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.F1Session.LightCopy</span> <small>behaviour</small>
+  <span translate="no">F1Bot.LightCopy</span> <small>protocol</small>
   <small class="app-vsn" translate="no">(f1_bot v0.2.0)</small>
 
 </h1>
@@ -117,16 +117,34 @@ f1_bot
       Summary
     </h1>
 
-  <div class="summary-callbacks summary">
+  <div class="summary-types summary">
     <h2>
-      <a href="#callbacks">Callbacks</a>
+      <a href="#types">Types</a>
     </h2>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#c:light_copy/1" translate="no">light_copy(struct)</a>
+          <a href="#t:t/0" translate="no">t()</a>
 
         </div>
+
+      </div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#light_copy/1" translate="no">light_copy(data)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Recursively copies data with heavy bits (e.g. telemetry and position history) removed.
+Structs containing heavy data must implement the protocol and strip the data.</p></div>
 
       </div>
 
@@ -135,25 +153,25 @@ f1_bot
   </section>
 
 
-  <section id="callbacks" class="details-list">
+  <section id="types" class="details-list">
     <h1 class="section-heading">
-      <a class="hover-link" href="#callbacks">
+      <a class="hover-link" href="#types">
         <i class="ri-link-m" aria-hidden="true"></i>
         <span class="sr-only">Link to this section</span>
       </a>
-Callbacks
+Types
     </h1>
-    <div class="callbacks-list">
-<section class="detail" id="c:light_copy/1">
+    <div class="types-list">
+<section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#c:light_copy/1" class="detail-link" title="Link to this callback">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this callback</span>
+      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">light_copy(struct)</h1>
+    <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/light_copy.ex#L2" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/light_copy.ex#L1" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -165,11 +183,47 @@ Callbacks
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@callback</span> light_copy(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()</pre>
+          <pre translate="no"><span class="attribute">@type</span> t() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()</pre>
 
       </div>
 
 
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Functions
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="light_copy/1">
+
+  <div class="detail-header">
+    <a href="#light_copy/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">light_copy(data)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/light_copy.ex#L7" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Recursively copies data with heavy bits (e.g. telemetry and position history) removed.
+Structs containing heavy data must implement the protocol and strip the data.</p>
   </section>
 </section>
 
