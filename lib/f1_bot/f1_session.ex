@@ -7,7 +7,6 @@ defmodule F1Bot.F1Session do
   `F1Bot.F1Session.Server`.
   """
   use TypedStruct
-  @behaviour F1Bot.F1Session.LightCopy
 
   alias F1Bot.F1Session
 
@@ -23,11 +22,6 @@ defmodule F1Bot.F1Session do
   end
 
   def new(), do: %__MODULE__{}
-
-  def light_copy(self = %__MODULE__{}) do
-    light_driver_data_repo = F1Session.DriverDataRepo.light_copy(self.driver_data_repo)
-    %{self | driver_data_repo: light_driver_data_repo}
-  end
 
   def driver_info_by_number(session, driver_number) when is_integer(driver_number) do
     F1Session.DriverCache.get_driver_by_number(session.driver_cache, driver_number)

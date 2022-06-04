@@ -4,8 +4,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
   car telemetry, stint data and more.
   """
   use TypedStruct
-  @behaviour F1Bot.F1Session.LightCopy
 
+  alias F1Bot.LightCopy
   alias F1Bot.F1Session.DriverDataRepo.{Laps, Stints}
   alias F1Bot.F1Session.Common.TimeSeriesStore
 
@@ -29,11 +29,6 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     %__MODULE__{
       number: number
     }
-  end
-
-  def light_copy(self = %__MODULE__{}) do
-    empty_hist = TimeSeriesStore.new()
-    %{self | telemetry_hist: empty_hist, position_hist: empty_hist}
   end
 
   def push_lap_time(
@@ -203,5 +198,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
 
   defp reset_current_lap_stats(self) do
     %{self | top_speed_curr_lap: nil}
+  end
+
+  defimpl LightCopy do
+    def light_copy(self) do
+      empty_hist = TimeSeriesStore.new()
+      %{self | telemetry_hist: empty_hist, position_hist: empty_hist}
+    end
   end
 end

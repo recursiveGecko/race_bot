@@ -5,7 +5,6 @@ defmodule F1Bot.F1Session.DriverDataRepo do
   session statistics, such as the overall fastest lap and top speed.
   """
   use TypedStruct
-  @behaviour F1Bot.F1Session.LightCopy
 
   alias F1Bot.F1Session.DriverDataRepo
   alias F1Bot.F1Session.DriverDataRepo.{DriverData, BestStats, Events}
@@ -19,11 +18,6 @@ defmodule F1Bot.F1Session.DriverDataRepo do
 
   def new do
     %__MODULE__{}
-  end
-
-  def light_copy(self = %__MODULE__{}) do
-    light_drivers = Enum.map(self.drivers, &DriverData.light_copy/1) |> Enum.into(%{})
-    %{self | drivers: light_drivers}
   end
 
   def info(repo, driver_number) do

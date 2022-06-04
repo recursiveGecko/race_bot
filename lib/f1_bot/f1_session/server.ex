@@ -25,6 +25,11 @@ defmodule F1Bot.F1Session.Server do
     {:ok, state}
   end
 
+  def state(light_copy) when is_boolean(light_copy) do
+    server_via()
+    |> GenServer.call({:state, light_copy})
+  end
+
   def session_info() do
     server_via()
     |> GenServer.call({:session_info})
@@ -58,6 +63,18 @@ defmodule F1Bot.F1Session.Server do
   def replace_session(session = %F1Session{}) do
     server_via()
     |> GenServer.call({:replace_session, session})
+  end
+
+  @impl true
+  def handle_call({:state, light_copy}, _from, state = %{session: session}) do
+    reply =
+      if light_copy do
+        F1Bot.LightCopy.light_copy(session)
+      else
+        session
+      end
+
+    {:reply, reply, state}
   end
 
   @impl true
