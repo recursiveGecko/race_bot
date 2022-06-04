@@ -9,15 +9,17 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     Stint
   }
 
-  def generate(data = %DriverData{}) do
+  alias F1Bot.F1Session.TrackStatusHistory
+
+  def generate(data = %DriverData{}, track_status_hist = %TrackStatusHistory{}) do
     %{
-      stints: stints(data),
+      stints: stints(data, track_status_hist),
       fastest_lap: data.fastest_lap,
       top_speed: data.top_speed
     }
   end
 
-  defp stints(data = %DriverData{}) do
+  defp stints(data, track_status_hist) do
     stints =
       data.stints.data
       |> Enum.sort_by(fn %Stint{number: n} -> n end, :asc)
@@ -28,27 +30,40 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
       |> Stream.filter(fn %Lap{time: t} -> t != nil end)
       |> Enum.sort_by(fn %Lap{number: n} -> n end, :asc)
 
-    process_stints([], stints, laps)
+    neutralized_intervals =
+      track_status_hist
+      |> TrackStatusHistory.find_intervals_with_status([
+        :virtual_safety_car,
+        :safety_car,
+        :red_flag
+      ])
+
+    process_stints([], stints, laps, neutralized_intervals)
     |> Enum.reverse()
   end
 
-  defp process_stints(acc, _stints = [stint, next_stint | rest], laps) do
+  defp process_stints(
+         acc,
+         _stints = [stint, next_stint | rest],
+         laps,
+         neutralized_intervals
+       ) do
     # TODO: Possibly add sanity checks that next_stint.number is stint.number + 1 (in case of missing data)
-    processed = analyze_stint(stint, next_stint, laps)
+    processed = analyze_stint(stint, next_stint, laps, neutralized_intervals)
     acc = [processed | acc]
-    process_stints(acc, [next_stint | rest], laps)
+    process_stints(acc, [next_stint | rest], laps, neutralized_intervals)
   end
 
-  defp process_stints(acc, _stints = [stint], laps) do
-    processed = analyze_stint(stint, nil, laps)
+  defp process_stints(acc, _stints = [stint], laps, neutralized_intervals) do
+    processed = analyze_stint(stint, nil, laps, neutralized_intervals)
     [processed | acc]
   end
 
-  defp process_stints(acc, _stints = [], _laps) do
+  defp process_stints(acc, _stints = [], _laps, _neutralized_intervals) do
     acc
   end
 
-  defp analyze_stint(stint = %Stint{}, next_stint, laps)
+  defp analyze_stint(stint = %Stint{}, next_stint, laps, neutralized_intervals)
        when is_struct(next_stint, Stint) or is_nil(next_stint) do
     lap_end =
       if next_stint == nil do
@@ -63,7 +78,13 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     # Keep inlap
     timed_laps_end = lap_end
 
-    relevant_laps = find_relevant_laps(laps, timed_laps_start, timed_laps_end)
+    relevant_laps =
+      find_relevant_laps(
+        laps,
+        timed_laps_start,
+        timed_laps_end,
+        neutralized_intervals
+      )
 
     %{avg: avg_time, min: min_time} = find_lap_times(relevant_laps)
 
@@ -79,7 +100,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     }
   end
 
-  defp find_relevant_laps(laps, min_lap, max_lap) do
+  defp find_relevant_laps(laps, min_lap, max_lap, neutralized_intervals) do
     laps
     |> Stream.filter(fn lap = %Lap{} ->
       n = lap.number
@@ -88,6 +109,11 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     |> Stream.filter(fn lap = %Lap{} ->
       lap.time != nil
     end)
+    |> Stream.reject(fn lap = %Lap{} ->
+      # Remove what is likely to be an outlap after a red flag
+      lap.sectors == nil and lap.time != nil and Timex.Duration.to_seconds(lap.time) > 240
+    end)
+    |> Stream.reject(&Lap.is_neutralized?(&1, neutralized_intervals))
     |> Enum.sort_by(fn %Lap{time: time} -> time end, :asc)
   end
 

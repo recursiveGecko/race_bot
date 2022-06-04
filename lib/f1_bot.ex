@@ -33,6 +33,10 @@ defmodule F1Bot do
     F1Bot.F1Session.Server.session_status()
   end
 
+  def track_status_history() do
+    F1Bot.F1Session.Server.track_status_history()
+  end
+
   def reload_live_data(url \\ nil, light_data) do
     url_result =
       if url == nil do

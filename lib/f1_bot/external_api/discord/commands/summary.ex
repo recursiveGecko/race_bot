@@ -40,8 +40,9 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
     {:ok, session_info} = F1Bot.session_info()
     {:ok, driver_info} = F1Bot.driver_info_by_number(options.driver)
     {:ok, driver_data} = F1Bot.driver_session_data(options.driver)
+    track_status_history = F1Bot.track_status_history()
 
-    summary = Summary.generate(driver_data)
+    summary = Summary.generate(driver_data, track_status_history)
 
     embed = generate_summary_embed(session_info, driver_info, summary)
 
@@ -69,7 +70,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
         text:
           """
           Number in parentheses - tyre age when fitted (laps)
-          Timed laps - number of laps included in statistics (excludes outlaps)
+          Timed laps - # of laps included in statistics (excludes outlaps, VSC, SC, red flags)
           """
           |> String.trim()
       }

@@ -62,6 +62,10 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
     LiveTimingHandlers.StintData.process_packet(session, packet)
   end
 
+  defp process_for_topic(session, packet = %Packet{topic: "TrackStatus"}) do
+    LiveTimingHandlers.TrackStatus.process_packet(session, packet)
+  end
+
   defp process_for_topic(session, _packet = %Packet{topic: _topic}) do
     # Logger.warn("Received a message for unknown topic: #{topic}")
     {:ok, session, []}

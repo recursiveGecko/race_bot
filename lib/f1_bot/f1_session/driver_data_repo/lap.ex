@@ -4,6 +4,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
   """
   use TypedStruct
 
+  alias F1Bot.F1Session.TrackStatusHistory
+
   @type sector_data :: %{
           time: Timex.Duration.t() | nil,
           timestamp: DateTime.t() | nil
@@ -31,4 +33,25 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
       2 => %{time: nil, timestamp: nil},
       3 => %{time: nil, timestamp: nil}
     }
+
+  @spec is_neutralized?(t(), [TrackStatusHistory.interval()]) :: boolean()
+  def is_neutralized?(lap = %__MODULE__{}, neutralized_intervals) do
+    if lap.time == nil or lap.timestamp == nil do
+      false
+    else
+      lap_start = Timex.subtract(lap.timestamp, lap.time)
+      lap_end = lap.timestamp
+
+      Enum.any?(neutralized_intervals, fn %{starts_at: starts_at, ends_at: ends_at} ->
+        # Add a margin for drivers to return to racing speed
+        ends_at = Timex.add(ends_at, Timex.Duration.from_seconds(5))
+
+        started_during_neutral = Timex.between?(lap_start, starts_at, ends_at)
+        ended_during_neutral = Timex.between?(lap_end, starts_at, ends_at)
+        short_neutral_during_lap = Timex.between?(starts_at, lap_start, lap_end)
+
+        started_during_neutral or ended_during_neutral or short_neutral_during_lap
+      end)
+    end
+  end
 end

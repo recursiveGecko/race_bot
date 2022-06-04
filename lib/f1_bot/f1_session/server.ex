@@ -55,6 +55,11 @@ defmodule F1Bot.F1Session.Server do
     |> GenServer.call({:driver_session_data, driver_number})
   end
 
+  def track_status_history() do
+    server_via()
+    |> GenServer.call({:track_status_history})
+  end
+
   def push_live_timing_packet(packet = %LiveTimingHandlers.Packet{}) do
     server_via()
     |> GenServer.call({:push_live_timing_packet, packet})
@@ -115,6 +120,12 @@ defmodule F1Bot.F1Session.Server do
   def handle_call({:driver_session_data, driver_number}, _from, state = %{session: session}) do
     data = F1Session.driver_session_data(session, driver_number)
     reply = {:ok, data}
+    {:reply, reply, state}
+  end
+
+  @impl true
+  def handle_call({:track_status_history}, _from, state = %{session: session}) do
+    reply = session.track_status_history
     {:reply, reply, state}
   end
 

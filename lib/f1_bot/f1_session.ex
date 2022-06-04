@@ -15,6 +15,10 @@ defmodule F1Bot.F1Session do
 
     field(:driver_data_repo, F1Session.DriverDataRepo.t(), default: F1Session.DriverDataRepo.new())
 
+    field(:track_status_history, F1Session.TrackStatusHistory.t(),
+      default: F1Session.TrackStatusHistory.new()
+    )
+
     field(:race_control, F1Session.RaceControl.t(), default: F1Session.RaceControl.new())
     field(:driver_cache, F1Session.DriverCache.t(), default: F1Session.DriverCache.new())
     field(:session_info, F1Session.SessionInfo.t(), default: F1Session.SessionInfo.new())
@@ -154,6 +158,15 @@ defmodule F1Bot.F1Session do
     {session, events}
   end
 
+  def push_track_status(session, track_status, timestamp) do
+    track_status =
+      session.track_status_history
+      |> F1Session.TrackStatusHistory.push_track_status(track_status, timestamp)
+
+    session = %{session | track_status_history: track_status}
+    {session, []}
+  end
+
   defp hydrate_events(session, events) do
     for e <- events do
       %{
@@ -169,6 +182,7 @@ defmodule F1Bot.F1Session do
     %__MODULE__{
       session
       | driver_data_repo: F1Session.DriverDataRepo.new(),
+        track_status_history: F1Session.TrackStatusHistory.new(),
         race_control: F1Session.RaceControl.new()
     }
   end
