@@ -27,7 +27,7 @@ drivers = [
 
 stats =
   for {abbr, num, lap} <- drivers do
-    {:ok, stats} = F1Bot.driver_stats(num)
+    {:ok, stats} = F1Bot.driver_session_data(num)
 
     {
       abbr,
