@@ -16,6 +16,18 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     %__MODULE__{}
   end
 
+  def fastest(%__MODULE__{data: data}) do
+    lap =
+      data
+      |> Stream.filter(fn lap -> lap.time != nil end)
+      |> Enum.min_by(fn lap -> Timex.Duration.to_milliseconds(lap.time) end, fn -> nil end)
+
+    case lap do
+      nil -> {:error, :no_laps}
+      _ -> {:ok, lap}
+    end
+  end
+
   def find_by_close_timestamp(
         %__MODULE__{data: data},
         timestamp,
