@@ -57,6 +57,13 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     {self, result}
   end
 
+  @spec outlap_lap_numbers(t()) :: [pos_integer()]
+  def outlap_lap_numbers(self = %__MODULE__{}) do
+    self.stints.data
+    |> Enum.map(fn s -> s.lap_number end)
+    |> Enum.reject(&(&1 == nil))
+  end
+
   def push_sector_time(
         self = %__MODULE__{},
         sector,

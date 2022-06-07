@@ -18,10 +18,10 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
         data: %{"Lines" => drivers = %{}},
         timestamp: timestamp
       }) do
-    # Lap information is delayed. -3 second offset was chosen because it seems about right, most of the time.
+    # Lap information is delayed. -2.5 second offset was chosen because it seems about right, most of the time.
     # Exact timestamps aren't critical at the time of writing this code
     timestamp =
-      -3000
+      -2500
       |> Timex.Duration.from_milliseconds()
       |> (&Timex.add(timestamp, &1)).()
 
