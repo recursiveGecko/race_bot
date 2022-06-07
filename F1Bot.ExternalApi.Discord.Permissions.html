@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.2.0">
 
-    <title>F1Bot.ExternalApi.SignalR.Encoding — f1_bot v0.2.0</title>
+    <title>F1Bot.ExternalApi.Discord.Permissions — f1_bot v0.2.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
     <script src="dist/sidebar_items-c218f89288.js"></script>
@@ -96,20 +96,16 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/signalr/encoding.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/permissions.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.ExternalApi.SignalR.Encoding</span> 
+  <span translate="no">F1Bot.ExternalApi.Discord.Permissions</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.2.0)</small>
 
 </h1>
 
-
-  <section id="moduledoc">
-<p>Decoding &amp; decompression functions for inflating certain live timing API data feeds (e.g. telemetry)</p>
-  </section>
 
 
   <section id="summary" class="details-list">
@@ -128,15 +124,17 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#decode_live_timing_data/1" translate="no">decode_live_timing_data(base64_encoded_compressed_json)</a>
+          <a href="#everyone_has_external_emojis?/1" translate="no">everyone_has_external_emojis?(guild_id)</a>
 
         </div>
+
+          <div class="summary-synopsis"><p>Checks whether @everyone role has &quot;use external emojis&quot; permission.</p></div>
 
       </div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#safe_zlib_unzip/1" translate="no">safe_zlib_unzip(data)</a>
+          <a href="#guild_role_permissions/2" translate="no">guild_role_permissions(guild_id, role_id)</a>
 
         </div>
 
@@ -156,16 +154,16 @@ f1_bot
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="decode_live_timing_data/1">
+<section class="detail" id="everyone_has_external_emojis?/1">
 
   <div class="detail-header">
-    <a href="#decode_live_timing_data/1" class="detail-link" title="Link to this function">
+    <a href="#everyone_has_external_emojis?/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">decode_live_timing_data(base64_encoded_compressed_json)</h1>
+    <h1 class="signature" translate="no">everyone_has_external_emojis?(guild_id)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/signalr/encoding.ex#L6" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/permissions.ex#L14" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -175,19 +173,27 @@ Functions
 
   <section class="docstring">
 
+      <div class="specs">
 
+          <pre translate="no"><span class="attribute">@spec</span> everyone_has_external_emojis?(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()) ::
+  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+<p>Checks whether @everyone role has &quot;use external emojis&quot; permission.</p><p>This also determines whether we can use external emojis in slash command responses
+due to Discord not respecting permissions granted via individual roles.</p><p>Discussion of this API limitation: <a href="https://github.com/discord/discord-api-docs/issues/2612">https://github.com/discord/discord-api-docs/issues/2612</a></p>
   </section>
 </section>
-<section class="detail" id="safe_zlib_unzip/1">
+<section class="detail" id="guild_role_permissions/2">
 
   <div class="detail-header">
-    <a href="#safe_zlib_unzip/1" class="detail-link" title="Link to this function">
+    <a href="#guild_role_permissions/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">safe_zlib_unzip(data)</h1>
+    <h1 class="signature" translate="no">guild_role_permissions(guild_id, role_id)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/signalr/encoding.ex#L17" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/permissions.ex#L27" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -196,6 +202,13 @@ Functions
   </div>
 
   <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> guild_role_permissions(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()) ::
+  {:ok, [<a href="https://hexdocs.pm/nostrum/0.5.1/Nostrum.Permission.html#t:t/0">Nostrum.Permission.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
 
 
   </section>

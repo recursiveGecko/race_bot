@@ -7,6 +7,7 @@ F1Bot.ExternalApi.Discord.Commands.Summary.html
 F1Bot.ExternalApi.Discord.Commands.html
 F1Bot.ExternalApi.Discord.Console.html
 F1Bot.ExternalApi.Discord.Live.html
+F1Bot.ExternalApi.Discord.Permissions.html
 F1Bot.ExternalApi.Discord.html
 F1Bot.ExternalApi.SignalR.Client.html
 F1Bot.ExternalApi.SignalR.Encoding.html
@@ -65,8 +66,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-c08c60ea81.js
-dist/sidebar_items-29dc126f44.js
+dist/search_items-fa0f08f2e1.js
+dist/sidebar_items-c218f89288.js
 index.html
 license.html
 readme.html
