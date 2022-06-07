@@ -27,8 +27,7 @@ defmodule F1Bot.F1Session.Common.TimeSeriesStore do
       ) do
     data
     |> Enum.filter(fn %{timestamp: ts} ->
-      Timex.diff(ts, from_ts, :microseconds) >= 0 and
-        Timex.diff(ts, to_ts, :microseconds) <= 0
+      Timex.between?(ts, from_ts, to_ts, inclusive: true)
     end)
     |> Enum.reverse()
   end
