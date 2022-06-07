@@ -8,6 +8,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
   alias F1Bot.F1Session.DriverDataRepo.DriverData.Summary
   alias F1Bot.F1Session.DriverCache.DriverInfo
   alias F1Bot.ExternalApi.Discord
+  alias F1Bot.ExternalApi.Discord.Permissions
   alias F1Bot.ExternalApi.Discord.Commands.{Response, OptionValidator}
 
   @behaviour Discord.Commands
@@ -42,16 +43,22 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
     {:ok, driver_data} = F1Bot.driver_session_data(options.driver)
     track_status_history = F1Bot.track_status_history()
 
+    use_emojis =
+      case Permissions.everyone_has_external_emojis?(interaction.guild_id) do
+        {:ok, perm} -> perm
+        _ -> false
+      end
+
     summary = Summary.generate(driver_data, track_status_history)
 
-    embed = generate_summary_embed(session_info, driver_info, summary)
+    embed = generate_summary_embed(session_info, driver_info, summary, use_emojis)
 
     flags
     |> Response.make_followup_message(nil, [], [embed])
     |> Response.send_followup_response(interaction)
   end
 
-  defp generate_summary_embed(session_info, driver_info, summary) do
+  defp generate_summary_embed(session_info, driver_info, summary, use_emojis) do
     %{
       type: "rich",
       color: DriverInfo.team_color_int(driver_info),
@@ -65,31 +72,26 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
           %{inline: true, name: "Fastest lap", value: format_lap_time(summary.fastest_lap)},
           %{inline: true, name: "Top speed", value: format_speed(summary.top_speed)},
           %{inline: true, name: "Stints", value: "#{length(summary.stints)}"}
-        ] ++ generate_stint_fields(summary),
+        ] ++ generate_stint_fields(summary, use_emojis),
       footer: %{
         text:
           """
-          Number in parentheses - tyre age when fitted (laps)
-          Timed laps - # of laps included in statistics (excludes outlaps, VSC, SC, red flags)
+          Letter and number in parentheses - tyre compound and age when fitted (laps)
+          Timed laps - # of laps included in statistics (excludes outlaps, VSC, SC, red flag)
           """
           |> String.trim()
       }
     }
   end
 
-  defp generate_stint_fields(summary) do
+  defp generate_stint_fields(summary, use_emojis) do
     for stint <- summary.stints do
-      tyre_emoji =
-        "#{stint.compound}_tyre"
-        |> String.to_atom()
-        |> Discord.get_emoji()
-
       stint_info = "Stint #{stint.number + 1}"
       laps_info = "Lap #{stint.lap_start}-#{stint.lap_end}" |> format_width(9)
       timed_laps_info = "Timed laps: #{stint.timed_laps}" |> format_width(15)
-      age_info = "(#{stint.tyre_age || 0})"
+      tyre_info = gen_stint_tyre_info(stint, use_emojis)
 
-      first_row = "#{tyre_emoji}`#{age_info} #{stint_info}  #{laps_info}   #{timed_laps_info}`"
+      first_row = "#{tyre_info} `#{stint_info}  #{laps_info}   #{timed_laps_info}`"
 
       avg_lap = format_lap_time(stint.average_time) |> format_width(8)
       fast_lap = format_lap_time(stint.fastest_time) |> format_width(8)
@@ -101,6 +103,27 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
         name: first_row,
         value: second_row
       }
+    end
+  end
+
+  defp gen_stint_tyre_info(stint, use_emojis) do
+    tyre_emoji =
+      "#{stint.compound}_tyre"
+      |> String.to_atom()
+      |> Discord.get_emoji()
+
+    tyre_ascii =
+      stint.compound
+      |> to_string()
+      |> String.first()
+      |> String.upcase()
+
+    age_info = "(#{stint.tyre_age || 0})"
+
+    if use_emojis do
+      "#{tyre_emoji}`#{age_info}`"
+    else
+      "`#{tyre_ascii} #{age_info} `"
     end
   end
 
