@@ -55,6 +55,7 @@ F1Bot.Plotting.LapTime.html
 F1Bot.Plotting.html
 F1Bot.PubSub.html
 F1Bot.Replay.html
+F1Bot.Time.html
 F1Bot.html
 Mix.Tasks.Backtest.html
 api-reference.html
@@ -66,8 +67,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-fa0f08f2e1.js
-dist/sidebar_items-c218f89288.js
+dist/search_items-496e9389b7.js
+dist/sidebar_items-908d967280.js
 index.html
 license.html
 readme.html

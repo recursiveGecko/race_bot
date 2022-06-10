@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.4">
-    <meta name="project" content="f1_bot v0.2.0">
+    <meta name="project" content="f1_bot v0.2.1">
 
-    <title>F1Bot.F1Session.TrackStatusHistory — f1_bot v0.2.0</title>
+    <title>F1Bot.F1Session.TrackStatusHistory — f1_bot v0.2.1</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-c218f89288.js"></script>
+    <script src="dist/sidebar_items-908d967280.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -66,7 +66,7 @@
 f1_bot
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.2.0
+        v0.2.1
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -102,7 +102,7 @@ f1_bot
     </a>
 
   <span translate="no">F1Bot.F1Session.TrackStatusHistory</span> 
-  <small class="app-vsn" translate="no">(f1_bot v0.2.0)</small>
+  <small class="app-vsn" translate="no">(f1_bot v0.2.1)</small>
 
 </h1>
 
@@ -168,6 +168,14 @@ f1_bot
       <div class="summary-row">
         <div class="summary-signature">
           <a href="#new/0" translate="no">new()</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#new_interval/3" translate="no">new_interval(track_status, starts_at, ends_at \\ nil)</a>
 
         </div>
 
@@ -306,7 +314,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">find_intervals_with_status(self, statuses)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L38" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L47" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -353,6 +361,36 @@ Functions
 
   </section>
 </section>
+<section class="detail" id="new_interval/3">
+
+    <span id="new_interval/2"></span>
+
+  <div class="detail-header">
+    <a href="#new_interval/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">new_interval(track_status, starts_at, ends_at \\ nil)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L23" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> new_interval(<a href="#t:status/0">status</a>(), <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>(), <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>() | nil) :: <a href="#t:interval/0">interval</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="push_track_status/3">
 
   <div class="detail-header">
@@ -362,7 +400,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_track_status(self, track_status, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L23" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/track_status_history.ex#L32" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
