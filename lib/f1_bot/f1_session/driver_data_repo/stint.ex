@@ -35,6 +35,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stint do
 
     update_type =
       cond do
+        self.compound == nil and new_self.compound != nil ->
+          :changed_compound_from_nil
+
         self.compound != new_self.compound ->
           :changed_compound
 

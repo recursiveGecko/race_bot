@@ -39,22 +39,30 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
             false -> :updated_old_compound
           end
 
-        new_data =
-          new_data
-          |> fix_lap_numbers()
-          |> sort_by_number(:desc)
+        self =
+          %{self | data: new_data}
+          |> normalize_internal_data()
 
-        self = %{self | data: new_data}
+        {change_type, self}
+
+      update_type == :changed_compound_from_nil ->
+        change_type =
+          case current_stint_number?(self, stint_number) do
+            true -> :late_set_current_compound
+            false -> :updated_old_compound
+          end
+
+        self =
+          %{self | data: new_data}
+          |> normalize_internal_data()
 
         {change_type, self}
 
       update_type in [:other_fields, :no_changes] ->
-        new_data =
-          new_data
-          |> fix_lap_numbers()
-          |> sort_by_number(:desc)
+        self =
+          %{self | data: new_data}
+          |> normalize_internal_data()
 
-        self = %{self | data: new_data}
         {update_type, self}
 
       update_type == nil ->
@@ -66,8 +74,18 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
           |> fix_lap_numbers()
           |> sort_by_number(:desc)
 
-        self = %{self | data: new_data}
-        {:new, self}
+        self =
+          %{self | data: new_data}
+          |> normalize_internal_data()
+
+        change_type =
+          if stint.compound == nil do
+            :new_without_compound
+          else
+            :new_with_compound
+          end
+
+        {change_type, self}
     end
   end
 
@@ -97,6 +115,15 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
     stints
     |> sort_by_number(:asc)
     |> fix_lap_numbers([])
+  end
+
+  defp normalize_internal_data(self = %__MODULE__{data: data}) do
+    new_data =
+      data
+      |> fix_lap_numbers()
+      |> sort_by_number(:desc)
+
+    %{self | data: new_data}
   end
 
   defp fix_lap_numbers(_stints = [first, second | rest], acc) do

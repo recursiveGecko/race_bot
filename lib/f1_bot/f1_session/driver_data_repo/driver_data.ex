@@ -129,11 +129,11 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
 
     self = %{self | stints: new_stints}
 
-    if change_type in [:new, :updated_current_compound] do
+    if change_type in [:new_with_compound, :late_set_current_compound, :updated_current_compound] do
       {:ok, stint} = Stints.find_stint(new_stints, stint_data.number)
 
       result = %{
-        is_correction: change_type != :new,
+        is_correction: change_type == :updated_current_compound,
         stint: stint
       }
 
