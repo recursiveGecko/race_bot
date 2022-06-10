@@ -19,6 +19,15 @@ defmodule F1Bot.F1Session.TrackStatusHistory do
   @spec new() :: t()
   def new(), do: %__MODULE__{}
 
+  @spec new_interval(status(), DateTime.t(), DateTime.t() | nil) :: interval()
+  def new_interval(track_status, starts_at, ends_at \\ nil) do
+    %{
+      starts_at: starts_at,
+      ends_at: ends_at,
+      status: track_status
+    }
+  end
+
   @spec push_track_status(t(), status(), DateTime.t()) :: t()
   def push_track_status(self = %__MODULE__{intervals: intervals}, track_status, timestamp) do
     intervals = maybe_end_previous_interval(intervals, timestamp)
@@ -37,15 +46,6 @@ defmodule F1Bot.F1Session.TrackStatusHistory do
   @spec find_intervals_with_status(t(), [status()]) :: [interval()]
   def find_intervals_with_status(_self = %__MODULE__{intervals: intervals}, statuses) do
     Enum.filter(intervals, fn i -> i.status in statuses end)
-  end
-
-  @spec new_interval(atom(), DateTime.t()) :: interval()
-  defp new_interval(track_status, timestamp) do
-    %{
-      starts_at: timestamp,
-      ends_at: nil,
-      status: track_status
-    }
   end
 
   defp maybe_end_previous_interval([last | rest], timestamp) do

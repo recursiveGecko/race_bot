@@ -2,6 +2,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
   use ExUnit.Case, async: true
 
   alias F1Bot.F1Session.TrackStatusHistory
+
   alias F1Bot.F1Session.DriverDataRepo.{
     DriverData,
     DriverData.Summary,

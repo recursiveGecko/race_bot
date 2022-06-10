@@ -44,11 +44,16 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
 
       Enum.any?(neutralized_intervals, fn %{starts_at: starts_at, ends_at: ends_at} ->
         # Add a margin for drivers to return to racing speed
-        ends_at = Timex.add(ends_at, Timex.Duration.from_seconds(5))
+        ends_at =
+          if ends_at == nil do
+            nil
+          else
+            Timex.add(ends_at, Timex.Duration.from_seconds(5))
+          end
 
-        started_during_neutral = Timex.between?(lap_start, starts_at, ends_at)
-        ended_during_neutral = Timex.between?(lap_end, starts_at, ends_at)
-        short_neutral_during_lap = Timex.between?(starts_at, lap_start, lap_end)
+        started_during_neutral = F1Bot.Time.between?(lap_start, starts_at, ends_at)
+        ended_during_neutral = F1Bot.Time.between?(lap_end, starts_at, ends_at)
+        short_neutral_during_lap = F1Bot.Time.between?(starts_at, lap_start, lap_end)
 
         started_during_neutral or ended_during_neutral or short_neutral_during_lap
       end)
