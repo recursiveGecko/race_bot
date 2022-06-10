@@ -15,7 +15,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     %{
       stints: stints(data, track_status_hist),
       fastest_lap: data.fastest_lap,
-      top_speed: data.top_speed
+      top_speed: data.top_speed,
+      fastest_sectors: find_fastest_sectors(data)
     }
   end
 
@@ -157,5 +158,35 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
       avg: average_time,
       min: min_time
     }
+  end
+
+  defp find_fastest_sectors(_data = %DriverData{laps: laps}) do
+    min_sector_times =
+      for sector <- [1, 2, 3] do
+        times =
+          for l <- laps.data,
+              l.sectors[sector][:time] != nil do
+            l.sectors[sector][:time]
+          end
+
+        fastest_sector_time = Enum.min_by(times, &Timex.Duration.to_milliseconds/1, fn -> nil end)
+
+        {sector, fastest_sector_time}
+      end
+      |> Enum.into(%{})
+
+    ideal_lap =
+      min_sector_times
+      |> Map.values()
+      |> Enum.reduce(Timex.Duration.zero(), fn time, acc ->
+        if acc == nil or time == nil do
+          nil
+        else
+          Timex.Duration.add(acc, time)
+        end
+      end)
+
+    min_sector_times
+    |> Map.put(:ideal_lap, ideal_lap)
   end
 end

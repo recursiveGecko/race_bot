@@ -57,7 +57,7 @@ defmodule F1Bot do
       report_progress: true
     }
 
-    with {:ok, :ends} <- session_status(),
+    with {:ok, status} when status in [:ends, :finalised] <- session_status(),
          {:ok, www_path} <- url_result,
          {:ok, session} <- F1Bot.Replay.session_from_url(www_path, replay_options) do
       F1Bot.F1Session.Server.replace_session(session)

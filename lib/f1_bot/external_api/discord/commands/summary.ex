@@ -69,9 +69,16 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
       },
       fields:
         [
+          %{inline: true, name: "Fastest S1", value: format_lap_time(summary.fastest_sectors[1])},
+          %{inline: true, name: "Fastest S2", value: format_lap_time(summary.fastest_sectors[2])},
+          %{inline: true, name: "Fastest S3", value: format_lap_time(summary.fastest_sectors[3])},
           %{inline: true, name: "Fastest lap", value: format_lap_time(summary.fastest_lap)},
           %{inline: true, name: "Top speed", value: format_speed(summary.top_speed)},
-          %{inline: true, name: "Stints", value: "#{length(summary.stints)}"}
+          %{
+            inline: true,
+            name: "Ideal lap",
+            value: format_lap_time(summary.fastest_sectors.ideal_lap)
+          }
         ] ++ generate_stint_fields(summary, use_emojis),
       footer: %{
         text:
@@ -116,6 +123,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
       stint.compound
       |> to_string()
       |> String.first()
+      |> to_string()
       |> String.upcase()
 
     age_info = "(#{stint.tyre_age || 0})"
