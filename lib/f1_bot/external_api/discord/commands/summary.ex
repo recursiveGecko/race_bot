@@ -166,6 +166,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
       {:ok, opts}
     else
       false -> {:error, "You may provide a list of up to 10 drivers."}
+      {:error, error} -> {:error, error}
     end
   end
 end
