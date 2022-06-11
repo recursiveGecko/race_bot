@@ -38,23 +38,27 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
   defp do_create_summary(interaction, options, internal_args) do
     flags = Map.get(internal_args, :flags, [])
 
-    {:ok, session_info} = F1Bot.session_info()
-    {:ok, driver_info} = F1Bot.driver_info_by_number(options.driver)
-    {:ok, driver_data} = F1Bot.driver_session_data(options.driver)
-    track_status_history = F1Bot.track_status_history()
-
     use_emojis =
       case Permissions.everyone_has_external_emojis?(interaction.guild_id) do
         {:ok, perm} -> perm
         _ -> false
       end
 
-    summary = Summary.generate(driver_data, track_status_history)
+    {:ok, session_info} = F1Bot.session_info()
+    track_status_history = F1Bot.track_status_history()
 
-    embed = generate_summary_embed(session_info, driver_info, summary, use_emojis)
+    embeds =
+      for driver_number <- options.drivers do
+        {:ok, driver_info} = F1Bot.driver_info_by_number(driver_number)
+        {:ok, driver_data} = F1Bot.driver_session_data(driver_number)
+
+        summary = Summary.generate(driver_data, track_status_history)
+
+        generate_summary_embed(session_info, driver_info, summary, use_emojis)
+      end
 
     flags
-    |> Response.make_followup_message(nil, [], [embed])
+    |> Response.make_followup_message(nil, [], embeds)
     |> Response.send_followup_response(interaction)
   end
 
@@ -153,12 +157,15 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
       }
     } = interaction
 
-    with {:ok, driver_number} <- OptionValidator.validate_driver(options, "driver") do
+    with {:ok, drivers} <- OptionValidator.validate_driver_list(options, "drivers"),
+         true <- length(drivers) <= 10 do
       opts = %{
-        driver: driver_number
+        drivers: drivers
       }
 
       {:ok, opts}
+    else
+      false -> {:error, "You may provide a list of up to 10 drivers."}
     end
   end
 end

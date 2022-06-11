@@ -3,6 +3,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Response do
   Functions for composing and sending responses to slash commands.
   """
   use Bitwise
+  require Logger
   alias Nostrum.Api
 
   @type flags :: :ephemeral
@@ -26,6 +27,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Response do
   @dialyzer {:nowarn_function, send_followup_response: 2}
   def send_followup_response(response, interaction) do
     Api.create_followup_message(interaction.token, response)
+    |> maybe_handle_followup_error()
   end
 
   def make_message(flags, message) when is_list(flags) do
@@ -62,5 +64,12 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Response do
       flag_val = Map.fetch!(@flags, flag)
       combined ||| flag_val
     end)
+  end
+
+  defp maybe_handle_followup_error(res = {:ok, _}), do: res
+
+  defp maybe_handle_followup_error(res = {:error, error}) do
+    Logger.error("Error occurred while posting command followup message: #{inspect(error)}")
+    res
   end
 end

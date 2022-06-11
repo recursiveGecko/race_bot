@@ -48,7 +48,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Definition do
       description: description,
       default_permission: default_permission,
       options: [
-        option_driver("driver", true)
+        option_driver_list("drivers", true)
       ]
     }
   end
