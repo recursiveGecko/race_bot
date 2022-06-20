@@ -16,6 +16,14 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     %__MODULE__{}
   end
 
+  def sort_by_number(laps, direction \\ :asc) do
+    Enum.sort_by(laps, fn l -> l.number end, direction)
+  end
+
+  def sort_by_timestamp(laps, direction \\ :asc) do
+    Enum.sort_by(laps, fn l -> l.timestamp end, {direction, DateTime})
+  end
+
   def fastest(%__MODULE__{data: data}) do
     lap =
       data
@@ -28,59 +36,24 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     end
   end
 
-  def find_by_close_timestamp(
-        %__MODULE__{data: data},
-        timestamp,
-        max_deviation_ms
-      ) do
-    lap =
-      data
-      |> Enum.find(fn
-        %{timestamp: ts} ->
-          delta = Timex.diff(timestamp, ts, :milliseconds) |> abs()
-          delta < max_deviation_ms
-      end)
-
-    if lap == nil do
-      {:error, :not_found}
-    else
-      {:ok, lap}
-    end
-  end
-
+  @spec fill_by_close_timestamp(t(), keyword(), DateTime.t(), pos_integer()) ::
+          {:ok, t()} | {:error, atom()}
   def fill_by_close_timestamp(
-        self = %__MODULE__{data: data},
+        self = %__MODULE__{},
         args,
         timestamp,
         max_deviation_ms
       ) do
-    {found, data_reversed} =
-      Enum.reduce(data, {_skip = false, _new_data = []}, fn lap, {skip, data} ->
-        cond do
-          skip == true ->
-            data = [lap | data]
-            {skip, data}
-
-          is_timestamp_in_range(lap.timestamp, timestamp, max_deviation_ms) ->
-            lap = fill_lap_with_args(lap, args)
-            data = [lap | data]
-            {true, data}
-
-          true ->
-            data = [lap | data]
-            {false, data}
-        end
-      end)
-
-    if found do
-      %{self | data: Enum.reverse(data_reversed)}
+    if accept_lap_information?(self, args, timestamp) do
+      self = do_fill_by_close_timestamp(self, args, timestamp, max_deviation_ms)
+      {:ok, self}
     else
-      args = Keyword.put_new(args, :timestamp, timestamp)
-      lap = create_lap_from_args(args)
-      %{self | data: [lap | data]}
+      {:error, :missing_prerequisites}
     end
   end
 
+  @spec fill_sector_times(t(), pos_integer(), Timex.Duration.t(), DateTime.t(), pos_integer) ::
+          t()
   def fill_sector_times(
         self = %__MODULE__{sectors: sectors},
         sector,
@@ -95,76 +68,97 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
       |> put_in([sector, :timestamp], timestamp)
 
     if sector == 3 do
-      fill_by_close_timestamp(self, [sectors: sectors], timestamp, max_deviation_ms)
-      |> clear_sector_data()
+      {:ok, laps} = fill_by_close_timestamp(self, [sectors: sectors], timestamp, max_deviation_ms)
+      laps = clear_sector_data(laps)
+
+      laps
     else
       %{self | sectors: sectors}
     end
-  end
-
-  defp fill_lap_with_args(lap, args) do
-    old_args = Map.from_struct(lap)
-    new_args = args |> Enum.into(%{})
-
-    # Do not replace existing fields
-    args =
-      Map.merge(new_args, old_args, fn _key, new, old ->
-        if old == nil do
-          new
-        else
-          old
-        end
-      end)
-
-    struct!(Lap, args)
-  end
-
-  def create_lap_from_args(args) do
-    struct(Lap, args)
-  end
-
-  def sort_by_number(laps, direction \\ :asc) do
-    Enum.sort_by(laps, fn l -> l.number end, direction)
-  end
-
-  def sort_by_timestamp(laps, direction \\ :asc) do
-    Enum.sort_by(laps, fn l -> l.timestamp end, {direction, DateTime})
-  end
-
-  defp is_timestamp_in_range(ts1, ts2, max_ms) do
-    delta = Timex.diff(ts1, ts2, :milliseconds) |> abs()
-
-    delta < max_ms
-  end
-
-  defp clear_sector_data(self = %__MODULE__{}) do
-    %{self | sectors: Lap.new_clean_sector_map()}
   end
 
   def fix_laps_data(self = %__MODULE__{data: laps}) do
     new_laps =
       laps
       |> sort_by_timestamp(:asc)
-      |> fix_laps_data([])
+      |> do_fix_laps_data([])
       |> sort_by_timestamp(:desc)
 
     %{self | data: new_laps}
   end
 
-  defp fix_laps_data(_laps = [first, second | rest], acc) do
+  defp do_fill_by_close_timestamp(
+         self = %__MODULE__{data: data},
+         args,
+         timestamp,
+         max_deviation_ms
+       ) do
+    {found, data_reversed} =
+      Enum.reduce(data, {_skip = false, _new_data = []}, fn lap, {skip, data} ->
+        cond do
+          skip == true ->
+            data = [lap | data]
+            {skip, data}
+
+          should_fill_lap?(lap, timestamp, max_deviation_ms) ->
+            lap = Lap.merge_with_args(lap, args)
+            data = [lap | data]
+            {true, data}
+
+          true ->
+            data = [lap | data]
+            {false, data}
+        end
+      end)
+
+    if found do
+      %{self | data: Enum.reverse(data_reversed)}
+      |> fix_laps_data()
+    else
+      args = Keyword.put_new(args, :timestamp, timestamp)
+      lap = Lap.new(args)
+
+      %{self | data: [lap | data]}
+      |> fix_laps_data()
+    end
+  end
+
+  defp accept_lap_information?(%__MODULE__{sectors: sectors}, args, _timestamp) do
+    cond do
+      # Ignore received lap time if we hadn't received any sector times prior to this
+      # See Canada 2022 quali integration test
+      Keyword.has_key?(args, :time) ->
+        Lap.has_any_sector_time?(sectors)
+
+      true ->
+        true
+    end
+  end
+
+  defp do_fix_laps_data(_laps = [first, second | rest], acc) do
     first_is_candidate = first.number == nil
 
     second_is_candidate = second.number != nil and second.time == nil and second.sectors == nil
 
     if first_is_candidate and second_is_candidate do
       first = %{first | number: second.number}
-      fix_laps_data(rest, [first | acc])
+      do_fix_laps_data(rest, [first | acc])
     else
-      fix_laps_data([second | rest], [first | acc])
+      do_fix_laps_data([second | rest], [first | acc])
     end
   end
 
-  defp fix_laps_data(laps, acc) do
+  defp do_fix_laps_data(laps, acc) do
     acc ++ laps
+  end
+
+  defp clear_sector_data(self = %__MODULE__{}) do
+    %{self | sectors: Lap.new_clean_sector_map()}
+  end
+
+  defp should_fill_lap?(lap, ts, max_ms) do
+    delta_ms = Timex.diff(lap.timestamp, ts, :milliseconds) |> abs()
+
+    delta_ms < max_ms
   end
 end

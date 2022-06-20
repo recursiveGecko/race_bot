@@ -49,9 +49,18 @@ defmodule F1Bot.F1Session do
   end
 
   def push_lap_time(session, driver_number, lap_time, timestamp) when is_integer(driver_number) do
-    {repo, events} =
+    push_result =
       session.driver_data_repo
       |> F1Session.DriverDataRepo.push_lap_time(driver_number, lap_time, timestamp)
+
+    {repo, events} =
+      case push_result do
+        {:ok, {repo, events}} ->
+          {repo, events}
+
+        {:error, _error} ->
+          {session.driver_data_repo, []}
+      end
 
     events = hydrate_events(session, events)
 

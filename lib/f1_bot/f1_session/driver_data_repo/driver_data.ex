@@ -36,25 +36,31 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
         lap_time = %Timex.Duration{},
         timestamp
       ) do
-    {self, is_fastest_lap, lap_delta} = maybe_replace_fastest_lap(self, lap_time)
-    {self, is_top_speed, speed_delta} = maybe_replace_top_speed_after_lap(self)
-
-    laps =
+    fill_result =
       self.laps
       |> Laps.fill_by_close_timestamp([time: lap_time], timestamp, @max_fill_delay_ms)
 
-    result = %{
-      is_fastest_lap: is_fastest_lap,
-      is_top_speed: is_top_speed,
-      lap_delta: lap_delta,
-      speed_delta: speed_delta,
-      lap_top_speed: self.top_speed_curr_lap
-    }
+    case fill_result do
+      {:ok, laps} ->
+        {self, is_fastest_lap, lap_delta} = maybe_replace_fastest_lap(self, lap_time)
+        {self, is_top_speed, speed_delta} = maybe_replace_top_speed_after_lap(self)
 
-    self = reset_current_lap_stats(self)
+        result = %{
+          is_fastest_lap: is_fastest_lap,
+          is_top_speed: is_top_speed,
+          lap_delta: lap_delta,
+          speed_delta: speed_delta,
+          lap_top_speed: self.top_speed_curr_lap
+        }
 
-    self = %{self | laps: laps}
-    {self, result}
+        self = reset_current_lap_stats(self)
+
+        self = %{self | laps: laps}
+        {:ok, {self, result}}
+
+      {:error, error} ->
+        {:error, error}
+    end
   end
 
   @spec outlap_lap_numbers(t()) :: [pos_integer()]
@@ -84,10 +90,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
         timestamp
       )
       when is_integer(lap_number) do
-    laps =
+    {:ok, laps} =
       self.laps
       |> Laps.fill_by_close_timestamp([number: lap_number], timestamp, @max_fill_delay_ms)
-      |> Laps.fix_laps_data()
 
     new_lap_number =
       if lap_number >= self.current_lap_number do

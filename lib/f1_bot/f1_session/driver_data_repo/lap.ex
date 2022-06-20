@@ -26,6 +26,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
     field(:sectors, sector_map())
   end
 
+  def new(args) when is_list(args) do
+    struct!(__MODULE__, args)
+  end
+
   @spec new_clean_sector_map() :: sector_map()
   def new_clean_sector_map,
     do: %{
@@ -58,5 +62,33 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
         started_during_neutral or ended_during_neutral or short_neutral_during_lap
       end)
     end
+  end
+
+  @spec has_any_sector_time?(sector_map()) :: boolean()
+  def has_any_sector_time?(sectors) do
+    non_nil_sector_times =
+      sectors
+      |> Map.values()
+      |> Enum.map(fn s -> s.time end)
+      |> Enum.filter(&(&1 != nil))
+
+    not Enum.empty?(non_nil_sector_times)
+  end
+
+  def merge_with_args(lap, args) do
+    old_args = Map.from_struct(lap)
+    new_args = args |> Enum.into(%{})
+
+    # Do not replace existing fields
+    args =
+      Map.merge(new_args, old_args, fn _key, new, old ->
+        if old == nil do
+          new
+        else
+          old
+        end
+      end)
+
+    struct!(__MODULE__, args)
   end
 end

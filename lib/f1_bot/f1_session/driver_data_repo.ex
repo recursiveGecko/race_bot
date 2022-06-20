@@ -26,64 +26,19 @@ defmodule F1Bot.F1Session.DriverDataRepo do
   end
 
   def push_lap_time(repo, driver_number, lap_time, timestamp) do
-    {driver, result} =
+    push_result =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
       |> DriverData.push_lap_time(lap_time, timestamp)
 
-    best_stats = repo.best_stats
+    case push_result do
+      {:ok, {driver_data, result}} ->
+        {repo, events} = handle_push_lap_time_result(repo, driver_data, result, lap_time)
+        {:ok, {repo, events}}
 
-    {best_stats, is_fastest_lap_overall, best_lap_delta} =
-      BestStats.push_lap_time(best_stats, lap_time)
-
-    {best_stats, is_top_speed_overall, best_speed_delta} =
-      BestStats.push_top_speed(best_stats, result.lap_top_speed)
-
-    lap_time_events =
-      cond do
-        is_fastest_lap_overall ->
-          delta = best_lap_delta
-          event = Events.make_agg_fastest_lap_event(driver.number, :overall, lap_time, delta)
-
-          [event]
-
-        result.is_fastest_lap ->
-          delta = result.lap_delta
-          event = Events.make_agg_fastest_lap_event(driver.number, :personal, lap_time, delta)
-
-          [event]
-
-        true ->
-          []
-      end
-
-    top_speed_events =
-      cond do
-        is_top_speed_overall ->
-          delta = best_speed_delta
-
-          event =
-            Events.make_agg_top_speed_event(driver.number, :overall, result.lap_top_speed, delta)
-
-          [event]
-
-        result.is_top_speed ->
-          delta = result.speed_delta
-
-          event =
-            Events.make_agg_top_speed_event(driver.number, :personal, result.lap_top_speed, delta)
-
-          [event]
-
-        true ->
-          []
-      end
-
-    events = lap_time_events ++ top_speed_events
-
-    repo = %{repo | best_stats: best_stats}
-    repo = update_driver(repo, driver)
-    {repo, events}
+      {:error, error} ->
+        {:error, error}
+    end
   end
 
   def push_sector_time(repo, driver_number, sector, sector_time, timestamp) do
@@ -154,6 +109,63 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     events = Events.make_tyre_change_events(driver, result)
 
     repo = update_driver(repo, driver)
+    {repo, events}
+  end
+
+  defp handle_push_lap_time_result(repo, driver_data, result, lap_time) do
+    driver_no = driver_data.number
+    best_stats = repo.best_stats
+
+    {best_stats, is_fastest_lap_overall, best_lap_delta} =
+      BestStats.push_lap_time(best_stats, lap_time)
+
+    {best_stats, is_top_speed_overall, best_speed_delta} =
+      BestStats.push_top_speed(best_stats, result.lap_top_speed)
+
+    lap_time_events =
+      cond do
+        is_fastest_lap_overall ->
+          delta = best_lap_delta
+          event = Events.make_agg_fastest_lap_event(driver_no, :overall, lap_time, delta)
+
+          [event]
+
+        result.is_fastest_lap ->
+          delta = result.lap_delta
+          event = Events.make_agg_fastest_lap_event(driver_no, :personal, lap_time, delta)
+
+          [event]
+
+        true ->
+          []
+      end
+
+    top_speed_events =
+      cond do
+        is_top_speed_overall ->
+          delta = best_speed_delta
+
+          event =
+            Events.make_agg_top_speed_event(driver_no, :overall, result.lap_top_speed, delta)
+
+          [event]
+
+        result.is_top_speed ->
+          delta = result.speed_delta
+
+          event =
+            Events.make_agg_top_speed_event(driver_no, :personal, result.lap_top_speed, delta)
+
+          [event]
+
+        true ->
+          []
+      end
+
+    events = lap_time_events ++ top_speed_events
+
+    repo = %{repo | best_stats: best_stats}
+    repo = update_driver(repo, driver_data)
     {repo, events}
   end
 
