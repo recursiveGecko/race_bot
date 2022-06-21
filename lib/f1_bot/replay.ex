@@ -65,8 +65,12 @@ defmodule F1Bot.Replay do
       timestamp: timestamp
     }
 
+    options = %{
+      log_stray_packets: false
+    }
+
     {session, events} =
-      case LiveTimingHandlers.process_live_timing_packet(session, packet) do
+      case LiveTimingHandlers.process_live_timing_packet(session, packet, options) do
         {:ok, session, events} ->
           {session, events}
 

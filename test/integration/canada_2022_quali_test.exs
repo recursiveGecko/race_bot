@@ -7,8 +7,6 @@ defmodule Integration.Canada2022QualiTest do
   """
   use ExUnit.Case, async: true
 
-  alias F1Bot.F1Session
-
   setup_all context do
     replay_options = %{
       exclude_files_regex: ~r/\.z\./

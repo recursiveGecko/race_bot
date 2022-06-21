@@ -131,8 +131,12 @@ defmodule F1Bot.F1Session.Server do
 
   @impl true
   def handle_call({:push_live_timing_packet, packet}, _from, state = %{session: session}) do
+    options = %{
+      log_stray_packets: true
+    }
+
     # process_live_timing_packet is expected to rescue errors to prevent the entire GenServer from crashing
-    result = LiveTimingHandlers.process_live_timing_packet(session, packet)
+    result = LiveTimingHandlers.process_live_timing_packet(session, packet, options)
 
     {session, events} =
       case result do
