@@ -152,7 +152,7 @@ defmodule F1Bot.Output.Discord do
         },
         state
       ) do
-    if session_status == :started and not is_correction do
+    if session_status == :started do
       driver = Common.get_driver_name_by_number(e, driver_number)
 
       age_str =
@@ -162,12 +162,17 @@ defmodule F1Bot.Output.Discord do
           "#{age} laps old"
         end
 
+      correction =
+        if is_correction do
+          " (correction)"
+        end
+
       emoji =
         "#{compound}_tyre"
         |> String.to_atom()
         |> F1Bot.ExternalApi.Discord.get_emoji_or_default(":arrows_counterclockwise:")
 
-      msg = "#{emoji}  **Pit Stop**: `#{driver}` for `#{compound}` tyres (`#{age_str}`)"
+      msg = "#{emoji}  **Pit Stop#{correction}**: `#{driver}` for `#{compound}` tyres (`#{age_str}`)"
 
       F1Bot.ExternalApi.Discord.post_message(msg)
     end
