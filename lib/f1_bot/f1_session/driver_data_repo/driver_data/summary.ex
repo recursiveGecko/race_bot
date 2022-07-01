@@ -66,11 +66,18 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
 
   defp analyze_stint(stint = %Stint{}, next_stint, laps, neutralized_intervals)
        when is_struct(next_stint, Stint) or is_nil(next_stint) do
+    last_recorded_lap = laps |> List.last()
+
     lap_end =
-      if next_stint == nil do
-        laps |> List.last() |> Map.fetch!(:number)
-      else
-        next_stint.lap_number - 1
+      cond do
+        next_stint != nil ->
+          next_stint.lap_number - 1
+
+        last_recorded_lap != nil ->
+          Map.fetch!(last_recorded_lap, :number)
+
+        true ->
+          stint.lap_number
       end
 
     # Remove outlap
