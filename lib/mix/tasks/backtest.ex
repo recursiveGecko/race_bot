@@ -26,7 +26,7 @@ defmodule Mix.Tasks.Backtest do
     replay_options = %{
       exclude_files_regex: ~r/\.z\./,
       events_fn: &F1Bot.F1Session.Common.Helpers.publish_events/1,
-      report_progress: false
+      report_progress: true
     }
 
     {:ok, session} = F1Bot.Replay.session_from_url(url, replay_options)
