@@ -60,7 +60,7 @@ job "f1bot" {
 
       resources {
         cpu    = 2000 # Mhz
-        memory = 1024 # MB
+        memory = 4096 # MB
       }
 
       kill_timeout = "20s"
