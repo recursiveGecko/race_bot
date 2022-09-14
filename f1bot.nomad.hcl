@@ -18,10 +18,16 @@ variable "environment" {
 }
 
 locals {
-  config_scope = "apps/f1bot_${var.environment}"
+  config_scope = "apps/f1bot_${var.environment}",
+  prod_hostname = "${var.environment == "master" ? "racing.recursiveprojects.cloud" : ""}",
+  dev_hostname = "${var.environment == "develop" ? "racing-dev.recursiveprojects.cloud" : ""}",
+  hostname = "${coalesce(dev_hostname, prod_hostname)}",
+  prod_data_root = "${var.environment == "master" ? "/srv/f1bot/prod" : ""}",
+  dev_data_root = "${var.environment == "develop" ? "/srv/f1bot/dev" : ""}",
+  data_root = "${coalesce(dev_data_root, prod_data_root, "/srv/f1bot/unknown")}",
 }
 
-job "f1bot-:::INSERT_ENV_HERE:::" {
+job "f1bot-____INSERT_ENV_HERE____" {
   datacenters = ["dc1"]
   type = "service"
 
@@ -33,12 +39,25 @@ job "f1bot-:::INSERT_ENV_HERE:::" {
       }
     }
 
+    service {
+      name = "f1bot-${var.environment}"
+      port = "http"
+
+      tags = [
+        "traefik.enable=true",
+        "traefik.http.routers.http.rule=Host(`${local.hostname}`)",
+      ]
+
+      check {
+        type     = "http"
+        path     = "/"
+        interval = "2s"
+        timeout  = "2s"
+      }
+    }
+
     task "f1bot-elixir" {
       driver = "docker"
-
-      service {
-        name = "f1bot"
-      }
 
       template {
         data = <<EOH
@@ -70,12 +89,18 @@ job "f1bot-:::INSERT_ENV_HERE:::" {
 
       config {
         image = "${var.image_id}:${var.image_version}"
+
         auth {
           server_address = split("/", var.image_id)[0]
           username = split("/", var.image_id)[1]
           password = var.ghcr_password
         }
+
         ports = ["http"]
+
+        volumes = [
+          "${local.data_root}:/data",
+        ]
       }
 
 
