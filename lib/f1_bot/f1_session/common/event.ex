@@ -4,7 +4,7 @@ defmodule F1Bot.F1Session.Common.Event do
 
   alias F1Bot.F1Session
 
-  @type event_scope :: :driver | :aggregate_stats | :session_status | :race_control
+  @type event_scope :: :driver | :aggregate_stats | :session_status | :race_control | :session_info
   @type event_type ::
           :fastest_lap
           | :fastest_sector
@@ -12,6 +12,11 @@ defmodule F1Bot.F1Session.Common.Event do
           | :tyre_change
           | :started
           | :message
+          | :summary
+          | :session_clock
+          | :list
+          | :session_info_changed
+          | :reset_session
 
   typedstruct do
     @typedoc "Emitted state machine event"

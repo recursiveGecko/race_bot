@@ -4,6 +4,8 @@ defmodule F1Bot.F1Session.SessionInfo do
   """
   use TypedStruct
 
+  alias F1Bot.F1Session.Common.Event
+
   @api_base_path "http://livetiming.formula1.com/static/"
 
   typedstruct do
@@ -77,7 +79,9 @@ defmodule F1Bot.F1Session.SessionInfo do
         session_info
       end
 
-    {session_info, session_changed?}
+    events = [Event.new(:session_info, :session_info_changed, session_info)]
+
+    {session_info, events, session_changed?}
   end
 
   def push_lap_number(

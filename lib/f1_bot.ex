@@ -13,6 +13,18 @@ defmodule F1Bot do
     Application.fetch_env(:f1_bot, key)
   end
 
+  def demo_mode_url() do
+    F1Bot.get_env(:demo_mode_url)
+  end
+
+  def driver_list() do
+    F1Bot.F1Session.Server.driver_list()
+  end
+
+  def driver_summary(driver_no) do
+    F1Bot.F1Session.Server.driver_summary(driver_no)
+  end
+
   def driver_info_by_number(driver_number) when is_integer(driver_number) do
     F1Bot.F1Session.Server.driver_info_by_number(driver_number)
   end
@@ -23,6 +35,10 @@ defmodule F1Bot do
 
   def driver_session_data(driver_number) when is_integer(driver_number) do
     F1Bot.F1Session.Server.driver_session_data(driver_number)
+  end
+
+  def session_best_stats() do
+    F1Bot.F1Session.Server.session_best_stats()
   end
 
   def session_info() do
@@ -37,10 +53,14 @@ defmodule F1Bot do
     F1Bot.F1Session.Server.track_status_history()
   end
 
-  def reload_live_data(url \\ nil, light_data) do
+  def session_clock() do
+    F1Bot.F1Session.Server.session_clock_from_local_time(Timex.now())
+  end
+
+  def reload_live_data(url \\ nil, light_data) when is_boolean(light_data) do
     url_result =
       if url == nil do
-        api_base()
+        F1Bot.ExternalApi.F1LiveTiming.current_archive_url_if_completed()
       else
         {:ok, url}
       end
@@ -57,9 +77,9 @@ defmodule F1Bot do
       report_progress: true
     }
 
-    with {:ok, status} when status in [:ends, :finalised] <- session_status(),
-         {:ok, www_path} <- url_result,
-         {:ok, session} <- F1Bot.Replay.session_from_url(www_path, replay_options) do
+    with {_, status} when status in [:ends, :finalised, :not_available] <- session_status(),
+         {:ok, url} <- url_result,
+         {:ok, %{session: session}} <- F1Bot.Replay.start_replay(url, replay_options) do
       F1Bot.F1Session.Server.replace_session(session)
     else
       {:ok, session_status} ->
@@ -82,13 +102,6 @@ defmodule F1Bot do
 
       {:error, err} ->
         {:error, err}
-    end
-  end
-
-  def api_base() do
-    case session_info() do
-      {:ok, %{www_path: www_path}} -> {:ok, www_path}
-      {:error, _} -> {:error, :no_session_info}
     end
   end
 

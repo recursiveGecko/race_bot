@@ -39,6 +39,10 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
     LiveTimingHandlers.SessionStatus.process_packet(session, packet)
   end
 
+  defp process_for_topic(session, packet = %Packet{topic: "ExtrapolatedClock"}, _options) do
+    LiveTimingHandlers.ExtrapolatedClock.process_packet(session, packet)
+  end
+
   # Ignore initialization messages sent on other topics
   defp process_for_topic(session, _packet = %Packet{init: true}, _options) do
     {:ok, session, []}
@@ -56,7 +60,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
 
     if log do
       Logger.info(
-        "Ignored received packet while session is inactive: #{inspect(packet, pretty: true)}"
+        "Ignored received packet on #{packet.topic} while session is inactive (#{inspect(session.session_status)})"
       )
     end
 

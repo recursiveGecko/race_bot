@@ -8,9 +8,9 @@ defmodule Integration.Monaco2022RaceTest do
       exclude_files_regex: ~r/\.z\./
     }
 
-    {:ok, session} =
+    {:ok, %{session: session}} =
       "http://livetiming.formula1.com/static/2022/2022-05-29_Monaco_Grand_Prix/2022-05-29_Race"
-      |> F1Bot.Replay.session_from_url(replay_options)
+      |> F1Bot.Replay.start_replay(replay_options)
 
     Map.put(context, :session, session)
   end

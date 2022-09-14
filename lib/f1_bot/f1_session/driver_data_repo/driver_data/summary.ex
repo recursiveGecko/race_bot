@@ -12,11 +12,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
   alias F1Bot.F1Session.TrackStatusHistory
 
   def generate(data = %DriverData{}, track_status_hist = %TrackStatusHistory{}) do
+    stints = stints(data, track_status_hist)
+    stats = aggregate_stats(data, stints)
+
     %{
-      stints: stints(data, track_status_hist),
-      fastest_lap: data.fastest_lap,
-      top_speed: data.top_speed,
-      fastest_sectors: find_fastest_sectors(data)
+      stints: stints,
+      stats: stats
     }
   end
 
@@ -28,7 +29,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     laps =
       data.laps.data
       |> Stream.filter(fn %Lap{number: n} -> n != nil end)
-      |> Stream.filter(fn %Lap{time: t} -> t != nil end)
+      # |> Stream.filter(fn %Lap{time: t} -> t != nil end)
       |> Enum.sort_by(fn %Lap{number: n} -> n end, :asc)
 
     neutralized_intervals =
@@ -74,14 +75,16 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
           next_stint.lap_number - 1
 
         last_recorded_lap != nil ->
-          Map.fetch!(last_recorded_lap, :number)
+          last_recorded_lap
+          |> Map.fetch!(:number)
+          |> max(stint.lap_number)
 
         true ->
           stint.lap_number
       end
 
-    # Remove outlap
-    timed_laps_start = stint.lap_number + 1
+    # Keep outlap for now to determine stint start time
+    timed_laps_start = stint.lap_number
 
     # Keep inlap
     timed_laps_end = lap_end
@@ -94,17 +97,26 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
         neutralized_intervals
       )
 
-    %{avg: avg_time, min: min_time} = find_lap_times(relevant_laps)
+    # Remove outlap and determine stint start time
+    {stint_start_time, relevant_laps} =
+      case relevant_laps do
+        [outlap | relevant_laps] ->
+          start_time = stint.timestamp || outlap.timestamp
+          {start_time, relevant_laps}
+
+        [] ->
+          {stint.timestamp, []}
+      end
 
     %{
       number: stint.number,
       compound: stint.compound,
       tyre_age: stint.age,
+      start_time: stint_start_time,
       lap_start: stint.lap_number,
       lap_end: lap_end,
       timed_laps: length(relevant_laps),
-      average_time: avg_time,
-      fastest_time: min_time
+      stats: find_lap_times(relevant_laps)
     }
   end
 
@@ -114,23 +126,51 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
       n = lap.number
       n != nil and n >= min_lap and n <= max_lap
     end)
-    |> Stream.filter(fn lap = %Lap{} ->
-      lap.time != nil
-    end)
     |> Stream.reject(fn lap = %Lap{} ->
       # Remove what is likely to be an outlap after a red flag
-      lap.sectors == nil and lap.time != nil and Timex.Duration.to_seconds(lap.time) > 240
+      lap.sectors == nil and lap.time != nil and Timex.Duration.to_seconds(lap.time) > 180
     end)
     |> Stream.reject(&Lap.is_neutralized?(&1, neutralized_intervals))
-    |> Enum.sort_by(fn %Lap{time: time} -> time end, :asc)
+    |> Enum.sort_by(fn %Lap{number: number} -> number end, :asc)
   end
 
   defp find_lap_times(relevant_laps) do
-    {time_sum_ms, min_time} =
+    lap_stats =
       relevant_laps
-      |> Enum.reduce({nil, nil}, fn lap = %Lap{}, {time_sum_ms, min_time} ->
-        t = lap.time
+      |> Enum.map(fn %Lap{time: time} -> time end)
+      |> Enum.reject(&(&1 == nil))
+      |> calculate_stats_for_times()
 
+    s1_stats =
+      relevant_laps
+      |> Enum.map(fn %Lap{sectors: sectors} -> sectors[1][:time] end)
+      |> Enum.reject(&(&1 == nil))
+      |> calculate_stats_for_times()
+
+    s2_stats =
+      relevant_laps
+      |> Enum.map(fn %Lap{sectors: sectors} -> sectors[2][:time] end)
+      |> Enum.reject(&(&1 == nil))
+      |> calculate_stats_for_times()
+
+    s3_stats =
+      relevant_laps
+      |> Enum.map(fn %Lap{sectors: sectors} -> sectors[3][:time] end)
+      |> Enum.reject(&(&1 == nil))
+      |> calculate_stats_for_times()
+
+    %{
+      lap_time: lap_stats,
+      s1_time: s1_stats,
+      s2_time: s2_stats,
+      s3_time: s3_stats
+    }
+  end
+
+  defp calculate_stats_for_times(times) do
+    {time_sum_ms, n_times, min_time} =
+      times
+      |> Enum.reduce({nil, 0, nil}, fn t, {time_sum_ms, n_times, min_time} ->
         min_time =
           if min_time == nil or Timex.Duration.diff(t, min_time, :milliseconds) < 0 do
             t
@@ -138,23 +178,26 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
             min_time
           end
 
-        t_ms = Timex.Duration.to_milliseconds(t)
+        {time_sum, n_times} =
+          cond do
+            t == nil ->
+              {time_sum_ms, n_times}
 
-        time_sum =
-          if time_sum_ms == nil do
-            t_ms
-          else
-            time_sum_ms + t_ms
+            time_sum_ms == nil and n_times == 0 ->
+              t_ms = Timex.Duration.to_milliseconds(t)
+              {t_ms, 1}
+
+            true ->
+              t_ms = Timex.Duration.to_milliseconds(t)
+              {time_sum_ms + t_ms, n_times + 1}
           end
 
-        {time_sum, min_time}
+        {time_sum, n_times, min_time}
       end)
 
-    num_relevant = length(relevant_laps)
-
     average_time =
-      if num_relevant > 0 do
-        (time_sum_ms / num_relevant)
+      if n_times > 0 do
+        (time_sum_ms / n_times)
         |> round()
         |> Timex.Duration.from_milliseconds()
       else
@@ -162,38 +205,60 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
       end
 
     %{
-      avg: average_time,
-      min: min_time
+      average: average_time,
+      fastest: min_time
     }
   end
 
-  defp find_fastest_sectors(_data = %DriverData{laps: laps}) do
-    min_sector_times =
-      for sector <- [1, 2, 3] do
-        times =
-          for l <- laps.data,
-              l.sectors[sector][:time] != nil do
-            l.sectors[sector][:time]
-          end
+  defp aggregate_stats(data, stints) do
+    fastest_s1 =
+      stints
+      |> Enum.map(& &1.stats.s1_time.fastest)
+      |> Enum.reject(&(&1 == nil))
+      |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
 
-        fastest_sector_time = Enum.min_by(times, &Timex.Duration.to_milliseconds/1, fn -> nil end)
+    fastest_s2 =
+      stints
+      |> Enum.map(& &1.stats.s2_time.fastest)
+      |> Enum.reject(&(&1 == nil))
+      |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
 
-        {sector, fastest_sector_time}
+    fastest_s3 =
+      stints
+      |> Enum.map(& &1.stats.s3_time.fastest)
+      |> Enum.reject(&(&1 == nil))
+      |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
+
+    theoretical_fl =
+      if nil in [fastest_s1, fastest_s2, fastest_s3] do
+        nil
+      else
+        fastest_s1
+        |> Timex.Duration.add(fastest_s2)
+        |> Timex.Duration.add(fastest_s3)
       end
-      |> Enum.into(%{})
 
-    ideal_lap =
-      min_sector_times
-      |> Map.values()
-      |> Enum.reduce(Timex.Duration.zero(), fn time, acc ->
-        if acc == nil or time == nil do
-          nil
-        else
-          Timex.Duration.add(acc, time)
-        end
-      end)
+    fastest_lap =
+      stints
+      |> Enum.map(& &1.stats.lap_time.fastest)
+      |> Enum.reject(&(&1 == nil))
+      |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
 
-    min_sector_times
-    |> Map.put(:ideal_lap, ideal_lap)
+    %{
+      lap_time: %{
+        fastest: fastest_lap,
+        theoretical: theoretical_fl
+      },
+      s1_time: %{
+        fastest: fastest_s1
+      },
+      s2_time: %{
+        fastest: fastest_s2
+      },
+      s3_time: %{
+        fastest: fastest_s3
+      },
+      top_speed: data.top_speed
+    }
   end
 end

@@ -27,7 +27,7 @@ defmodule F1Bot.DataTransform.Format.SessionTime do
       total_mils
       |> div(1000)
       |> div(60)
-      |> rem(60)
+      |> div(60)
       |> Integer.to_string()
 
     "#{hours}:#{minutes}:#{seconds}"

@@ -17,4 +17,11 @@ defmodule F1Bot.DataTransform.Format do
       val -> val
     end
   end
+
+  def format_session_clock(duration) do
+    case Timex.format_duration(duration, Format.SessionClock) do
+      {:error, _err} -> "--:--:--"
+      val -> val
+    end
+  end
 end

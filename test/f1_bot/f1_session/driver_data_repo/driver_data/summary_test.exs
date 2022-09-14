@@ -22,7 +22,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
       compound: :soft,
       age: 0,
       total_laps: 0,
-      tyres_changed: true
+      tyres_changed: true,
+      timestamp: nil
     }
   end
 
@@ -62,7 +63,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
         generate_lap(6, 80, generate_sectors(nil, nil, 30)),
         generate_lap(7, 95, generate_sectors(30, 20, nil)),
         generate_lap(8, 95, generate_sectors(40, 10, nil)),
-        generate_lap(9, 130, generate_sectors(60, 40, 30)),
+        generate_lap(9, 130, generate_sectors(50, 30, 30)),
         generate_lap(10, 1000, generate_sectors(nil, 90, 90)),
         generate_lap(11, 70, generate_sectors(50, nil, 10)),
         generate_lap(12, 90, generate_sectors(20, 40, 30)),
@@ -76,7 +77,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
       stints: stints,
       laps: laps,
       top_speed: 333,
-      fastest_lap: duration(73)
+      # This is intentionally wrong to test that the fastest lap is correctly
+      # calculated from the laps data
+      fastest_lap: duration(273)
     }
 
     expected_summary = %{
@@ -85,40 +88,99 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
           number: 1,
           lap_start: 1,
           lap_end: 4,
+          start_time: nil,
           compound: Enum.at(stints.data, 0) |> Map.fetch!(:compound),
           tyre_age: Enum.at(stints.data, 0) |> Map.fetch!(:age),
-          average_time: duration(90),
-          fastest_time: duration(80),
-          timed_laps: 3
+          timed_laps: 3,
+          stats: %{
+            lap_time: %{
+              fastest: duration(80),
+              average: duration(90),
+            },
+            s1_time: %{
+              fastest: duration(40),
+              average: duration(40)
+            },
+            s2_time: %{
+              fastest: duration(20),
+              average: duration(22.5)
+            },
+            s3_time: %{
+              fastest: duration(50),
+              average: duration(50)
+            },
+          }
         },
         %{
           number: 2,
           lap_start: 5,
           lap_end: 9,
+          start_time: nil,
           compound: Enum.at(stints.data, 1) |> Map.fetch!(:compound),
           tyre_age: Enum.at(stints.data, 1) |> Map.fetch!(:age),
-          average_time: duration(100),
-          fastest_time: duration(80),
-          timed_laps: 4
+          timed_laps: 4,
+          stats: %{
+            lap_time: %{
+              fastest: duration(80),
+              average: duration(100),
+            },
+            s1_time: %{
+              fastest: duration(30),
+              average: duration(40)
+            },
+            s2_time: %{
+              fastest: duration(10),
+              average: duration(20)
+            },
+            s3_time: %{
+              fastest: duration(30),
+              average: duration(30)
+            },
+          }
         },
         %{
           number: 3,
           lap_start: 10,
           lap_end: 14,
+          start_time: nil,
           compound: Enum.at(stints.data, 2) |> Map.fetch!(:compound),
           tyre_age: Enum.at(stints.data, 2) |> Map.fetch!(:age),
-          average_time: duration(75),
-          fastest_time: duration(60),
-          timed_laps: 4
+          timed_laps: 4,
+          stats: %{
+            lap_time: %{
+              fastest: duration(60),
+              average: duration(75),
+            },
+            s1_time: %{
+              fastest: duration(20),
+              average: duration(40)
+            },
+            s2_time: %{
+              fastest: duration(40),
+              average: duration(40)
+            },
+            s3_time: %{
+              fastest: duration(10),
+              average: duration(35)
+            },
+          }
         }
       ],
-      top_speed: driver_data.top_speed,
-      fastest_lap: driver_data.fastest_lap,
-      fastest_sectors: %{
-        1 => duration(20),
-        2 => duration(10),
-        3 => duration(10),
-        :ideal_lap => duration(40)
+      stats: %{
+        lap_time: %{
+          fastest: duration(60),
+          theoretical: duration(40),
+        },
+        s1_time: %{
+          fastest: duration(20),
+        },
+        s2_time: %{
+          fastest: duration(10),
+        },
+        s3_time: %{
+          fastest: duration(10),
+        },
+        top_speed: driver_data.top_speed
       }
     }
 

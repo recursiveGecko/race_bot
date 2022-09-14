@@ -19,7 +19,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.SessionInfo do
         data: data
       }) do
     session_info = F1Bot.F1Session.SessionInfo.parse_from_json(data)
-    session = F1Session.push_session_info(session, session_info)
-    {:ok, session, []}
+    {session, events} = F1Session.push_session_info(session, session_info)
+    {:ok, session, events}
   end
 end

@@ -5,8 +5,8 @@ defmodule F1Bot.Replay do
   alias F1Bot.F1Session.LiveTimingHandlers
   alias F1Bot.F1Session
 
-  def session_from_url(url, options \\ %{}) do
-    if String.starts_with?(url, "http://livetiming.formula1.com/static/") do
+  def start_replay(url, options \\ %{}) do
+    if String.match?(url, ~r"^https?://livetiming.formula1.com/static/") do
       url = String.replace_trailing(url, "/", "")
 
       dataset =
@@ -22,26 +22,34 @@ defmodule F1Bot.Replay do
 
       total = length(dataset)
 
-      session =
-        F1Session.new()
-        |> replay_dataset(options, dataset, {0, total}, base_ts)
+      state = %{
+        session: F1Session.new(),
+        dataset: dataset,
+        processed_packets: 0,
+        total_packets: total,
+        base_ts: base_ts
+      }
 
-      {:ok, session}
+      state = replay_dataset(state, options)
+
+      {:ok, state}
     else
       {:error, :invalid_url}
     end
   end
 
-  defp replay_dataset(
-         session,
-         options,
-         [{_ts_ms, file_name, session_ts, payload} | rest],
-         {count, total},
-         base_ts
-       ) do
-    if rem(count, 5000) == 0 and !!options[:report_progress] do
-      percent = round(count / total * 100)
-      Logger.info("Replay status: #{count}/#{total} (#{percent} %)")
+  def replay_dataset(
+        state = %{dataset: [_ | _]},
+        options
+      ) do
+    [{ts_ms, file_name, session_ts, payload} | rest_dataset] = state.dataset
+
+    if rem(state.processed_packets, 5000) == 0 and !!options[:report_progress] do
+      percent = round(state.processed_packets / state.total_packets * 100)
+
+      Logger.info(
+        "Replay status: #{state.processed_packets}/#{state.total_packets} (#{percent} %)"
+      )
     end
 
     [topic | _] = String.split(file_name, ".")
@@ -54,7 +62,7 @@ defmodule F1Bot.Replay do
         # Logger.debug("Time synchronization: #{Timex.Duration.to_string(timestamp)} = #{payload["Utc"]}")
         base_ts
       else
-        base_ts
+        state.base_ts
       end
 
     timestamp = Timex.add(base_ts, session_ts)
@@ -65,33 +73,62 @@ defmodule F1Bot.Replay do
       timestamp: timestamp
     }
 
+    # Pause the replay if provided `replay_while_fn/1` returns false, this allows
+    # us to process events in small chunks to provide a live-like experience.
+    # This only makes sense in conjunction with a custom packets_fn as described below.
+    if options[:replay_while_fn] != nil and !options[:replay_while_fn].(state, packet, ts_ms) do
+      state
+    else
+      # Determine the handler function for this packet
+      #
+      # By default we use default_packets_fn/3 which updates the session
+      # without any additional side effects.
+      #
+      # Alternatively we might want to provide a custom function that
+      # sends packets to the F1Session.Server instance to get
+      # a live replay that behaves like a live race and can be observed on the website.
+      packets_fn = Map.get(options, :packets_fn, &default_packets_fn/3)
+      state = packets_fn.(state, options, packet)
+
+      state = %{
+        state
+        | dataset: rest_dataset,
+          processed_packets: state.processed_packets + 1,
+          base_ts: base_ts
+      }
+
+      replay_dataset(state, options)
+    end
+  end
+
+  def replay_dataset(state = %{dataset: []}, options) do
+    if options[:report_progress] do
+      Logger.info("Replay completed.")
+    end
+
+    state
+  end
+
+  defp default_packets_fn(state, options, packet) do
     ingest_options = %{
       log_stray_packets: false
     }
 
     {session, events} =
-      case LiveTimingHandlers.process_live_timing_packet(session, packet, ingest_options) do
+      case LiveTimingHandlers.process_live_timing_packet(state.session, packet, ingest_options) do
         {:ok, session, events} ->
           {session, events}
 
         {:error, err} ->
-          Logger.error(err)
-          {session, []}
+          Logger.error(inspect(err))
+          {state.session, []}
       end
 
     if length(events) > 0 and options[:events_fn] != nil do
       options[:events_fn].(events)
     end
 
-    replay_dataset(session, options, rest, {count + 1, total}, base_ts)
-  end
-
-  defp replay_dataset(session, options, [], {_count, _total}, _ts_offset) do
-    if !!options[:report_progress] do
-      Logger.info("Replay completed.")
-    end
-
-    session
+    %{state | session: session}
   end
 
   defp download_dataset(base_url, options) do

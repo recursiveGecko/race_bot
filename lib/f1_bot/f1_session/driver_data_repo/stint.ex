@@ -13,6 +13,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stint do
     field(:total_laps, non_neg_integer(), enforce: true)
     field(:tyres_changed, boolean(), enforce: true)
     field(:lap_number, non_neg_integer(), enforce: true)
+    field(:timestamp, DateTime, enforce: true)
   end
 
   def new(stint_data) do
@@ -23,13 +24,11 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stint do
     old = Map.from_struct(self)
 
     data =
-      Map.merge(old, stint_data, fn _k, v1, v2 ->
-        if v2 == nil do
-          v1
-        else
-          v2
-        end
-      end)
+      Map.merge(
+        old,
+        stint_data,
+        fn k, v1, v2 -> merge_fn(old, stint_data, k, v1, v2) end
+      )
 
     new_self = struct!(__MODULE__, data)
 
@@ -56,6 +55,24 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stint do
       self.total_laps == nil -> nil
       self.age == nil -> self.total_laps
       true -> self.total_laps - self.age
+    end
+  end
+
+  defp merge_fn(_self_map, _stint_data, _key = :timestamp, v1, v2) do
+    # TODO: Timestamp should be set only once when the stint starts except when the stint
+    # has been erroneously started earlier in the session (occasional SignalR API bug)
+    cond do
+      v2 == nil -> v1
+      v1 == nil -> v2
+      true -> v1
+    end
+  end
+
+  defp merge_fn(_self_map, _stint_data, _key, v1, v2) do
+    if v2 == nil do
+      v1
+    else
+      v2
     end
   end
 end

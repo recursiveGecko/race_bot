@@ -2,7 +2,7 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
 
   workflow_dispatch:
 
@@ -63,8 +63,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: "${{env.IMAGE_ID}}:latest,${{env.IMAGE_ID}}:${{ github.sha }}"
-          cache-from: type=registry,ref=${{env.IMAGE_ID}}:latest
+          tags: "${{env.IMAGE_ID}}:latest,${{env.IMAGE_ID}}:${{ github.sha }},${{env.IMAGE_ID}}:${{ github.base_ref }}"
+          cache-from: type=registry,ref=${{env.IMAGE_ID}}:${{ github.base_ref }}
           cache-to: type=inline
 
   deploy:
@@ -130,7 +130,13 @@ jobs:
       -
         name: Deploy Nomad job
         run: |
-          run_output=$(nomad job run -verbose -var "image_version=${{ github.sha }}" -var "ghcr_password=$GHCR_PASSWORD" -var "image_id=$IMAGE_ID" -detach f1bot.nomad)
+          sed 's/:::INSERT_ENV_HERE:::/${{ github.base_ref }}/g' f1bot.nomad.hcl >> f1bot-baked.nomad.hcl
+          run_output=$(nomad job run -verbose \
+            -var "image_version=${{ github.sha }}" \
+            -var "environment=${{ github.base_ref }}" \
+            -var "ghcr_password=$GHCR_PASSWORD" \
+            -var "image_id=$IMAGE_ID" \
+            -detach f1bot-baked.nomad.hcl)
           ./scripts/check-nomad-deployment.sh "$run_output"
         env:
           NOMAD_TOKEN: "${{ secrets.NOMAD_TOKEN }}"
@@ -157,6 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build
+    if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v2
 

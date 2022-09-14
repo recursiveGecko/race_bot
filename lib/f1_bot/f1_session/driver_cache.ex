@@ -4,6 +4,7 @@ defmodule F1Bot.F1Session.DriverCache do
   """
   use TypedStruct
 
+  alias F1Bot.F1Session.Common.Event
   alias F1Bot.F1Session.DriverCache.DriverInfo
 
   typedstruct do
@@ -14,6 +15,15 @@ defmodule F1Bot.F1Session.DriverCache do
 
   def new() do
     %__MODULE__{}
+  end
+
+  def driver_list(%__MODULE__{drivers: drivers}) do
+    driver_list =
+      drivers
+      |> Map.values()
+      |> Enum.sort_by(& &1.last_name)
+
+    {:ok, driver_list}
   end
 
   def get_driver_by_number(%__MODULE__{drivers: drivers}, driver_number) do
@@ -45,6 +55,23 @@ defmodule F1Bot.F1Session.DriverCache do
     driver_cache = %{driver_cache | drivers: new_cache}
 
     driver_cache
+  end
+
+  def process_updates(driver_cache, partial_drivers) when is_list(partial_drivers) do
+    new_driver_cache =
+      Enum.reduce(partial_drivers, driver_cache, fn driver, driver_cache ->
+        process_update(driver_cache, driver)
+      end)
+
+    events =
+      with true <- new_driver_cache != driver_cache,
+           {:ok, driver_list} <- driver_list(new_driver_cache) do
+        [Event.new(:driver, :list, driver_list)]
+      else
+        _ -> []
+      end
+
+    {new_driver_cache, events}
   end
 
   def process_update(

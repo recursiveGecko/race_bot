@@ -23,9 +23,23 @@ defmodule F1Bot.F1Session do
     field(:driver_cache, F1Session.DriverCache.t(), default: F1Session.DriverCache.new())
     field(:session_info, F1Session.SessionInfo.t(), default: F1Session.SessionInfo.new())
     field(:session_status, atom())
+    field(:clock, F1Session.Clock.t())
   end
 
   def new(), do: %__MODULE__{}
+
+  def driver_list(session) do
+    F1Session.DriverCache.driver_list(session.driver_cache)
+  end
+
+  def driver_summary(session, driver_number) when is_integer(driver_number) do
+    data =
+      session.driver_data_repo
+      |> F1Session.DriverDataRepo.info(driver_number)
+      |> F1Session.DriverDataRepo.DriverData.Summary.generate(session.track_status_history)
+
+    {:ok, data}
+  end
 
   def driver_info_by_number(session, driver_number) when is_integer(driver_number) do
     F1Session.DriverCache.get_driver_by_number(session.driver_cache, driver_number)
@@ -39,13 +53,16 @@ defmodule F1Bot.F1Session do
     F1Session.DriverDataRepo.info(session.driver_data_repo, driver_number)
   end
 
-  def push_driver_list_update(session, drivers) do
-    driver_cache =
-      Enum.reduce(drivers, session.driver_cache, fn driver, driver_cache ->
-        F1Session.DriverCache.process_update(driver_cache, driver)
-      end)
+  def session_best_stats(session) do
+    best_stats = F1Session.DriverDataRepo.session_best_stats(session.driver_data_repo)
+    {:ok, best_stats}
+  end
 
-    %{session | driver_cache: driver_cache}
+  def push_driver_list_update(session, drivers) do
+    {driver_cache, events} = F1Session.DriverCache.process_updates(session.driver_cache, drivers)
+
+    session = %{session | driver_cache: driver_cache}
+    {session, events}
   end
 
   def push_lap_time(session, driver_number, lap_time, timestamp) when is_integer(driver_number) do
@@ -62,9 +79,15 @@ defmodule F1Bot.F1Session do
           {session.driver_data_repo, []}
       end
 
+    session = %{session | driver_data_repo: repo}
+
     events = hydrate_events(session, events)
 
-    session = %{session | driver_data_repo: repo}
+    summary_events =
+      F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
+
+    events = summary_events ++ events
+
     {session, events}
   end
 
@@ -74,9 +97,15 @@ defmodule F1Bot.F1Session do
       session.driver_data_repo
       |> F1Session.DriverDataRepo.push_sector_time(driver_number, sector, sector_time, timestamp)
 
+    session = %{session | driver_data_repo: repo}
+
     events = hydrate_events(session, events)
 
-    session = %{session | driver_data_repo: repo}
+    summary_events =
+      F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
+
+    events = summary_events ++ events
+
     {session, events}
   end
 
@@ -121,17 +150,21 @@ defmodule F1Bot.F1Session do
   end
 
   def push_session_info(session, session_info) do
-    {session_info, should_reset} =
+    {session_info, events, should_reset} =
       session.session_info
       |> F1Session.SessionInfo.update(session_info)
 
     session = %{session | session_info: session_info}
 
-    if should_reset do
-      reset_session(session)
-    else
-      session
-    end
+    {session, events} =
+      if should_reset do
+        {session, reset_events} = reset_session(session)
+        {session, events ++ reset_events}
+      else
+        {session, events}
+      end
+
+    {session, events}
   end
 
   def push_session_status(session, session_status) do
@@ -161,9 +194,15 @@ defmodule F1Bot.F1Session do
       session.driver_data_repo
       |> F1Session.DriverDataRepo.push_stint_data(driver_number, stint_data)
 
+    session = %{session | driver_data_repo: repo}
+
     events = hydrate_events(session, events)
 
-    session = %{session | driver_data_repo: repo}
+    summary_events =
+      F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
+
+    events = summary_events ++ events
+
     {session, events}
   end
 
@@ -176,6 +215,54 @@ defmodule F1Bot.F1Session do
     {session, []}
   end
 
+  def session_clock_from_local_time(session, local_time) do
+    case session.clock do
+      nil ->
+        {:error, :clock_not_set}
+
+      clock ->
+        session_clock = F1Session.Clock.session_clock_from_local_time(clock, local_time)
+        {:ok, session_clock}
+    end
+  end
+
+  def update_clock(session, server_time, local_time, remaining, is_running) do
+    clock = F1Session.Clock.new(server_time, local_time, remaining, is_running)
+    %{session | clock: clock}
+  end
+
+  def periodic_tick(session) do
+    events =
+      [
+        F1Session.EventGenerator.generate_session_clock_events(session)
+      ]
+      |> List.flatten()
+
+    {session, events}
+  end
+
+  def reset_session(session) do
+    # We reset the session then generate the summary events ...
+    # (which should contain an empty summary because the DriverDataRepo has been reset
+    # and an empty DriverData container should be created on access)
+    # ... for all drivers in the previous session (because we pass a list of drivers
+    # from the previous session),
+    {:ok, driver_list} = F1Session.DriverCache.driver_list(session.driver_cache)
+    driver_numbers = Enum.map(driver_list, & &1.driver_number)
+
+    session = %__MODULE__{
+      session
+      | driver_data_repo: F1Session.DriverDataRepo.new(),
+        track_status_history: F1Session.TrackStatusHistory.new(),
+        race_control: F1Session.RaceControl.new(),
+        clock: nil
+    }
+
+    reset_events = F1Session.EventGenerator.generate_session_reset_events(session, driver_numbers)
+
+    {session, reset_events}
+  end
+
   defp hydrate_events(session, events) do
     for e <- events do
       %{
@@ -185,14 +272,5 @@ defmodule F1Bot.F1Session do
           driver_cache: session.driver_cache
       }
     end
-  end
-
-  defp reset_session(session) do
-    %__MODULE__{
-      session
-      | driver_data_repo: F1Session.DriverDataRepo.new(),
-        track_status_history: F1Session.TrackStatusHistory.new(),
-        race_control: F1Session.RaceControl.new()
-    }
   end
 end

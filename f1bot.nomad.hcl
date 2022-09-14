@@ -12,7 +12,16 @@ variable "ghcr_password" {
   description = "Github Container Registry password (personal access token with scope read:packages)"
 }
 
-job "f1bot" {
+variable "environment" {
+  type        = string
+  description = "Environment name (e.g. dev, staging, prod)"
+}
+
+locals {
+  config_scope = "apps/f1bot_${var.environment}"
+}
+
+job "f1bot-:::INSERT_ENV_HERE:::" {
   datacenters = ["dc1"]
   type = "service"
 
@@ -32,15 +41,15 @@ job "f1bot" {
 
       template {
         data = <<EOH
-          DISCORD_TOKEN="{{key "apps/f1bot/DISCORD_TOKEN"}}"
+          DISCORD_TOKEN="{{key "${local.config_scope}/DISCORD_TOKEN"}}"
 
-          TWITTER_CONSUMER_KEY="{{key "apps/f1bot/TWITTER_CONSUMER_KEY"}}"
-          TWITTER_CONSUMER_SECRET="{{key "apps/f1bot/TWITTER_CONSUMER_SECRET"}}"
-          TWITTER_ACCESS_TOKEN="{{key "apps/f1bot/TWITTER_ACCESS_TOKEN"}}"
-          TWITTER_ACCESS_TOKEN_SECRET="{{key "apps/f1bot/TWITTER_ACCESS_TOKEN_SECRET"}}"
+          TWITTER_CONSUMER_KEY="{{key "${local.config_scope}/TWITTER_CONSUMER_KEY"}}"
+          TWITTER_CONSUMER_SECRET="{{key "${local.config_scope}/TWITTER_CONSUMER_SECRET"}}"
+          TWITTER_ACCESS_TOKEN="{{key "${local.config_scope}/TWITTER_ACCESS_TOKEN"}}"
+          TWITTER_ACCESS_TOKEN_SECRET="{{key "${local.config_scope}/TWITTER_ACCESS_TOKEN_SECRET"}}"
 
-          DISCORD_CHANNEL_IDS_MESSAGES="{{key "apps/f1bot/DISCORD_CHANNEL_IDS_MESSAGES" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
-          DISCORD_SERVER_IDS_COMMANDS="{{key "apps/f1bot/DISCORD_SERVER_IDS_COMMANDS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
+          DISCORD_CHANNEL_IDS_MESSAGES="{{key "${local.config_scope}/DISCORD_CHANNEL_IDS_MESSAGES" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
+          DISCORD_SERVER_IDS_COMMANDS="{{key "${local.config_scope}/DISCORD_SERVER_IDS_COMMANDS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
         EOH
 
         destination = ".env"

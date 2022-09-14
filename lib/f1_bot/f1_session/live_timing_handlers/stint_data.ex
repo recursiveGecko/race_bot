@@ -19,13 +19,33 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
       }) do
     {session, events} =
       drivers
-      |> Enum.filter(fn {_, data} -> data["Stints"] |> is_map() end)
+      |> Enum.filter(fn {_, data} ->
+        stints = data["Stints"]
+        is_map(stints) or is_list(stints)
+      end)
+      |> Enum.map(fn {driver_no, data} ->
+        stints = data["Stints"]
+
+        # Normalize list-based stints to map-based stints,
+        # usually seen in first message of a session
+        stints =
+          if is_list(stints) do
+            for {stint, index} <- Enum.with_index(stints), into: %{} do
+              {"#{index}", stint}
+            end
+          else
+            stints
+          end
+
+        data = Map.put(data, "Stints", stints)
+        {driver_no, data}
+      end)
       |> Enum.reduce({session, []}, &reduce_stints_per_driver(&1, &2, timestamp))
 
     {:ok, session, events}
   end
 
-  defp reduce_stints_per_driver({driver_number, data}, {session, events}, _timestamp) do
+  defp reduce_stints_per_driver({driver_number, data}, {session, events}, timestamp) do
     %{"Stints" => stints} = data
     driver_number = String.trim(driver_number) |> String.to_integer()
 
@@ -65,6 +85,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
         compound: compound,
         age: age,
         total_laps: total_laps,
+        timestamp: timestamp,
         tyres_changed:
           case raw_tyres_not_changed do
             nil -> nil

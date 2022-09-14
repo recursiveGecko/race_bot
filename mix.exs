@@ -6,8 +6,10 @@ defmodule F1Bot.MixProject do
       app: :f1_bot,
       version: "0.2.1",
       elixir: "~> 1.13",
+      elixirc_paths: elixirc_paths(Mix.env()),
       source_url: "https://github.com/recursiveGecko/race_bot",
       homepage_url: "https://github.com/recursiveGecko/race_bot",
+      compilers: Mix.compilers() ++ [:surface],
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
@@ -29,6 +31,9 @@ defmodule F1Bot.MixProject do
       ]
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help compile.app" to learn about applications.
   def application do
@@ -66,12 +71,29 @@ defmodule F1Bot.MixProject do
     ]
   end
 
+  # Aliases are shortcuts or tasks specific to the current project.
+  # For example, to install project dependencies and perform other setup tasks, run:
+  #
+  #     $ mix setup
+  #
+  # See the documentation for `Mix` for more info on aliases.
+  def aliases do
+    [
+      setup: ["deps.get", "ecto.setup"],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+    ]
+  end
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:gun, "== 2.0.1", hex: :remedy_gun},
+      {:cowlib, "~> 2.11.0", override: true},
       {:jason, "~> 1.2"},
       {:finch, "~> 0.9.1"},
       {:nostrum, "~> 0.5.1", runtime: false},
@@ -90,7 +112,22 @@ defmodule F1Bot.MixProject do
       {:vega_lite, "~> 0.1.2", only: :dev},
       {:dialyxir, "~> 1.1", only: [:dev], runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.28", runtime: false, override: true}
+      {:ex_doc, "~> 0.28", runtime: false, override: true},
+      {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev},
+      {:phoenix, "~> 1.6.12"},
+      {:surface, "~> 0.8.0"},
+      {:phoenix_ecto, "~> 4.4"},
+      {:ecto_sql, "~> 3.6"},
+      {:ecto_sqlite3, ">= 0.0.0"},
+      {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_view, "~> 0.17.5"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.6"},
+      {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
+      {:plug_cowboy, "~> 2.5"}
     ]
   end
 end

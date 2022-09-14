@@ -15,7 +15,7 @@ ADD mix.lock /app
 RUN mix deps.get && mix deps.compile
 
 ADD . /app 
-RUN mix release
+RUN mix assets.deploy && mix release
 
 RUN useradd -m app
 RUN chown -R app:app /app

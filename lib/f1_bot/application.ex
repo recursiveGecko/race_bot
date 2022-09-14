@@ -2,20 +2,32 @@ defmodule F1Bot.Application do
   @moduledoc false
 
   use Application
+  require Logger
 
   @impl true
   def start(_type, _args) do
+    if F1Bot.demo_mode_url() != nil do
+      Logger.info("[DEMO] Starting in demo mode with url: #{F1Bot.demo_mode_url()}")
+    end
+
     maybe_start_external_api_apps()
 
     children =
       [
-        # Starts a worker by calling: F1Bot.Worker.start_link(arg)
-        # {F1Bot.Worker, arg}
+        # Start the Ecto repository
+        F1Bot.Repo,
+        F1Bot.Cache,
+        # Start the Telemetry supervisor
+        F1BotWeb.Telemetry,
+        # Start the PubSub system
+        {Phoenix.PubSub, name: F1Bot.PubSub},
+        # Start the Endpoint (http/https)
+        F1BotWeb.Endpoint,
         {Finch, name: F1Bot.Finch},
-        {Phoenix.PubSub, name: :f1_pubsub},
         F1Bot.Output.Discord,
         F1Bot.Output.Twitter,
-        F1Bot.F1Session.Server
+        F1Bot.F1Session.Server,
+        F1Bot.Replay.Server
       ]
       |> add_if_signalr_conn_enabled({
         F1Bot.ExternalApi.SignalR.Client,
@@ -45,6 +57,14 @@ defmodule F1Bot.Application do
     Supervisor.start_link(children, opts)
   end
 
+  # Tell Phoenix to update the endpoint configuration
+  # whenever the application is updated.
+  @impl true
+  def config_change(changed, _new, removed) do
+    F1BotWeb.Endpoint.config_change(changed, removed)
+    :ok
+  end
+
   defp maybe_start_external_api_apps() do
     if external_apis_enabled?() do
       {:ok, _} = Application.ensure_all_started(:nostrum)
@@ -52,7 +72,7 @@ defmodule F1Bot.Application do
   end
 
   defp add_if_external_apis_enabled(children, child) do
-    if external_apis_enabled?() do
+    if external_apis_enabled?() and F1Bot.demo_mode_url() == nil do
       children ++ [child]
     else
       children
@@ -60,7 +80,7 @@ defmodule F1Bot.Application do
   end
 
   defp add_if_signalr_conn_enabled(children, child) do
-    if signalr_enabled?() do
+    if signalr_enabled?() and F1Bot.demo_mode_url() == nil do
       children ++ [child]
     else
       children

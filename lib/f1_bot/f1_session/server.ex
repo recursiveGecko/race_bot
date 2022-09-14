@@ -19,7 +19,8 @@ defmodule F1Bot.F1Session.Server do
   @impl true
   def init(_init_arg) do
     state = %{
-      session: F1Session.new()
+      session: F1Session.new(),
+      tick_interval_ref: :timer.send_interval(50, :periodic_tick)
     }
 
     {:ok, state}
@@ -30,6 +31,11 @@ defmodule F1Bot.F1Session.Server do
     |> GenServer.call({:state, light_copy})
   end
 
+  def session_best_stats() do
+    server_via()
+    |> GenServer.call(:session_best_stats)
+  end
+
   def session_info() do
     server_via()
     |> GenServer.call({:session_info})
@@ -38,6 +44,16 @@ defmodule F1Bot.F1Session.Server do
   def session_status() do
     server_via()
     |> GenServer.call({:session_status})
+  end
+
+  def driver_list() do
+    server_via()
+    |> GenServer.call({:driver_list})
+  end
+
+  def driver_summary(driver_no) do
+    server_via()
+    |> GenServer.call({:driver_summary, driver_no})
   end
 
   def driver_info_by_number(driver_number) when is_integer(driver_number) do
@@ -70,6 +86,16 @@ defmodule F1Bot.F1Session.Server do
     |> GenServer.call({:replace_session, session})
   end
 
+  def reset_session() do
+    server_via()
+    |> GenServer.call({:reset_session})
+  end
+
+  def session_clock_from_local_time(local_time) do
+    server_via()
+    |> GenServer.call({:session_clock_from_local_time, local_time})
+  end
+
   @impl true
   def handle_call({:state, light_copy}, _from, state = %{session: session}) do
     reply =
@@ -79,6 +105,12 @@ defmodule F1Bot.F1Session.Server do
         session
       end
 
+    {:reply, reply, state}
+  end
+
+  @impl true
+  def handle_call(:session_best_stats, _from, state = %{session: session}) do
+    reply = F1Session.session_best_stats(session)
     {:reply, reply, state}
   end
 
@@ -100,6 +132,19 @@ defmodule F1Bot.F1Session.Server do
         nil -> {:error, :not_available}
         status -> {:ok, status}
       end
+
+    {:reply, reply, state}
+  end
+
+  @impl true
+  def handle_call({:driver_list}, _from, state = %{session: session}) do
+    reply = F1Session.driver_list(session)
+    {:reply, reply, state}
+  end
+
+  @impl true
+  def handle_call({:driver_summary, driver_no}, _from, state = %{session: session}) do
+    reply = F1Session.driver_summary(session, driver_no)
 
     {:reply, reply, state}
   end
@@ -162,6 +207,38 @@ defmodule F1Bot.F1Session.Server do
     Logger.info("Session replaced!")
 
     {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_call({:reset_session}, _from, state) do
+    # Ensure all session reset events are sent
+    {_session, events} = F1Session.reset_session(state.session)
+
+    Helpers.publish_events(events)
+
+    state = %{state | session: F1Session.new()}
+    Logger.info("Session reset!")
+
+    {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_call(
+        {:session_clock_from_local_time, local_time},
+        _from,
+        state = %{session: session}
+      ) do
+    reply = F1Session.session_clock_from_local_time(session, local_time)
+    {:reply, reply, state}
+  end
+
+  @impl true
+  def handle_info(:periodic_tick, state = %{session: session}) do
+    {session, events} = F1Session.periodic_tick(session)
+    Helpers.publish_events(events)
+
+    state = %{state | session: session}
+    {:noreply, state}
   end
 
   defp after_live_timing_packet(_packet = %Packet{topic: "SessionInfo"}, session) do

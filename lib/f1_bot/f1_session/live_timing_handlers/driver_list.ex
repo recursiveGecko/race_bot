@@ -23,11 +23,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.DriverList do
           driver_json
           |> Map.put_new("RacingNumber", driver_no)
           |> Map.update("RacingNumber", nil, fn x -> x |> String.trim() |> String.to_integer() end)
+          # |> Map.update("HeadshotUrl", nil, &String.replace(&1, ~r|\.transform\/.*|, ""))
 
         DriverInfo.parse_from_json(driver_json)
       end
 
-    session = F1Session.push_driver_list_update(session, parsed_drivers)
-    {:ok, session, []}
+    {session, events} = F1Session.push_driver_list_update(session, parsed_drivers)
+    {:ok, session, events}
   end
 end

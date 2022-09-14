@@ -3,10 +3,10 @@ defmodule F1Bot.PubSub do
   alias Phoenix.PubSub
 
   def subscribe(topic, opts \\ []) do
-    PubSub.subscribe(:f1_pubsub, topic, opts)
+    PubSub.subscribe(F1Bot.PubSub, topic, opts)
   end
 
   def broadcast(topic, message) do
-    PubSub.broadcast(:f1_pubsub, topic, message)
+    PubSub.broadcast(F1Bot.PubSub, topic, message)
   end
 end

@@ -25,6 +25,10 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     |> fetch_or_create_driver_from_repo(driver_number)
   end
 
+  def session_best_stats(repo) do
+    repo.best_stats
+  end
+
   def push_lap_time(repo, driver_number, lap_time, timestamp) do
     push_result =
       repo

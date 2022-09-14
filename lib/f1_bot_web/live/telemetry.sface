@@ -1,0 +1,25 @@
+<div class="grid gap-4 sm:grid-cols-[min-content_1fr] p-2">
+  <div class="text-2xl">
+    <span class="" :if={@session_clock != nil}>
+      {Format.format_session_clock(@session_clock)}
+    </span>
+  </div>
+    <div class="text-2xl">
+      <span class="" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}
+      </span>
+    </div>
+
+  <div class="sm:row-start-2">
+    <Component.DriverSelector {=@driver_list} {=@drivers_of_interest} toggle_driver="toggle-driver" />
+  </div>
+
+  <div class="grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,25rem)] auto-rows-min sm:row-start-2">
+    {#for driver_info <- @driver_list}
+      <Component.DriverSummary
+        :if={driver_info.driver_number in @drivers_of_interest}
+        id={driver_info.driver_number}
+        driver_info={driver_info}
+      />
+    {/for}
+  </div>
+</div>
