@@ -16,7 +16,9 @@ ADD mix.lock /app
 RUN mix deps.get && mix deps.compile
 
 ADD . /app 
-RUN mix assets.deploy && mix release && chown -R app:app /app
+# mix compile first to ensure Surface UI _components.css and _hooks/index.js are created 
+# for Tailwind to be able to process them
+RUN mix compile && mix assets.deploy && mix release && chown -R app:app /app
 
 USER app
 

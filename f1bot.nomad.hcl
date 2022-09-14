@@ -29,7 +29,8 @@ job "f1bot-:::INSERT_ENV_HERE:::" {
     count = 1
 
     network {
-      // port "dashboard" {}
+      port "http" {
+      }
     }
 
     task "f1bot-elixir" {
@@ -50,11 +51,20 @@ job "f1bot-:::INSERT_ENV_HERE:::" {
 
           DISCORD_CHANNEL_IDS_MESSAGES="{{key "${local.config_scope}/DISCORD_CHANNEL_IDS_MESSAGES" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
           DISCORD_SERVER_IDS_COMMANDS="{{key "${local.config_scope}/DISCORD_SERVER_IDS_COMMANDS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
+
+          DATABASE_PATH="{{key "${local.config_scope}/DATABASE_PATH"}}"
+          SECRET_KEY_BASE="{{key "${local.config_scope}/SECRET_KEY_BASE"}}"
+          PHX_HOST="{{key "${local.config_scope}/PHX_HOST"}}"
         EOH
 
         destination = ".env"
         change_mode = "noop"
         env         = true
+      }
+
+      env {
+        PORT = "${NOMAD_PORT_http}"
+        PHX_SERVER = "true"
       }
 
       config {
@@ -64,6 +74,7 @@ job "f1bot-:::INSERT_ENV_HERE:::" {
           username = split("/", var.image_id)[1]
           password = var.ghcr_password
         }
+        ports = ["http"]
       }
 
 
