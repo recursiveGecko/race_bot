@@ -13,6 +13,8 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
     steps:
       - uses: actions/checkout@v2
 
@@ -63,8 +65,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: "${{env.IMAGE_ID}}:latest,${{env.IMAGE_ID}}:${{ github.sha }},${{env.IMAGE_ID}}:${{ github.base_ref }}"
-          cache-from: type=registry,ref=${{env.IMAGE_ID}}:${{ github.base_ref }}
+          tags: "${{env.IMAGE_ID}}:latest,${{env.IMAGE_ID}}:${{ github.sha }},${{env.IMAGE_ID}}:${{ github.ref_name }}"
+          cache-from: type=registry,ref=${{env.IMAGE_ID}}:${{ github.ref_name }}
           cache-to: type=inline
 
   deploy:
@@ -130,10 +132,10 @@ jobs:
       -
         name: Deploy Nomad job
         run: |
-          sed 's/:::INSERT_ENV_HERE:::/${{ github.base_ref }}/g' f1bot.nomad.hcl >> f1bot-baked.nomad.hcl
+          sed 's/:::INSERT_ENV_HERE:::/${{ github.ref_name }}/g' f1bot.nomad.hcl >> f1bot-baked.nomad.hcl
           run_output=$(nomad job run -verbose \
             -var "image_version=${{ github.sha }}" \
-            -var "environment=${{ github.base_ref }}" \
+            -var "environment=${{ github.ref_name }}" \
             -var "ghcr_password=$GHCR_PASSWORD" \
             -var "image_id=$IMAGE_ID" \
             -detach f1bot-baked.nomad.hcl)
