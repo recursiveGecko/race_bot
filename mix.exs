@@ -11,6 +11,7 @@ defmodule F1Bot.MixProject do
       homepage_url: "https://github.com/recursiveGecko/race_bot",
       compilers: Mix.compilers() ++ [:surface],
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps(),
       docs: docs(),
       dialyzer: [
@@ -43,7 +44,7 @@ defmodule F1Bot.MixProject do
     ]
   end
 
-  def docs do
+  defp docs do
     [
       main: "readme",
       extras: [
@@ -77,7 +78,7 @@ defmodule F1Bot.MixProject do
   #     $ mix setup
   #
   # See the documentation for `Mix` for more info on aliases.
-  def aliases do
+  defp aliases do
     [
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],

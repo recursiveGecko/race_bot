@@ -7,6 +7,7 @@ RUN apt-get update && \
 
 RUN mix local.hex --force && mix local.rebar --force
 
+RUN useradd -m app
 RUN mkdir /app
 WORKDIR /app
 
@@ -15,10 +16,8 @@ ADD mix.lock /app
 RUN mix deps.get && mix deps.compile
 
 ADD . /app 
-RUN mix assets.deploy && mix release
+RUN mix assets.deploy && mix release && chown -R app:app /app
 
-RUN useradd -m app
-RUN chown -R app:app /app
 USER app
 
 ENTRYPOINT ["/app/_build/prod/rel/f1bot/bin/f1bot"]
