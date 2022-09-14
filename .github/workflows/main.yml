@@ -132,7 +132,7 @@ jobs:
       -
         name: Deploy Nomad job
         run: |
-          sed 's/:::INSERT_ENV_HERE:::/${{ github.ref_name }}/g' f1bot.nomad.hcl >> f1bot-baked.nomad.hcl
+          sed 's/____INSERT_ENV_HERE____/${{ github.ref_name }}/g' f1bot.nomad.hcl >> f1bot-baked.nomad.hcl
           run_output=$(nomad job run -verbose \
             -var "image_version=${{ github.sha }}" \
             -var "environment=${{ github.ref_name }}" \
