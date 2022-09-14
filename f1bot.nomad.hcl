@@ -71,7 +71,6 @@ job "f1bot-____INSERT_ENV_HERE____" {
           DISCORD_CHANNEL_IDS_MESSAGES="{{key "${local.config_scope}/DISCORD_CHANNEL_IDS_MESSAGES" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
           DISCORD_SERVER_IDS_COMMANDS="{{key "${local.config_scope}/DISCORD_SERVER_IDS_COMMANDS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
 
-          DATABASE_PATH="{{key "${local.config_scope}/DATABASE_PATH"}}"
           SECRET_KEY_BASE="{{key "${local.config_scope}/SECRET_KEY_BASE"}}"
           PHX_HOST="{{key "${local.config_scope}/PHX_HOST"}}"
           DEMO_MODE_URL="{{key "${local.config_scope}/DEMO_MODE_URL"}}"
@@ -83,8 +82,9 @@ job "f1bot-____INSERT_ENV_HERE____" {
       }
 
       env {
-        PORT = "${NOMAD_PORT_http}"
-        PHX_SERVER = "true"
+        PORT = "${NOMAD_PORT_http}",
+        PHX_SERVER = "true",
+        DATABASE_PATH = "/data/f1bot.db"
       }
 
       config {
@@ -102,7 +102,6 @@ job "f1bot-____INSERT_ENV_HERE____" {
           "${local.data_root}:/data",
         ]
       }
-
 
       resources {
         cpu    = 2000 # Mhz
