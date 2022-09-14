@@ -45,7 +45,7 @@ job "f1bot-____INSERT_ENV_HERE____" {
 
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.http.rule=Host(`${local.hostname}`)",
+        "traefik.http.routers.f1bot-${var.environment}.rule=Host(`${local.hostname}`)",
       ]
 
       check {
