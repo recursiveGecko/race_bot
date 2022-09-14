@@ -55,6 +55,7 @@ job "f1bot-:::INSERT_ENV_HERE:::" {
           DATABASE_PATH="{{key "${local.config_scope}/DATABASE_PATH"}}"
           SECRET_KEY_BASE="{{key "${local.config_scope}/SECRET_KEY_BASE"}}"
           PHX_HOST="{{key "${local.config_scope}/PHX_HOST"}}"
+          DEMO_MODE_URL="{{key "${local.config_scope}/DEMO_MODE_URL"}}"
         EOH
 
         destination = ".env"
