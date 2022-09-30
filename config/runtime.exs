@@ -138,18 +138,22 @@ if config_env() == :prod do
 
   enable_internal_endpoint? = !!internal_secret_key_base and !!internal_host and !!internal_port
 
-  config :f1_bot, F1BotWeb.InternalEndpoint,
-    url: [host: internal_host, port: internal_port, scheme: "http"],
-    http: [
-      # Enable IPv6 and bind on all interfaces.
-      # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
-      # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
-      # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0},
-      port: internal_port
-    ],
-    secret_key_base: internal_secret_key_base,
-    server: enable_internal_endpoint?
+  if enable_internal_endpoint? do
+    config :f1_bot, F1BotWeb.InternalEndpoint,
+      url: [host: internal_host, port: internal_port, scheme: "http"],
+      http: [
+        # Enable IPv6 and bind on all interfaces.
+        # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
+        # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
+        # for details about using IPv6 vs IPv4 and loopback vs public addresses.
+        ip: {0, 0, 0, 0, 0, 0, 0, 0},
+        port: internal_port
+      ],
+      secret_key_base: internal_secret_key_base,
+      server: true
+  else
+    config :f1_bot, F1BotWeb.InternalEndpoint, server: false
+  end
 end
 
 # ## Using releases
