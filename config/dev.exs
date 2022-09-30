@@ -35,7 +35,6 @@ config :f1_bot, F1BotWeb.Endpoint,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "U/lrJxiO8Pof0MWxTnEHM+CvYJ4559nfslojhRY3ui9hEcZX5N3bUrpGPRtKLX8b",
-  live_view: [signing_salt: "nDtTgwk3"],
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},

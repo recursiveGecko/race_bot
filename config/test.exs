@@ -23,7 +23,6 @@ config :f1_bot, F1BotWeb.Endpoint,
   url: [host: "localhost"],
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "jCvmuMYzhlV6gYjGyhfx9EQx8opC4ZdOy4E5xS1fti38f6L9SeaUAUAeqyt4ZXMv",
-  live_view: [signing_salt: "nDtTgwk3"],
   server: false
 
 config :f1_bot, F1BotWeb.InternalEndpoint,
