@@ -1,5 +1,6 @@
-defmodule F1BotWeb.Router do
+defmodule F1BotWeb.InternalRouter do
   use F1BotWeb, :router
+  import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -14,9 +15,15 @@ defmodule F1BotWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", F1BotWeb do
+  scope "/" do
     pipe_through :browser
 
-    live "/", Live.Telemetry
+    live "/site", F1BotWeb.Live.Telemetry
+
+    live_dashboard "/",
+      metrics: F1BotWeb.Telemetry,
+      additional_pages: [
+        flame_on: FlameOn.DashboardPage
+      ]
   end
 end

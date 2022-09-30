@@ -29,12 +29,16 @@ defmodule F1Bot.F1Session.EventGenerator do
     [primary_event | summary_events]
   end
 
-  def generate_session_clock_events(session = %F1Session{}) do
+  def maybe_generate_session_clock_events(session = %F1Session{}) do
     with clock when clock != nil <- session.clock,
-         session_clock <- F1Session.Clock.session_clock_from_local_time(clock, Timex.now()) do
-      [Event.new(:session_info, :session_clock, session_clock)]
+         session_clock <- F1Session.Clock.session_clock_from_local_time(clock, Timex.now()),
+         last_session_clock <- session.event_deduplication[:session_clock],
+         false <- session_clock == last_session_clock do
+      events = [Event.new(:session_info, :session_clock, session_clock)]
+      session = put_in(session, [Access.key(:event_deduplication), :session_clock], session_clock)
+      {session, events}
     else
-      _ -> []
+      _ -> {session, []}
     end
   end
 end

@@ -4,7 +4,7 @@ defmodule F1Bot.MixProject do
   def project do
     [
       app: :f1_bot,
-      version: "0.2.1",
+      version: "0.3.0",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       source_url: "https://github.com/recursiveGecko/race_bot",
@@ -97,7 +97,7 @@ defmodule F1Bot.MixProject do
       {:cowlib, "~> 2.11.0", override: true},
       {:jason, "~> 1.2"},
       {:finch, "~> 0.9.1"},
-      {:nostrum, "~> 0.5.1", runtime: false},
+      {:nostrum, "~> 0.6", runtime: false},
       {:phoenix_pubsub, "~> 2.0"},
       {:certifi, "~> 2.8"},
       {:typed_struct, "~> 0.2.1"},
@@ -128,7 +128,8 @@ defmodule F1Bot.MixProject do
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:flame_on, "~> 0.5.2", only: :dev}
     ]
   end
 end

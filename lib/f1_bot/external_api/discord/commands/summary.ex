@@ -63,6 +63,8 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
   end
 
   defp generate_summary_embed(session_info, driver_info, summary, use_emojis) do
+    stats = summary.stats
+
     %{
       type: "rich",
       color: DriverInfo.team_color_int(driver_info),
@@ -73,15 +75,15 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
       },
       fields:
         [
-          %{inline: true, name: "Fastest S1", value: format_lap_time(summary.fastest_sectors[1])},
-          %{inline: true, name: "Fastest S2", value: format_lap_time(summary.fastest_sectors[2])},
-          %{inline: true, name: "Fastest S3", value: format_lap_time(summary.fastest_sectors[3])},
-          %{inline: true, name: "Fastest lap", value: format_lap_time(summary.fastest_lap)},
-          %{inline: true, name: "Top speed", value: format_speed(summary.top_speed)},
+          %{inline: true, name: "Fastest S1", value: format_lap_time(stats.s1_time[:fastest])},
+          %{inline: true, name: "Fastest S2", value: format_lap_time(stats.s2_time[:fastest])},
+          %{inline: true, name: "Fastest S3", value: format_lap_time(stats.s3_time[:fastest])},
+          %{inline: true, name: "Fastest lap", value: format_lap_time(stats.lap_time[:fastest])},
+          %{inline: true, name: "Top speed", value: format_speed(stats.top_speed)},
           %{
             inline: true,
             name: "Ideal lap",
-            value: format_lap_time(summary.fastest_sectors.ideal_lap)
+            value: format_lap_time(stats.lap_time.theoretical)
           }
         ] ++ generate_stint_fields(summary, use_emojis),
       footer: %{
@@ -104,8 +106,8 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
 
       first_row = "#{tyre_info} `#{stint_info}  #{laps_info}   #{timed_laps_info}`"
 
-      avg_lap = format_lap_time(stint.average_time) |> format_width(8)
-      fast_lap = format_lap_time(stint.fastest_time) |> format_width(8)
+      avg_lap = format_lap_time(stint.stats.lap_time.average) |> format_width(8)
+      fast_lap = format_lap_time(stint.stats.lap_time.fastest) |> format_width(8)
 
       second_row = "`Lap (min/avg):  #{fast_lap} /  #{avg_lap} `"
 

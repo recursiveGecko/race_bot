@@ -1,8 +1,9 @@
 import Config
 
 config :f1_bot,
-  connect_to_signalr: false,
-  external_apis_enabled: false,
+  connect_to_signalr: true,
+  start_discord: false,
+  start_twitter: false,
   discord_api_module: F1Bot.ExternalApi.Discord.Console,
   twitter_api_module: F1Bot.ExternalApi.Twitter.Console
 
@@ -28,19 +29,19 @@ config :f1_bot, F1Bot.Repo,
 config :f1_bot, F1BotWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
+  url: [host: "localhost"],
   http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "U/lrJxiO8Pof0MWxTnEHM+CvYJ4559nfslojhRY3ui9hEcZX5N3bUrpGPRtKLX8b",
+  live_view: [signing_salt: "nDtTgwk3"],
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
-  ]
-
-# Watch static and templates for browser reloading.
-config :f1_bot, F1BotWeb.Endpoint,
+  ],
+  # Watch static and templates for browser reloading.
   reloadable_compilers: [:gettext, :elixir, :surface],
   live_reload: [
     patterns: [
@@ -49,6 +50,14 @@ config :f1_bot, F1BotWeb.Endpoint,
       ~r"lib/f1_bot_web/templates/.*(eex|sface)$"
     ]
   ]
+
+config :f1_bot, F1BotWeb.InternalEndpoint,
+  url: [host: "localhost"],
+  http: [ip: {127, 0, 0, 1}, port: 4001],
+  check_origin: false,
+  debug_errors: true,
+  secret_key_base: "kIaE5yMJsNdbC2xW+TtE/ImirvCTyyzkOoftsQPWimDQHfZnwXkx/4sWIww9hWt0",
+  live_view: [signing_salt: "AOtJEjcdsssJpmsFIkNl6ksdtAQuwavZ"]
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.

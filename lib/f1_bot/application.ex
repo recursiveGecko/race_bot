@@ -10,26 +10,23 @@ defmodule F1Bot.Application do
       Logger.info("[DEMO] Starting in demo mode with url: #{F1Bot.demo_mode_url()}")
     end
 
-    maybe_start_external_api_apps()
+    start_if_feature_flag_enabled(:start_discord, :nostrum)
 
     children =
       [
-        # Start the Ecto repository
+        {Finch, name: F1Bot.Finch},
+        F1BotWeb.Telemetry,
         F1Bot.Repo,
         F1Bot.Cache,
-        # Start the Telemetry supervisor
-        F1BotWeb.Telemetry,
-        # Start the PubSub system
         {Phoenix.PubSub, name: F1Bot.PubSub},
-        # Start the Endpoint (http/https)
         F1BotWeb.Endpoint,
-        {Finch, name: F1Bot.Finch},
+        F1BotWeb.InternalEndpoint,
         F1Bot.Output.Discord,
         F1Bot.Output.Twitter,
         F1Bot.F1Session.Server,
         F1Bot.Replay.Server
       ]
-      |> add_if_signalr_conn_enabled({
+      |> add_if_feature_flag_enabled(:connect_to_signalr, {
         F1Bot.ExternalApi.SignalR.Client,
         [
           hostname: "livetiming.formula1.com",
@@ -42,9 +39,9 @@ defmodule F1Bot.Application do
             end
         ]
       })
-      |> add_if_external_apis_enabled(F1Bot.ExternalApi.Discord.Live)
-      |> add_if_external_apis_enabled(F1Bot.ExternalApi.Twitter.Live)
-      |> add_if_external_apis_enabled(F1Bot.ExternalApi.Discord.Commands)
+      |> add_if_feature_flag_enabled(:start_discord, F1Bot.ExternalApi.Discord.Live)
+      |> add_if_feature_flag_enabled(:start_discord, F1Bot.ExternalApi.Discord.Commands)
+      |> add_if_feature_flag_enabled(:start_twitter, F1Bot.ExternalApi.Twitter.Live)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -65,33 +62,21 @@ defmodule F1Bot.Application do
     :ok
   end
 
-  defp maybe_start_external_api_apps() do
-    if external_apis_enabled?() do
-      {:ok, _} = Application.ensure_all_started(:nostrum)
+  defp start_if_feature_flag_enabled(feature_flag, application) do
+    if feature_flag_enabled?(feature_flag) do
+      {:ok, _} = Application.ensure_all_started(application)
     end
   end
 
-  defp add_if_external_apis_enabled(children, child) do
-    if external_apis_enabled?() and F1Bot.demo_mode_url() == nil do
+  defp add_if_feature_flag_enabled(children, feature_flag, child) do
+    if feature_flag_enabled?(feature_flag) and F1Bot.demo_mode_url() == nil do
       children ++ [child]
     else
       children
     end
   end
 
-  defp add_if_signalr_conn_enabled(children, child) do
-    if signalr_enabled?() and F1Bot.demo_mode_url() == nil do
-      children ++ [child]
-    else
-      children
-    end
-  end
-
-  defp external_apis_enabled?() do
-    F1Bot.get_env(:external_apis_enabled, false)
-  end
-
-  defp signalr_enabled?() do
-    F1Bot.get_env(:connect_to_signalr, false)
+  defp feature_flag_enabled?(feature_flag) do
+    F1Bot.get_env(feature_flag, false)
   end
 end

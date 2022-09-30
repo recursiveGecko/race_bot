@@ -2,7 +2,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Response do
   @moduledoc """
   Functions for composing and sending responses to slash commands.
   """
-  use Bitwise
+  import Bitwise
   require Logger
   alias Nostrum.Api
 

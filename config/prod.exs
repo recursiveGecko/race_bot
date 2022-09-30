@@ -10,6 +10,7 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :f1_bot, F1BotWeb.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
+config :f1_bot, F1BotWeb.InternalEndpoint, cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
 config :logger, level: :info

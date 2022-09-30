@@ -2,7 +2,6 @@ defmodule F1Bot.ExternalApi.Discord.Commands.OptionValidator do
   @moduledoc """
   Parses and validates Discord command options
   """
-  use Bitwise
   alias F1Bot
 
   def validate_graph_metric(options, name) do

@@ -24,6 +24,7 @@ defmodule F1Bot.F1Session do
     field(:session_info, F1Session.SessionInfo.t(), default: F1Session.SessionInfo.new())
     field(:session_status, atom())
     field(:clock, F1Session.Clock.t())
+    field(:event_deduplication, map(), default: %{})
   end
 
   def new(), do: %__MODULE__{}
@@ -232,11 +233,17 @@ defmodule F1Bot.F1Session do
   end
 
   def periodic_tick(session) do
-    events =
+    {session, events} =
       [
-        F1Session.EventGenerator.generate_session_clock_events(session)
+        &F1Session.EventGenerator.maybe_generate_session_clock_events/1
       ]
-      |> List.flatten()
+      |> Enum.reduce(
+        {session, []},
+        fn fun, {session, events} ->
+          {new_session, new_events} = fun.(session)
+          {new_session, events ++ new_events}
+        end
+      )
 
     {session, events}
   end
