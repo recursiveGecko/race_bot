@@ -136,7 +136,7 @@ if config_env() == :prod do
         String.to_integer(port)
     end
 
-  enable_internal_endpoint? = internal_secret_key_base and internal_host and internal_port
+  enable_internal_endpoint? = !!internal_secret_key_base and !!internal_host and !!internal_port
 
   config :f1_bot, F1BotWeb.InternalEndpoint,
     url: [host: internal_host, port: internal_port, scheme: "http"],
