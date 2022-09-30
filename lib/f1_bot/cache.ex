@@ -3,7 +3,7 @@ defmodule F1Bot.Cache do
   require Logger
 
   @ets_table :f1_bot_cache
-  @default_ttl 5_000
+  @default_ttl 1_000
 
   @impl true
   def init(_init_arg) do
@@ -20,7 +20,7 @@ defmodule F1Bot.Cache do
   def session_info(), do: fetch(:session_info)
   def session_best_stats(), do: fetch(:session_best_stats)
 
-  def driver_summary(driver_no) when driver_no > 0 and driver_no < 1000 do
+  def driver_summary(driver_no) when driver_no > 0 and driver_no < 100 do
     fetch({:driver_summary, driver_no})
   end
 
