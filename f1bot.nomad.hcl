@@ -133,8 +133,8 @@ job "f1bot-____INSERT_ENV_HERE____" {
     # perform in parallel. In this case, this specifies to update a single task
     # at a time.
     max_parallel = 1
-    min_healthy_time = "15s"
-    healthy_deadline = "60s"
+    min_healthy_time = "10s"
+    healthy_deadline = "90s"
     progress_deadline = "0"
     auto_revert = true
   }
