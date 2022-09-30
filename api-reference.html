@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.4">
-    <meta name="project" content="f1_bot v0.2.1">
+    <meta name="project" content="f1_bot v0.3.0">
 
-    <title>API Reference — f1_bot v0.2.1</title>
+    <title>API Reference — f1_bot v0.3.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-760a4e723a.js"></script>
+    <script src="dist/sidebar_items-e17673b0ee.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -66,7 +66,7 @@
 f1_bot
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.2.1
+        v0.3.0
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -96,7 +96,7 @@ f1_bot
 </button>
 
 
-  <span>API Reference <small class="app-vsn">f1_bot v0.2.1</small></span>
+  <span>API Reference <small class="app-vsn">f1_bot v0.3.0</small></span>
 </h1>
 
 
@@ -116,6 +116,13 @@ f1_bot
   </div>
 
     <div class="summary-synopsis"><p>API for retrieving data between different system components.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.Cache.html" translate="no">F1Bot.Cache</a>
+
+  </div>
 
 </div>
 <div class="summary-row">
@@ -273,6 +280,13 @@ all received events by forming <a href="F1Bot.F1Session.LiveTimingHandlers.Packe
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="F1Bot.F1Session.Clock.html" translate="no">F1Bot.F1Session.Clock</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="F1Bot.F1Session.Common.Event.html" translate="no">F1Bot.F1Session.Common.Event</a>
 
   </div>
@@ -405,6 +419,13 @@ e.g. tyre compount and tyre age.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="F1Bot.F1Session.EventGenerator.html" translate="no">F1Bot.F1Session.EventGenerator</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="F1Bot.F1Session.LiveTimingHandlers.html" translate="no">F1Bot.F1Session.LiveTimingHandlers</a>
 
   </div>
@@ -428,6 +449,16 @@ e.g. tyre compount and tyre age.</p></div>
   </div>
 
     <div class="summary-synopsis"><p>Handler for driver list updates received from live timing API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.F1Session.LiveTimingHandlers.ExtrapolatedClock.html" translate="no">F1Bot.F1Session.LiveTimingHandlers.ExtrapolatedClock</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Handler for extrapolated clock which keeps track of remaining session time,
+useful for qualifying.</p></div>
 
 </div>
 <div class="summary-row">
@@ -628,7 +659,198 @@ and calls a configured Twitter client (live or console) to send them.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="F1Bot.Replay.Server.html" translate="no">F1Bot.Replay.Server</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1Bot.Repo.html" translate="no">F1Bot.Repo</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="F1Bot.Time.html" translate="no">F1Bot.Time</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.html" translate="no">F1BotWeb</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The entrypoint for defining your web interface, such
+as controllers, views, channels and so on.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Component.DriverSelector.html" translate="no">F1BotWeb.Component.DriverSelector</a>
+
+  </div>
+
+    <div class="summary-synopsis"><h2 id="properties" class="section-heading">
+  <a href="#properties" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">properties</p>
+  </a>
+  Properties
+</h2>
+<ul><li><strong>driver_list</strong> <em>:list, required: true</em></li><li><strong>drivers_of_interest</strong> <em>:list, required: true</em></li></ul><h2 id="events" class="section-heading">
+  <a href="#events" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">events</p>
+  </a>
+  Events
+</h2>
+<ul><li><strong>toggle_driver, required: true</strong></li></ul></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Component.DriverSummary.html" translate="no">F1BotWeb.Component.DriverSummary</a>
+
+  </div>
+
+    <div class="summary-synopsis"><h2 id="properties-1" class="section-heading">
+  <a href="#properties-1" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">properties-1</p>
+  </a>
+  Properties
+</h2>
+<ul><li><p><strong>id</strong> <em>:string, required: true</em> - The id of the live component (required by LiveView for stateful components).</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Component.LapTimeField.html" translate="no">F1BotWeb.Component.LapTimeField</a>
+
+  </div>
+
+    <div class="summary-synopsis"><h2 id="properties-2" class="section-heading">
+  <a href="#properties-2" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">properties-2</p>
+  </a>
+  Properties
+</h2>
+<ul><li><strong>class</strong> <em>:css_class</em></li><li><strong>stats</strong> <em>:map, required: true</em></li><li><strong>personal_best_stats</strong> <em>:map, required: true</em></li><li><strong>session_best_stats</strong> <em>:map, required: true</em></li><li><strong>kind</strong> <em>:any, required: true</em></li><li><strong>overall_fastest_class</strong> <em>:css_class, default: &quot;border-purple-600&quot;</em></li><li><strong>personal_fastest_class</strong> <em>:css_class, default: &quot;border-green-600&quot;</em></li><li><strong>not_fastest_class</strong> <em>:css_class, default: &quot;border-transparent&quot;</em></li></ul></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Component.TyreSymbol.html" translate="no">F1BotWeb.Component.TyreSymbol</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>A component that renders a tyre symbol.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Endpoint.html" translate="no">F1BotWeb.Endpoint</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.ErrorHelpers.html" translate="no">F1BotWeb.ErrorHelpers</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Conveniences for translating and building error messages.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.ErrorView.html" translate="no">F1BotWeb.ErrorView</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.InternalEndpoint.html" translate="no">F1BotWeb.InternalEndpoint</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.InternalRouter.html" translate="no">F1BotWeb.InternalRouter</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.InternalRouter.Helpers.html" translate="no">F1BotWeb.InternalRouter.Helpers</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Module with named helpers generated from F1BotWeb.InternalRouter.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.LayoutView.html" translate="no">F1BotWeb.LayoutView</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Live.Telemetry.html" translate="no">F1BotWeb.Live.Telemetry</a>
+
+  </div>
+
+    <div class="summary-synopsis"><h2 id="properties-3" class="section-heading">
+  <a href="#properties-3" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">properties-3</p>
+  </a>
+  Properties
+</h2>
+<ul><li><strong>id</strong> <em>:string, required: true</em> - The id of the live view</li><li><strong>session</strong> <em>:map</em> - The request info necessary for the view, such as params, cookie session info, etc.
+The session is signed and stored on the client, then provided back to the server
+when the client connects, or reconnects to the stateful view.</li></ul></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.PageController.html" translate="no">F1BotWeb.PageController</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.PageView.html" translate="no">F1BotWeb.PageView</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Router.html" translate="no">F1BotWeb.Router</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Router.Helpers.html" translate="no">F1BotWeb.Router.Helpers</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Module with named helpers generated from F1BotWeb.Router.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="F1BotWeb.Telemetry.html" translate="no">F1BotWeb.Telemetry</a>
 
   </div>
 

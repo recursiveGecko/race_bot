@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.4">
-    <meta name="project" content="f1_bot v0.2.1">
+    <meta name="project" content="f1_bot v0.3.0">
 
-    <title>F1Bot.F1Session.DriverCache — f1_bot v0.2.1</title>
+    <title>F1Bot.F1Session.DriverCache — f1_bot v0.3.0</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-760a4e723a.js"></script>
+    <script src="dist/sidebar_items-e17673b0ee.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -66,7 +66,7 @@
 f1_bot
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.2.1
+        v0.3.0
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -102,7 +102,7 @@ f1_bot
     </a>
 
   <span translate="no">F1Bot.F1Session.DriverCache</span> 
-  <small class="app-vsn" translate="no">(f1_bot v0.2.1)</small>
+  <small class="app-vsn" translate="no">(f1_bot v0.3.0)</small>
 
 </h1>
 
@@ -145,6 +145,14 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
+          <a href="#driver_list/1" translate="no">driver_list(driver_cache)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
           <a href="#get_driver_by_abbr/2" translate="no">get_driver_by_abbr(driver_cache, abbr)</a>
 
         </div>
@@ -170,6 +178,14 @@ f1_bot
       <div class="summary-row">
         <div class="summary-signature">
           <a href="#process_update/2" translate="no">process_update(driver_cache, partial_driver)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#process_updates/2" translate="no">process_updates(driver_cache, partial_drivers)</a>
 
         </div>
 
@@ -206,7 +222,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L9" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L10" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -238,6 +254,28 @@ Types
 Functions
     </h1>
     <div class="functions-list">
+<section class="detail" id="driver_list/1">
+
+  <div class="detail-header">
+    <a href="#driver_list/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">driver_list(driver_cache)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L20" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="get_driver_by_abbr/2">
 
   <div class="detail-header">
@@ -247,7 +285,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_driver_by_abbr(driver_cache, abbr)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L26" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L36" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -269,7 +307,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">get_driver_by_number(driver_cache, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L19" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L29" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -291,7 +329,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L15" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L16" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -313,7 +351,29 @@ Functions
     </a>
     <h1 class="signature" translate="no">process_update(driver_cache, partial_driver)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L50" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L77" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="process_updates/2">
+
+  <div class="detail-header">
+    <a href="#process_updates/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">process_updates(driver_cache, partial_drivers)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L60" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -335,7 +395,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">put_driver(driver_cache, driver_info)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L39" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_cache.ex#L49" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
