@@ -19,11 +19,11 @@ variable "environment" {
 
 locals {
   config_scope = "apps/f1bot_${var.environment}"
-  prod_hostname = "${var.environment == "master" ? "racing.recursiveprojects.cloud" : ""}"
-  dev_hostname = "${var.environment == "develop" ? "racing-dev.recursiveprojects.cloud" : ""}"
+  prod_hostname = "${var.environment == "master" ? "racing.recursiveprojects.cloud" : null}"
+  dev_hostname = "${var.environment == "develop" ? "racing-dev.recursiveprojects.cloud" : null}"
   hostname = "${coalesce(local.dev_hostname, local.prod_hostname, "")}"
-  prod_data_root = "${var.environment == "master" ? "/srv/f1bot/prod" : ""}"
-  dev_data_root = "${var.environment == "develop" ? "/srv/f1bot/dev" : ""}"
+  prod_data_root = "${var.environment == "master" ? "/srv/f1bot/prod" : null}"
+  dev_data_root = "${var.environment == "develop" ? "/srv/f1bot/dev" : null}"
   data_root = "${coalesce(local.dev_data_root, local.prod_data_root, "/srv/f1bot/unknown")}"
 }
 
