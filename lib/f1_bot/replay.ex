@@ -134,13 +134,17 @@ defmodule F1Bot.Replay do
   defp download_dataset(base_url, options) do
     files(options[:exclude_files_regex])
     |> Enum.map(fn f -> {f, download_file(base_url, f, options)} end)
-    |> Enum.map(fn {f, c} -> parse_file(f, c) end)
+    # Ignore failed downloads
+    |> Enum.filter(fn {_f, {:ok, _}} -> true; _ -> false end)
+    # Parse contents
+    |> Enum.map(fn {f, {:ok, contents}} -> parse_file(f, contents) end)
   end
 
   defp fetch_base_time(base_url, options) do
     {session_ts, json} =
       base_url
       |> download_file("Heartbeat.jsonStream", options)
+      |> elem(1)
       |> base_parse_file()
       |> List.last()
 
@@ -163,11 +167,18 @@ defmodule F1Bot.Replay do
       Logger.info("Replay downloading: #{full_url}")
     end
 
-    {:ok, %{status: 200, body: body}} =
+    res =
       Finch.build(:get, full_url)
       |> Finch.request(F1Bot.Finch)
 
-    body
+    case res do
+      {:ok, %{status: 200, body: body}} ->
+        {:ok, body}
+
+      _ ->
+        Logger.warn("Replay download failed: #{full_url}")
+        :error
+    end
   end
 
   defp parse_file(file_name, contents) do
