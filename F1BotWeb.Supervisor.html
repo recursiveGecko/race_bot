@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.3.1">
 
-    <title>F1Bot.ExternalApi.Discord.Live — f1_bot v0.3.1</title>
+    <title>F1BotWeb.Supervisor — f1_bot v0.3.1</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
     <script src="dist/sidebar_items-b51c323938.js"></script>
@@ -96,20 +96,16 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/live.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/supervisor.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.ExternalApi.Discord.Live</span> 
+  <span translate="no">F1BotWeb.Supervisor</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.3.1)</small>
 
 </h1>
 
-
-  <section id="moduledoc">
-
-  </section>
 
 
   <section id="summary" class="details-list">
@@ -138,7 +134,17 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#start_link/1" translate="no">start_link(_)</a>
+          <a href="#init/1" translate="no">init(state)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/elixir/Supervisor.html#c:init/1"><code class="inline">Supervisor.init/1</code></a>.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#start_link/1" translate="no">start_link(init_arg)</a>
 
         </div>
 
@@ -167,7 +173,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">child_spec(init_arg)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/live.ex#L3" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/supervisor.ex#L2" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -180,6 +186,28 @@ Functions
 <p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
   </section>
 </section>
+<section class="detail" id="init/1">
+
+  <div class="detail-header">
+    <a href="#init/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">init(state)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/supervisor.ex#L8" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Callback implementation for <a href="https://hexdocs.pm/elixir/Supervisor.html#c:init/1"><code class="inline">Supervisor.init/1</code></a>.</p>
+  </section>
+</section>
 <section class="detail" id="start_link/1">
 
   <div class="detail-header">
@@ -187,9 +215,9 @@ Functions
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">start_link(_)</h1>
+    <h1 class="signature" translate="no">start_link(init_arg)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/live.ex#L10" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/supervisor.ex#L4" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

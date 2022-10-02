@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.3.1">
 
-    <title>F1BotWeb.Router.Helpers — f1_bot v0.3.1</title>
+    <title>F1Bot.DelayedEvents — f1_bot v0.3.1</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
     <script src="dist/sidebar_items-b51c323938.js"></script>
@@ -96,20 +96,16 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1BotWeb.Router.Helpers</span> 
+  <span translate="no">F1Bot.DelayedEvents</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.3.1)</small>
 
 </h1>
 
-
-  <section id="moduledoc">
-<p>Module with named helpers generated from F1BotWeb.Router.</p>
-  </section>
 
 
   <section id="summary" class="details-list">
@@ -128,7 +124,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#live_path/2" translate="no">live_path(conn_or_endpoint, action)</a>
+          <a href="#available_delays/0" translate="no">available_delays()</a>
 
         </div>
 
@@ -136,7 +132,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#live_path/3" translate="no">live_path(conn_or_endpoint, action, params)</a>
+          <a href="#delay_step/0" translate="no">delay_step()</a>
 
         </div>
 
@@ -144,7 +140,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#live_url/2" translate="no">live_url(conn_or_endpoint, action)</a>
+          <a href="#delayed_topic_pairs/0" translate="no">delayed_topic_pairs()</a>
 
         </div>
 
@@ -152,7 +148,17 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#live_url/3" translate="no">live_url(conn_or_endpoint, action, params)</a>
+          <a href="#fetch_latest_event/3" translate="no">fetch_latest_event(delay_ms, event_scope, event_type)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>See <a href="F1Bot.DelayedEvents.Rebroadcaster.html#fetch_latest_event/3"><code class="inline">F1Bot.DelayedEvents.Rebroadcaster.fetch_latest_event/3</code></a>.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#max_delay_ms/0" translate="no">max_delay_ms()</a>
 
         </div>
 
@@ -160,51 +166,25 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#path/2" translate="no">path(data, path)</a>
+          <a href="#min_delay_ms/0" translate="no">min_delay_ms()</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Generates the path information including any necessary prefix.</p></div>
 
       </div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#static_integrity/2" translate="no">static_integrity(endpoint, path)</a>
+          <a href="#subscribe_with_delay!/3" translate="no">subscribe_with_delay!(topic_pairs, delay_ms, send_init_events \\ false)</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Generates an integrity hash to a static asset given its file path.</p></div>
 
       </div>
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#static_path/2" translate="no">static_path(conn, path)</a>
+          <a href="#topic_for_event/3" translate="no">topic_for_event(scope, type, delay_ms)</a>
 
         </div>
-
-          <div class="summary-synopsis"><p>Generates path to a static asset given its file path.</p></div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#static_url/2" translate="no">static_url(conn, path)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Generates url to a static asset given its file path.</p></div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#url/1" translate="no">url(data)</a>
-
-        </div>
-
-          <div class="summary-synopsis"><p>Generates the connection/endpoint base URL without any path information.</p></div>
 
       </div>
 
@@ -222,16 +202,16 @@ f1_bot
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="live_path/2">
+<section class="detail" id="available_delays/0">
 
   <div class="detail-header">
-    <a href="#live_path/2" class="detail-link" title="Link to this function">
+    <a href="#available_delays/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">live_path(conn_or_endpoint, action)</h1>
+    <h1 class="signature" translate="no">available_delays()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L13" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -244,16 +224,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="live_path/3">
+<section class="detail" id="delay_step/0">
 
   <div class="detail-header">
-    <a href="#live_path/3" class="detail-link" title="Link to this function">
+    <a href="#delay_step/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">live_path(conn_or_endpoint, action, params)</h1>
+    <h1 class="signature" translate="no">delay_step()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L16" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -266,16 +246,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="live_url/2">
+<section class="detail" id="delayed_topic_pairs/0">
 
   <div class="detail-header">
-    <a href="#live_url/2" class="detail-link" title="Link to this function">
+    <a href="#delayed_topic_pairs/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">live_url(conn_or_endpoint, action)</h1>
+    <h1 class="signature" translate="no">delayed_topic_pairs()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L42" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -288,16 +268,38 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="live_url/3">
+<section class="detail" id="fetch_latest_event/3">
 
   <div class="detail-header">
-    <a href="#live_url/3" class="detail-link" title="Link to this function">
+    <a href="#fetch_latest_event/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">live_url(conn_or_endpoint, action, params)</h1>
+    <h1 class="signature" translate="no">fetch_latest_event(delay_ms, event_scope, event_type)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L10" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="F1Bot.DelayedEvents.Rebroadcaster.html#fetch_latest_event/3"><code class="inline">F1Bot.DelayedEvents.Rebroadcaster.fetch_latest_event/3</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="max_delay_ms/0">
+
+  <div class="detail-header">
+    <a href="#max_delay_ms/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">max_delay_ms()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L15" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -310,16 +312,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="path/2">
+<section class="detail" id="min_delay_ms/0">
 
   <div class="detail-header">
-    <a href="#path/2" class="detail-link" title="Link to this function">
+    <a href="#min_delay_ms/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">path(data, path)</h1>
+    <h1 class="signature" translate="no">min_delay_ms()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L14" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -329,19 +331,21 @@ Functions
 
   <section class="docstring">
 
-<p>Generates the path information including any necessary prefix.</p>
+
   </section>
 </section>
-<section class="detail" id="static_integrity/2">
+<section class="detail" id="subscribe_with_delay!/3">
+
+    <span id="subscribe_with_delay!/2"></span>
 
   <div class="detail-header">
-    <a href="#static_integrity/2" class="detail-link" title="Link to this function">
+    <a href="#subscribe_with_delay!/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">static_integrity(endpoint, path)</h1>
+    <h1 class="signature" translate="no">subscribe_with_delay!(topic_pairs, delay_ms, send_init_events \\ false)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L18" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -351,19 +355,19 @@ Functions
 
   <section class="docstring">
 
-<p>Generates an integrity hash to a static asset given its file path.</p>
+
   </section>
 </section>
-<section class="detail" id="static_path/2">
+<section class="detail" id="topic_for_event/3">
 
   <div class="detail-header">
-    <a href="#static_path/2" class="detail-link" title="Link to this function">
+    <a href="#topic_for_event/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">static_path(conn, path)</h1>
+    <h1 class="signature" translate="no">topic_for_event(scope, type, delay_ms)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L37" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -373,51 +377,7 @@ Functions
 
   <section class="docstring">
 
-<p>Generates path to a static asset given its file path.</p>
-  </section>
-</section>
-<section class="detail" id="static_url/2">
 
-  <div class="detail-header">
-    <a href="#static_url/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">static_url(conn, path)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Generates url to a static asset given its file path.</p>
-  </section>
-</section>
-<section class="detail" id="url/1">
-
-  <div class="detail-header">
-    <a href="#url/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">url(data)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/router.ex#L1" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Generates the connection/endpoint base URL without any path information.</p>
   </section>
 </section>
 

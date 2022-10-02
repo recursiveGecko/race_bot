@@ -1,5 +1,8 @@
 404.html
-F1Bot.Cache.html
+F1Bot.DelayedEvents.Rebroadcaster.html
+F1Bot.DelayedEvents.Supervisor.html
+F1Bot.DelayedEvents.html
+F1Bot.Ets.html
 F1Bot.ExternalApi.Discord.Commands.Definition.html
 F1Bot.ExternalApi.Discord.Commands.Graph.html
 F1Bot.ExternalApi.Discord.Commands.OptionValidator.html
@@ -75,10 +78,12 @@ F1BotWeb.InternalRouter.Helpers.html
 F1BotWeb.InternalRouter.html
 F1BotWeb.LayoutView.html
 F1BotWeb.Live.Telemetry.html
+F1BotWeb.LiveHelpers.html
 F1BotWeb.PageController.html
 F1BotWeb.PageView.html
 F1BotWeb.Router.Helpers.html
 F1BotWeb.Router.html
+F1BotWeb.Supervisor.html
 F1BotWeb.Telemetry.html
 F1BotWeb.html
 Mix.Tasks.Backtest.html
@@ -91,8 +96,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-a1bf9bd92a.js
-dist/sidebar_items-e17673b0ee.js
+dist/search_items-2cab62458f.js
+dist/sidebar_items-b51c323938.js
 index.html
 license.html
 readme.html

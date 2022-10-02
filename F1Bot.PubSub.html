@@ -5,12 +5,12 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.28.4">
-    <meta name="project" content="f1_bot v0.3.0">
+    <meta name="project" content="f1_bot v0.3.1">
 
-    <title>F1Bot.PubSub — f1_bot v0.3.0</title>
+    <title>F1Bot.PubSub — f1_bot v0.3.1</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-e17673b0ee.js"></script>
+    <script src="dist/sidebar_items-b51c323938.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -66,7 +66,7 @@
 f1_bot
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.3.0
+        v0.3.1
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -102,7 +102,7 @@ f1_bot
     </a>
 
   <span translate="no">F1Bot.PubSub</span> 
-  <small class="app-vsn" translate="no">(f1_bot v0.3.0)</small>
+  <small class="app-vsn" translate="no">(f1_bot v0.3.1)</small>
 
 </h1>
 
@@ -142,6 +142,40 @@ f1_bot
 
       </div>
 
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#subscribe_all/1" translate="no">subscribe_all(topics)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#topic_for_event/2" translate="no">topic_for_event(scope, type)</a>
+
+        </div>
+
+          <div class="summary-synopsis"><p>See <a href="F1Bot.F1Session.Common.Helpers.html#topic_for_event/2"><code class="inline">F1Bot.F1Session.Common.Helpers.topic_for_event/2</code></a>.</p></div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#unsubscribe/1" translate="no">unsubscribe(topic)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#unsubscribe_all/1" translate="no">unsubscribe_all(topics)</a>
+
+        </div>
+
+      </div>
+
   </div>
 
   </section>
@@ -165,7 +199,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">broadcast(topic, message)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/pubsub.ex#L9" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/pubsub.ex#L13" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -190,6 +224,94 @@ Functions
     <h1 class="signature" translate="no">subscribe(topic, opts \\ [])</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/pubsub.ex#L5" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="subscribe_all/1">
+
+  <div class="detail-header">
+    <a href="#subscribe_all/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">subscribe_all(topics)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/pubsub.ex#L9" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="topic_for_event/2">
+
+  <div class="detail-header">
+    <a href="#topic_for_event/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">topic_for_event(scope, type)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/pubsub.ex#L25" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="F1Bot.F1Session.Common.Helpers.html#topic_for_event/2"><code class="inline">F1Bot.F1Session.Common.Helpers.topic_for_event/2</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="unsubscribe/1">
+
+  <div class="detail-header">
+    <a href="#unsubscribe/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">unsubscribe(topic)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/pubsub.ex#L17" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="unsubscribe_all/1">
+
+  <div class="detail-header">
+    <a href="#unsubscribe_all/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">unsubscribe_all(topics)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/pubsub.ex#L21" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
