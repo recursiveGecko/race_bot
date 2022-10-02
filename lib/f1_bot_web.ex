@@ -48,6 +48,8 @@ defmodule F1BotWeb do
       use Surface.LiveView,
         layout: {F1BotWeb.LayoutView, "live.html"}
 
+      import F1BotWeb.LiveHelpers
+
       unquote(view_helpers())
     end
   end
@@ -55,6 +57,8 @@ defmodule F1BotWeb do
   def live_component do
     quote do
       use Surface.LiveComponent
+
+      import F1BotWeb.LiveHelpers
 
       unquote(view_helpers())
     end

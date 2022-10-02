@@ -7,12 +7,18 @@ defmodule F1Bot.F1Session.Common.Helpers do
   @spec publish_events([Event.t()]) :: any()
   def publish_events(events) do
     for e <- events do
-      F1Bot.PubSub.broadcast("state_machine:#{e.scope}:#{e.type}", e)
+      topic = topic_for_event(e.scope, e.type)
+      F1Bot.PubSub.broadcast(topic, e)
     end
   end
 
   @spec subscribe_to_event(String.t() | atom(), String.t() | atom()) :: any()
   def subscribe_to_event(scope, type) do
-    F1Bot.PubSub.subscribe("state_machine:#{scope}:#{type}")
+    topic = topic_for_event(scope, type)
+    F1Bot.PubSub.subscribe(topic)
+  end
+
+  def topic_for_event(scope, type) do
+    "state_machine:#{scope}:#{type}"
   end
 end

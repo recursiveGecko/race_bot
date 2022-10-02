@@ -100,7 +100,10 @@ defmodule F1Bot.F1Session.SessionInfo do
           old_lap_number
       end
 
-    %{session_info | lap_number: lap_number}
+    session_info = %{session_info | lap_number: lap_number}
+    events = [Event.new(:session_info, :session_info_changed, session_info)]
+
+    {session_info, events}
   end
 
   def is_race?(session_info) do

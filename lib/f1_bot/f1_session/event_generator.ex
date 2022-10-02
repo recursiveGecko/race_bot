@@ -12,7 +12,8 @@ defmodule F1Bot.F1Session.EventGenerator do
         session_best_stats: Map.from_struct(session_best_stats)
       }
 
-      [Event.new(:driver, :summary, payload)]
+      scope = :"driver:#{driver_number}"
+      [Event.new(scope, :summary, payload)]
     else
       {:error, _} -> []
     end

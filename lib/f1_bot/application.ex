@@ -17,13 +17,12 @@ defmodule F1Bot.Application do
         {Finch, name: F1Bot.Finch},
         F1BotWeb.Telemetry,
         F1Bot.Repo,
-        F1Bot.Cache,
         {Phoenix.PubSub, name: F1Bot.PubSub},
-        F1BotWeb.Endpoint,
-        F1BotWeb.InternalEndpoint,
+        F1Bot.DelayedEvents.Supervisor,
         F1Bot.Output.Discord,
         F1Bot.Output.Twitter,
         F1Bot.F1Session.Server,
+        F1BotWeb.Supervisor,
         F1Bot.Replay.Server
       ]
       |> add_if_feature_flag_enabled(:connect_to_signalr, {

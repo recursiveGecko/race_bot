@@ -27,6 +27,7 @@ defmodule F1Bot.F1Session.Common.Event do
     field(:session_status, atom())
     field(:session_info, F1Session.SessionInfo.t())
     field(:driver_cache, F1Session.DriverCache.t())
+    field(:timestamp, integer())
   end
 
   @spec new(event_scope(), event_type(), any()) :: t()
@@ -34,7 +35,8 @@ defmodule F1Bot.F1Session.Common.Event do
     %__MODULE__{
       scope: scope,
       type: type,
-      payload: payload
+      payload: payload,
+      timestamp: System.monotonic_time(:millisecond)
     }
   end
 end

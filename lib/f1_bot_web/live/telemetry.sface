@@ -1,13 +1,48 @@
+<div class="p-2 w-full flex bg-slate-200">
+  <div class="text-xl flex items-center mr-12">
+    <img class="h-14 mr-3" src="/favicon.png" alt="logo">
+    <span class="text-2xl">Race Bot for F1</span>
+  </div>
+
+  <div class="flex flex-col">
+    <span class="font-semibold text-l">Delay</span>
+
+    <div class="flex mt-1 text-xl">
+      <button
+        class="mr-2 bg-transparent inline hover:bg-blue-500 text-blue-700 font-semibold hover:text-white px-2 border border-blue-500 hover:border-transparent rounded"
+        :on-click="delay-dec"
+        disabled={@pubsub_delay_ms <= min_delay_ms()}
+      >−</button>
+
+      <span class="w-8 text-center">{(@pubsub_delay_ms / 1000) |> trunc()}s</span>
+
+      <button
+        class="ml-2 bg-transparent inline hover:bg-blue-500 text-blue-700 font-semibold hover:text-white px-2 border border-blue-500 hover:border-transparent rounded"
+        :on-click="delay-inc"
+        disabled={@pubsub_delay_ms >= max_delay_ms()}
+      >+</button>
+    </div>
+  </div>
+</div>
+
 <div class="grid gap-4 sm:grid-cols-[min-content_1fr] p-2">
   <div class="text-2xl">
-    <span class="" :if={@session_clock != nil}>
+    <span
+      class=""
+      :if={@session_clock != nil and not is_race?(@session_info)}
+    >
       {Format.format_session_clock(@session_clock)}
     </span>
+
+    <span class="" :if={is_race?(@session_info)}>
+      Lap {@session_info.lap_number || 1}
+    </span>
   </div>
-    <div class="text-2xl">
-      <span class="" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}
-      </span>
-    </div>
+
+  <div class="text-2xl">
+    <span class="" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}
+    </span>
+  </div>
 
   <div class="sm:row-start-2">
     <Component.DriverSelector {=@driver_list} {=@drivers_of_interest} toggle_driver="toggle-driver" />
@@ -19,6 +54,7 @@
         :if={driver_info.driver_number in @drivers_of_interest}
         id={driver_info.driver_number}
         driver_info={driver_info}
+        delay_ms={@pubsub_delay_ms}
       />
     {/for}
   </div>

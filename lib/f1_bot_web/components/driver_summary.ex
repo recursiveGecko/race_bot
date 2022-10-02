@@ -1,7 +1,8 @@
 defmodule F1BotWeb.Component.DriverSummary do
-  use Surface.LiveComponent
+  use F1BotWeb, :live_component
   alias F1BotWeb.Component
 
+  prop delay_ms, :integer, required: true
   prop driver_info, :map, required: true
   data driver_summary, :map
   data session_best_stats, :map
@@ -16,19 +17,42 @@ defmodule F1BotWeb.Component.DriverSummary do
     {:ok, socket}
   end
 
-  def maybe_load_data(socket) do
+  def maybe_load_data(socket = %{assigns: %{initial_load_complete: true}}) do
     socket
-    |> assign_new(:driver_summary, fn ->
-      {:ok, data} = F1Bot.Cache.driver_summary(socket.assigns.driver_info.driver_number)
-      data
-    end)
-    |> assign_new(:session_best_stats, fn ->
-      {:ok, data} = F1Bot.Cache.session_best_stats()
-      Map.from_struct(data)
-    end)
   end
 
-  def handle_summary_event(_event = %{scope: :driver, type: :summary, payload: payload}) do
+  def maybe_load_data(socket) do
+    delay_ms = socket.assigns.delay_ms
+    driver_no = socket.assigns.driver_info.driver_number
+
+    delayed_payload = fetch_delayed_event_payload("driver:#{driver_no}", :summary, delay_ms, nil)
+
+    driver_summary =
+      case delayed_payload[:driver_summary] do
+        nil ->
+          F1Bot.F1Session.DriverDataRepo.DriverData.Summary.empty_summary()
+
+        value ->
+          value
+      end
+
+    session_best_stats =
+      case delayed_payload[:session_best_stats] do
+        nil ->
+          F1Bot.F1Session.DriverDataRepo.BestStats.new()
+          |> Map.from_struct()
+
+        value ->
+          value
+      end
+
+    socket
+    |> assign(:initial_load_complete, true)
+    |> assign(:driver_summary, driver_summary)
+    |> assign(:session_best_stats, session_best_stats)
+  end
+
+  def handle_summary_event(_event = %{type: :summary, payload: payload}) do
     %{
       driver_number: driver_number,
       driver_summary: driver_summary,
@@ -40,16 +64,6 @@ defmodule F1BotWeb.Component.DriverSummary do
       driver_summary: driver_summary,
       session_best_stats: session_best_stats
     )
-  end
-
-  def handle_reset_session() do
-    for driver_number <- 1..100 do
-      send_update(__MODULE__,
-        id: driver_number,
-        driver_summary: nil,
-        session_best_stats: nil
-      )
-    end
   end
 
   def render(assigns) do
@@ -159,10 +173,7 @@ defmodule F1BotWeb.Component.DriverSummary do
             >
               {Timex.format!(stint.start_time, "{h24}:{m}")} UTC
             </span>
-            <span
-              class="pr-2 sm:basis-auto text-sm text-gray-500"
-              title="Stint start/end (lap numbers)"
-            >
+            <span class="pr-2 sm:basis-auto text-sm text-gray-500" title="Stint start/end (lap numbers)">
               Laps: {stint.lap_start}-{stint.lap_end}
             </span>
             <span

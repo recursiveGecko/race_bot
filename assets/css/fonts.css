@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'Exo 2';
+  font-weight: 100 300 400 500 600 700 800 900;
+  src: url('/fonts/Exo2/Exo2-VariableFont_wght.ttf') format("truetype-variations");
+}
+
+@font-face {
+  font-family: 'Exo 2';
+  font-style: italic;
+  font-weight: 100 300 400 500 600 700 800 900;
+  src: url('/fonts/Exo2/Exo2-Italic-VariableFont_wght.ttf') format("truetype-variations");
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400;
+  src: url('/fonts/Roboto/Roboto-Regular.ttf') format("truetype");
+}

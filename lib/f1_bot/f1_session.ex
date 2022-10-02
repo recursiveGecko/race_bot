@@ -132,11 +132,13 @@ defmodule F1Bot.F1Session do
       session.driver_data_repo
       |> F1Session.DriverDataRepo.push_lap_number(driver_number, lap_number, timestamp)
 
-    session_info =
+    {session_info, events} =
       session.session_info
       |> F1Session.SessionInfo.push_lap_number(lap_number)
 
-    %{session | driver_data_repo: driver_data_repo, session_info: session_info}
+    session = %{session | driver_data_repo: driver_data_repo, session_info: session_info}
+
+    {session, events}
   end
 
   def push_race_control_messages(session, messages) do

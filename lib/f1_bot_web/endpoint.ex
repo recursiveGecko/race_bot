@@ -10,6 +10,11 @@ defmodule F1BotWeb.Endpoint do
     signing_salt: "ClYKEeTa"
   ]
 
+  defp add_response_headers(conn, _opts) do
+    conn
+    |> put_resp_header("Referrer-Policy", "no-referrer")
+  end
+
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
@@ -46,5 +51,8 @@ defmodule F1BotWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+
+  plug :add_response_headers
+
   plug F1BotWeb.Router
 end

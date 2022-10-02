@@ -21,6 +21,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     }
   end
 
+  def empty_summary() do
+    data = DriverData.new(0)
+    hist = TrackStatusHistory.new()
+    generate(data, hist)
+  end
+
   defp stints(data, track_status_hist) do
     stints =
       data.stints.data

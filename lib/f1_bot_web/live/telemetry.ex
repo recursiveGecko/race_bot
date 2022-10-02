@@ -9,29 +9,15 @@ defmodule F1BotWeb.Live.Telemetry do
   data drivers_of_interest, :list, default: [1, 11, 16, 55]
 
   def mount(_params, _session, socket) do
-    F1Bot.PubSub.subscribe("state_machine:driver:list")
-    F1Bot.PubSub.subscribe("state_machine:driver:summary")
-    F1Bot.PubSub.subscribe("state_machine:session_info:session_info_changed")
-    F1Bot.PubSub.subscribe("state_machine:session_info:session_clock")
+    initial_delay = 25_000
 
     socket =
       socket
       |> Surface.init()
-      |> load_data()
+      |> init_assigns()
+      |> subscribe_with_delay(initial_delay)
 
     {:ok, socket}
-  end
-
-  defp load_data(socket) do
-    maybe_assign = [
-      {:driver_list, F1Bot.Cache.driver_list()},
-      {:session_clock, F1Bot.Cache.session_clock()},
-      {:session_info, F1Bot.Cache.session_info()}
-    ]
-
-    maybe_assign
-    |> Enum.filter(fn {_, {result_type, _}} -> result_type == :ok end)
-    |> Enum.reduce(socket, fn {key, {:ok, val}}, socket -> assign(socket, key, val) end)
   end
 
   @impl true
@@ -46,13 +32,34 @@ defmodule F1BotWeb.Live.Telemetry do
         [driver_no | socket.assigns.drivers_of_interest]
       end
 
-    socket = assign(socket, :drivers_of_interest, drivers_of_interest)
+    socket =
+      socket
+      |> assign(:drivers_of_interest, drivers_of_interest)
+      |> subscribe_with_delay()
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_info(e = %{scope: :driver, type: :summary}, socket) do
+  def handle_event("delay-inc", _params, socket) do
+    step_ms = F1Bot.DelayedEvents.delay_step()
+    delay_ms = socket.assigns.pubsub_delay_ms + step_ms
+    socket = subscribe_with_delay(socket, delay_ms)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("delay-dec", _params, socket) do
+    step_ms = F1Bot.DelayedEvents.delay_step()
+    delay_ms = socket.assigns.pubsub_delay_ms - step_ms
+    socket = subscribe_with_delay(socket, delay_ms)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(e = %{type: :summary}, socket) do
     Component.DriverSummary.handle_summary_event(e)
     {:noreply, socket}
   end
@@ -83,4 +90,61 @@ defmodule F1BotWeb.Live.Telemetry do
     socket = assign(socket, session_info: session_info)
     {:noreply, socket}
   end
+
+  defp subscribe_with_delay(socket, delay_ms \\ nil) do
+    delay_ms =
+      if delay_ms == nil do
+        socket.assigns.pubsub_delay_ms
+      else
+        delay_ms
+      end
+
+    existing_topics = socket.assigns[:pubsub_delayed_topics]
+
+    if existing_topics do
+      F1Bot.PubSub.unsubscribe_all(existing_topics)
+    end
+
+    global_topics = [
+      {:driver, :list},
+      {:session_info, :session_info_changed},
+      {:session_info, :session_clock}
+    ]
+
+    per_driver_topics = per_driver_topic_pairs(socket.assigns.drivers_of_interest)
+
+    topics_to_subscribe = global_topics ++ per_driver_topics
+
+    {:ok, subscribed_topics} =
+      F1Bot.DelayedEvents.subscribe_with_delay!(
+        topics_to_subscribe,
+        delay_ms,
+        true
+      )
+
+    socket
+    |> assign(:pubsub_delay_ms, delay_ms)
+    |> assign(:pubsub_delayed_topics, subscribed_topics)
+  end
+
+  defp per_driver_topic_pairs(driver_numbers) do
+    driver_numbers
+    |> Enum.map(fn driver_no ->
+      {:"driver:#{driver_no}", :summary}
+    end)
+  end
+
+  defp init_assigns(socket) do
+    keys = [driver_list: [], session_clock: nil, session_info: nil]
+
+    Enum.reduce(keys, socket, fn {k, v}, s ->
+      assign_new(s, k, fn -> v end)
+    end)
+  end
+
+  defp min_delay_ms(), do: F1Bot.DelayedEvents.min_delay_ms()
+  defp max_delay_ms(), do: F1Bot.DelayedEvents.max_delay_ms()
+
+  defp is_race?(_session_info = nil), do: false
+  defp is_race?(session_info), do: F1Bot.F1Session.SessionInfo.is_race?(session_info)
 end

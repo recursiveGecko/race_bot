@@ -55,17 +55,18 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
   end
 
   defp handle_lap_numbers(session, drivers, timestamp) do
-    session =
+    {session, events} =
       drivers
       |> Enum.filter(fn {_, data} -> is_integer(data["NumberOfLaps"]) end)
-      |> Enum.reduce(session, fn {driver_number, data}, session ->
+      |> Enum.reduce({session, []}, fn {driver_number, data}, {session, events} ->
         driver_number = String.trim(driver_number) |> String.to_integer()
         lap_number = data["NumberOfLaps"]
 
-        F1Session.push_lap_number(session, driver_number, lap_number, timestamp)
+        {new_session, new_events} = F1Session.push_lap_number(session, driver_number, lap_number, timestamp)
+        {new_session, events ++ new_events}
       end)
 
-    {session, []}
+    {session, events}
   end
 
   defp handle_sector_times(session, drivers, timestamp) do
