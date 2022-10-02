@@ -215,7 +215,7 @@ defmodule F1Bot.F1Session.Server do
   def handle_call({:replace_session, session}, _from, state) do
     state = %{state | session: session}
     events = F1Session.generate_state_sync_events(session)
-    F1Bot.DelayedEvents.send_to_all_caches(events)
+    F1Bot.DelayedEvents.push_to_all_caches(events)
 
     Logger.info("Session replaced!")
 

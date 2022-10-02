@@ -71,13 +71,17 @@ defmodule F1Bot.F1Session.SessionInfo do
     merged = merge(old, new)
     session_info = struct!(__MODULE__, merged)
 
-    events = [Event.new(:session_info, :session_info_changed, session_info)]
+    events = [to_event(session_info)]
 
     {session_info, events, session_changed?}
   end
 
   def is_race?(session_info) do
     session_info.type == "Race"
+  end
+
+  def to_event(session_info = %__MODULE__{}) do
+    Event.new(:session_info, :session_info_changed, session_info)
   end
 
   defp merge(old, new) do

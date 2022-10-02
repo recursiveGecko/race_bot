@@ -52,6 +52,8 @@ defmodule F1Bot.F1Session.EventGenerator do
 
     [
       F1Session.DriverCache.to_event(session.driver_cache),
+      F1Session.SessionInfo.to_event(session.session_info),
+      F1Session.LapCounter.to_event(session.lap_counter),
       Enum.map(driver_numbers, &generate_driver_summary_events(session, &1)),
       F1Session.Clock.to_event(session.clock),
     ]
