@@ -33,6 +33,10 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
     {:ok, session, all_events}
   end
 
+  def process_packet(_session, _invalid_packet) do
+    {:error, :invalid_packet}
+  end
+
   defp handle_lap_times(session, drivers, timestamp) do
     drivers
     |> Enum.filter(fn {_, data} -> data["LastLapTime"]["Value"] not in [nil, ""] end)
@@ -62,7 +66,9 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
         driver_number = String.trim(driver_number) |> String.to_integer()
         lap_number = data["NumberOfLaps"]
 
-        {new_session, new_events} = F1Session.push_lap_number(session, driver_number, lap_number, timestamp)
+        {new_session, new_events} =
+          F1Session.push_lap_number(session, driver_number, lap_number, timestamp)
+
         {new_session, events ++ new_events}
       end)
 
