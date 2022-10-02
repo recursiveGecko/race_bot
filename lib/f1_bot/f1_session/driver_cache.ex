@@ -64,11 +64,10 @@ defmodule F1Bot.F1Session.DriverCache do
       end)
 
     events =
-      with true <- new_driver_cache != driver_cache,
-           {:ok, driver_list} <- driver_list(new_driver_cache) do
-        [Event.new(:driver, :list, driver_list)]
+      if new_driver_cache != driver_cache do
+        [to_event(new_driver_cache)]
       else
-        _ -> []
+        []
       end
 
     {new_driver_cache, events}
@@ -94,5 +93,10 @@ defmodule F1Bot.F1Session.DriverCache do
         _partial_driver
       ) do
     {:error, :invalid_driver}
+  end
+
+  def to_event(driver_cache = %__MODULE__{}) do
+    {:ok, driver_list} = driver_list(driver_cache)
+    Event.new(:driver, :list, driver_list)
   end
 end

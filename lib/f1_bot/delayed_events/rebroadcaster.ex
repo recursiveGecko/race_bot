@@ -14,7 +14,11 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
       topic_pairs: topic_pairs
     }
 
-    GenServer.start_link(__MODULE__, options, name: :"#{__MODULE__}::#{delay_ms}")
+    GenServer.start_link(__MODULE__, options, name: server_via(delay_ms))
+  end
+
+  def server_via(delay_ms) do
+    :"#{__MODULE__}::#{delay_ms}"
   end
 
   def fetch_latest_event(delay_ms, event_scope, event_type) do

@@ -180,17 +180,27 @@ defmodule F1Bot.F1Session.Server do
       log_stray_packets: true
     }
 
-    # process_live_timing_packet is expected to rescue errors to prevent the entire GenServer from crashing
-    result = LiveTimingHandlers.process_live_timing_packet(session, packet, options)
-
     {session, events} =
-      case result do
-        {:ok, session, events} ->
-          after_live_timing_packet(packet, session)
-          {session, events}
+      try do
+        result = LiveTimingHandlers.process_live_timing_packet(session, packet, options)
 
-        {:error, error} ->
-          Logger.warn("Error occurred while processing live timing packet: #{inspect(error)}")
+        case result do
+          {:ok, session, events} ->
+            after_live_timing_packet(packet, session)
+            {session, events}
+
+          e ->
+            Logger.warn(
+              "Recoverable error occurred while processing live timing packet: #{inspect(e)}"
+            )
+
+            {session, []}
+        end
+      rescue
+        e ->
+          err_text = Exception.format(:error, e, __STACKTRACE__)
+          Logger.error("Rescued an error while processing live timing packet: #{err_text}")
+          Logger.error("Stacktrace: \n#{Exception.format_stacktrace(__STACKTRACE__)}")
 
           {session, []}
       end
@@ -204,6 +214,9 @@ defmodule F1Bot.F1Session.Server do
   @impl true
   def handle_call({:replace_session, session}, _from, state) do
     state = %{state | session: session}
+    events = F1Session.generate_state_sync_events(session)
+    F1Bot.DelayedEvents.send_to_all_caches(events)
+
     Logger.info("Session replaced!")
 
     {:reply, :ok, state}

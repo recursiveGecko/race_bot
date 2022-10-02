@@ -1,4 +1,6 @@
 defmodule F1Bot.DelayedEvents do
+  alias F1Bot.DelayedEvents.Rebroadcaster
+
   @min_delay 15_000
   @max_delay 45_000
   @delay_step 1_000
@@ -42,8 +44,9 @@ defmodule F1Bot.DelayedEvents do
   def delayed_topic_pairs do
     topics = [
       {:driver, :list},
+      {:lap_counter, :changed},
       {:session_info, :session_info_changed},
-      {:session_info, :session_clock}
+      {:session_clock, :changed}
     ]
 
     per_driver_topics =
@@ -53,6 +56,16 @@ defmodule F1Bot.DelayedEvents do
       end)
 
     topics ++ per_driver_topics
+  end
+
+  def send_to_all_caches(events) do
+    for delay_ms <- @available_delays do
+      via = Rebroadcaster.server_via(delay_ms)
+
+      for e <- events do
+        send(via, e)
+      end
+    end
   end
 
   defp send_init_events(topic_pairs, delay_ms, pid) do

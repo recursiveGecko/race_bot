@@ -16,8 +16,6 @@ defmodule F1Bot.F1Session.SessionInfo do
     field(:www_path, String.t())
     field(:start_date, DateTime.t())
     field(:end_date, DateTime.t())
-
-    field(:lap_number, pos_integer() | nil)
   end
 
   def new do
@@ -64,53 +62,31 @@ defmodule F1Bot.F1Session.SessionInfo do
     name_match = old.gp_name == new.gp_name
     session_match = old.type == new.type
 
-    session_changed? = not name_match or not session_match
+    had_info? = nil not in [old.gp_name, old.type, old.start_date, old.end_date]
+    session_changed? = had_info? and (not name_match or not session_match)
 
     old = Map.from_struct(old)
     new = Map.from_struct(new)
 
-    merged = Map.merge(old, new)
+    merged = merge(old, new)
     session_info = struct!(__MODULE__, merged)
-
-    session_info =
-      if session_changed? do
-        reset_counters(session_info)
-      else
-        session_info
-      end
 
     events = [Event.new(:session_info, :session_info_changed, session_info)]
 
     {session_info, events, session_changed?}
   end
 
-  def push_lap_number(
-        session_info = %__MODULE__{lap_number: old_lap_number},
-        lap_number
-      ) do
-    lap_number =
-      cond do
-        is_integer(old_lap_number) and is_integer(lap_number) and lap_number > old_lap_number ->
-          lap_number
-
-        not is_integer(old_lap_number) and is_integer(lap_number) ->
-          lap_number
-
-        true ->
-          old_lap_number
-      end
-
-    session_info = %{session_info | lap_number: lap_number}
-    events = [Event.new(:session_info, :session_info_changed, session_info)]
-
-    {session_info, events}
-  end
-
   def is_race?(session_info) do
     session_info.type == "Race"
   end
 
-  def reset_counters(session_info) do
-    %__MODULE__{session_info | lap_number: nil}
+  defp merge(old, new) do
+    Map.merge(old, new, fn _k, a, b ->
+      if b == nil do
+        a
+      else
+        b
+      end
+    end)
   end
 end

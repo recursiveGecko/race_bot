@@ -5,8 +5,9 @@ defmodule F1BotWeb.Live.Telemetry do
 
   data session_clock, :any, default: nil
   data session_info, :any, default: nil
-  data driver_list, :list
-  data drivers_of_interest, :list, default: [1, 11, 16, 55]
+  data driver_list, :list, default: []
+  data lap_counter, :map, default: nil
+  data drivers_of_interest, :list, default: [1, 11, 16, 55, 44, 63]
 
   def mount(_params, _session, socket) do
     initial_delay = 25_000
@@ -14,7 +15,6 @@ defmodule F1BotWeb.Live.Telemetry do
     socket =
       socket
       |> Surface.init()
-      |> init_assigns()
       |> subscribe_with_delay(initial_delay)
 
     {:ok, socket}
@@ -75,7 +75,17 @@ defmodule F1BotWeb.Live.Telemetry do
 
   @impl true
   def handle_info(
-        %{scope: :session_info, type: :session_clock, payload: session_clock},
+        %{scope: :lap_counter, type: :changed, payload: lap_counter},
+        socket
+      ) do
+    lap_counter = Map.delete(lap_counter, :__struct__)
+    socket = assign(socket, lap_counter: lap_counter)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(
+        %{scope: :session_clock, type: :changed, payload: session_clock},
         socket
       ) do
     socket = assign(socket, session_clock: session_clock)
@@ -107,8 +117,9 @@ defmodule F1BotWeb.Live.Telemetry do
 
     global_topics = [
       {:driver, :list},
+      {:lap_counter, :changed},
       {:session_info, :session_info_changed},
-      {:session_info, :session_clock}
+      {:session_clock, :changed}
     ]
 
     per_driver_topics = per_driver_topic_pairs(socket.assigns.drivers_of_interest)
@@ -131,14 +142,6 @@ defmodule F1BotWeb.Live.Telemetry do
     driver_numbers
     |> Enum.map(fn driver_no ->
       {:"driver:#{driver_no}", :summary}
-    end)
-  end
-
-  defp init_assigns(socket) do
-    keys = [driver_list: [], session_clock: nil, session_info: nil]
-
-    Enum.reduce(keys, socket, fn {k, v}, s ->
-      assign_new(s, k, fn -> v end)
     end)
   end
 

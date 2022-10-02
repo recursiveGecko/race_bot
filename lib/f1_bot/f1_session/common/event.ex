@@ -4,33 +4,17 @@ defmodule F1Bot.F1Session.Common.Event do
 
   alias F1Bot.F1Session
 
-  @type event_scope :: :driver | :aggregate_stats | :session_status | :race_control | :session_info
-  @type event_type ::
-          :fastest_lap
-          | :fastest_sector
-          | :top_speed
-          | :tyre_change
-          | :started
-          | :message
-          | :summary
-          | :session_clock
-          | :list
-          | :session_info_changed
-          | :reset_session
-
   typedstruct do
     @typedoc "Emitted state machine event"
 
-    field(:scope, event_scope(), enforce: true)
-    field(:type, event_type(), enforce: true)
+    field(:scope, atom(), enforce: true)
+    field(:type, atom(), enforce: true)
     field(:payload, any(), enforce: true)
-    field(:session_status, atom())
-    field(:session_info, F1Session.SessionInfo.t())
-    field(:driver_cache, F1Session.DriverCache.t())
     field(:timestamp, integer())
+    field(:meta, map())
   end
 
-  @spec new(event_scope(), event_type(), any()) :: t()
+  @spec new(atom(), atom(), any()) :: t()
   def new(scope, type, payload) do
     %__MODULE__{
       scope: scope,
@@ -38,5 +22,38 @@ defmodule F1Bot.F1Session.Common.Event do
       payload: payload,
       timestamp: System.monotonic_time(:millisecond)
     }
+  end
+
+  def hydrate_driver_info(events, session, driver_numbers) when is_list(events) do
+    driver_info_map =
+      for driver_no <- driver_numbers, into: %{} do
+        driver_info =
+          case F1Session.driver_info_by_number(session, driver_no) do
+            {:ok, info} -> info
+            {:error, _} -> nil
+          end
+
+        {driver_no, driver_info}
+      end
+
+    for e <- events do
+      existing_meta = e.meta || %{}
+      new_meta = Map.merge(existing_meta, %{driver_info: driver_info_map})
+      %{e | meta: new_meta}
+    end
+  end
+
+  def hydrate_session_info(events, session = %F1Session{}) when is_list(events) do
+    new_meta = %{
+      lap_number: session.lap_counter.current,
+      session_type: session.session_info.type,
+    }
+
+    for e <- events do
+      existing_meta = e.meta || %{}
+      meta = Map.merge(existing_meta, new_meta)
+
+      Map.put(e, :meta, meta)
+    end
   end
 end

@@ -26,15 +26,18 @@
 </div>
 
 <div class="grid gap-4 sm:grid-cols-[min-content_1fr] p-2">
-  <div class="flex flex-col">
-    {#if is_race?(@session_info)}
-      <span class="text-2xl">
-        Lap {@session_info.lap_number || 1}
-      </span>
+  <div class="row-start-3 sm:row-start-1 flex items-baseline sm:flex-col">
+    {#if is_race?(@session_info) and @lap_counter != nil}
+      <div class="text-2xl flex items-baseline mr-4 sm:mr-0">
+        <span class="mr-2">Lap</span>
+        <span>{@lap_counter.current || 0}</span>
+        <span class="text-lg mx-1">/</span>
+        <span class="text-lg" :if={@lap_counter.total != nil}>{@lap_counter.total}</span>
+      </div>
     {/if}
 
     {#if @session_clock != nil}
-      <span class={"text-sm": is_race?(@session_info), "text-2xl": not is_race?(@session_info)}>
+      <span class={"sm:text-sm": is_race?(@session_info), "text-2xl": not is_race?(@session_info)}>
         {Format.format_session_clock(@session_clock)}
       </span>
     {/if}

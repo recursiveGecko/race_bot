@@ -7,8 +7,10 @@ defmodule F1Bot.F1Session do
   `F1Bot.F1Session.Server`.
   """
   use TypedStruct
+  require Logger
 
   alias F1Bot.F1Session
+  alias F1Bot.F1Session.Common.Event
 
   typedstruct do
     @typedoc "F1 Session State"
@@ -24,6 +26,7 @@ defmodule F1Bot.F1Session do
     field(:session_info, F1Session.SessionInfo.t(), default: F1Session.SessionInfo.new())
     field(:session_status, atom())
     field(:clock, F1Session.Clock.t())
+    field(:lap_counter, F1Session.LapCounter.t(), default: F1Session.LapCounter.new())
     field(:event_deduplication, map(), default: %{})
   end
 
@@ -82,7 +85,10 @@ defmodule F1Bot.F1Session do
 
     session = %{session | driver_data_repo: repo}
 
-    events = hydrate_events(session, events)
+    events =
+      events
+      |> Event.hydrate_session_info(session)
+      |> Event.hydrate_driver_info(session, [driver_number])
 
     summary_events =
       F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
@@ -100,7 +106,10 @@ defmodule F1Bot.F1Session do
 
     session = %{session | driver_data_repo: repo}
 
-    events = hydrate_events(session, events)
+    events =
+      events
+      |> Event.hydrate_session_info(session)
+      |> Event.hydrate_driver_info(session, [driver_number])
 
     summary_events =
       F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
@@ -132,13 +141,18 @@ defmodule F1Bot.F1Session do
       session.driver_data_repo
       |> F1Session.DriverDataRepo.push_lap_number(driver_number, lap_number, timestamp)
 
-    {session_info, events} =
-      session.session_info
-      |> F1Session.SessionInfo.push_lap_number(lap_number)
+    session = %{session | driver_data_repo: driver_data_repo}
 
-    session = %{session | driver_data_repo: driver_data_repo, session_info: session_info}
+    {session, []}
+  end
 
-    {session, events}
+  def push_session_lap_counter(session, partial_lap_counter) do
+    lap_counter = F1Session.LapCounter.update(session.lap_counter, partial_lap_counter)
+    session = %{session | lap_counter: lap_counter}
+
+    event = F1Session.LapCounter.to_event(lap_counter)
+
+    {session, [event]}
   end
 
   def push_race_control_messages(session, messages) do
@@ -146,7 +160,9 @@ defmodule F1Bot.F1Session do
       session.race_control
       |> F1Session.RaceControl.push_messages(messages)
 
-    events = hydrate_events(session, events)
+    events =
+      events
+      |> Event.hydrate_session_info(session)
 
     session = %{session | race_control: race_control}
     {session, events}
@@ -187,7 +203,9 @@ defmodule F1Bot.F1Session do
         []
       end
 
-    events = hydrate_events(session, events)
+    events =
+      events
+      |> Event.hydrate_session_info(session)
 
     {session, events}
   end
@@ -199,7 +217,10 @@ defmodule F1Bot.F1Session do
 
     session = %{session | driver_data_repo: repo}
 
-    events = hydrate_events(session, events)
+    events =
+      events
+      |> Event.hydrate_session_info(session)
+      |> Event.hydrate_driver_info(session, [driver_number])
 
     summary_events =
       F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
@@ -231,7 +252,10 @@ defmodule F1Bot.F1Session do
 
   def update_clock(session, server_time, local_time, remaining, is_running) do
     clock = F1Session.Clock.new(server_time, local_time, remaining, is_running)
-    %{session | clock: clock}
+    session = %{session | clock: clock}
+    events = [F1Session.Clock.to_event(clock)]
+
+    {session, events}
   end
 
   def periodic_tick(session) do
@@ -264,6 +288,7 @@ defmodule F1Bot.F1Session do
       | driver_data_repo: F1Session.DriverDataRepo.new(),
         track_status_history: F1Session.TrackStatusHistory.new(),
         race_control: F1Session.RaceControl.new(),
+        lap_counter: F1Session.LapCounter.new(),
         clock: nil
     }
 
@@ -272,14 +297,5 @@ defmodule F1Bot.F1Session do
     {session, reset_events}
   end
 
-  defp hydrate_events(session, events) do
-    for e <- events do
-      %{
-        e
-        | session_status: session.session_status,
-          session_info: session.session_info,
-          driver_cache: session.driver_cache
-      }
-    end
-  end
+  defdelegate generate_state_sync_events(session), to: F1Session.EventGenerator
 end

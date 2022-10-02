@@ -20,8 +20,9 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.ExtrapolatedClock do
          {:ok, server_time} <- Timex.parse(utc, "{ISO:Extended}") do
       local_time = Timex.now()
       is_running = !!data["Extrapolating"]
-      session = F1Session.update_clock(session, server_time, local_time, remaining, is_running)
-      {:ok, session, []}
+      {session, events} = F1Session.update_clock(session, server_time, local_time, remaining, is_running)
+
+      {:ok, session, events}
     else
       {:error, error} ->
         Logger.error("Failed to parse extrapolated clock: #{inspect(error)}")

@@ -17,14 +17,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
   Called by SignalR client for each received packet.
   """
   def process_live_timing_packet(session = %F1Session{}, packet = %Packet{}, options) do
-    try do
-      process_for_topic(session, packet, options)
-    rescue
-      e ->
-        err_text = Exception.format(:error, e, __STACKTRACE__)
-        Logger.error("LiveTimingHandlers rescued an error. Details:\n#{err_text}")
-        session
-    end
+    process_for_topic(session, packet, options)
   end
 
   defp process_for_topic(session, packet = %Packet{topic: "DriverList"}, _options) do
@@ -41,6 +34,10 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
 
   defp process_for_topic(session, packet = %Packet{topic: "ExtrapolatedClock"}, _options) do
     LiveTimingHandlers.ExtrapolatedClock.process_packet(session, packet)
+  end
+
+  defp process_for_topic(session, packet = %Packet{topic: "LapCount"}, _options) do
+    LiveTimingHandlers.LapCount.process_packet(session, packet)
   end
 
   # Ignore initialization messages sent on other topics

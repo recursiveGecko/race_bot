@@ -20,8 +20,9 @@ config :f1_bot,
     "Position.z",
     "Heartbeat",
     # Session time remaining and real time clock sync
-    "ExtrapolatedClock"
-    #  "AudioStreams",
+    "ExtrapolatedClock",
+    # Session-wise current lap counter and total # of laps
+    "LapCount"
   ]
 
 # Configures the endpoint

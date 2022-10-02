@@ -1,6 +1,8 @@
 defmodule F1Bot.F1Session.Clock do
   use TypedStruct
 
+  alias F1Bot.F1Session.Common.Event
+
   typedstruct do
     field :utc_server_time_sync, DateTime.t()
     field :utc_local_time_sync, DateTime.t()
@@ -40,5 +42,10 @@ defmodule F1Bot.F1Session.Clock do
     server_time = Timex.add(clock.utc_server_time_sync, local_time_delta)
 
     session_clock_from_server_time(clock, server_time)
+  end
+
+  def to_event(clock = %__MODULE__{}, local_time \\ Timex.now()) do
+    session_clock = session_clock_from_local_time(clock, local_time)
+    Event.new(:session_clock, :changed, session_clock)
   end
 end

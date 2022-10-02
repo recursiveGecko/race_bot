@@ -34,12 +34,27 @@ defmodule F1Bot.F1Session.EventGenerator do
     with clock when clock != nil <- session.clock,
          session_clock <- F1Session.Clock.session_clock_from_local_time(clock, Timex.now()),
          last_session_clock <- session.event_deduplication[:session_clock],
-         false <- session_clock == last_session_clock do
-      events = [Event.new(:session_info, :session_clock, session_clock)]
+         true <- session_clock != last_session_clock do
+      events = [F1Session.Clock.to_event(clock)]
       session = put_in(session, [Access.key(:event_deduplication), :session_clock], session_clock)
       {session, events}
     else
       _ -> {session, []}
     end
+  end
+
+  def generate_state_sync_events(session = %F1Session{}) do
+    driver_numbers =
+      session
+      |> F1Session.driver_list()
+      |> elem(1)
+      |> Enum.map(& &1.driver_number)
+
+    [
+      F1Session.DriverCache.to_event(session.driver_cache),
+      Enum.map(driver_numbers, &generate_driver_summary_events(session, &1)),
+      F1Session.Clock.to_event(session.clock),
+    ]
+    |> List.flatten()
   end
 end
