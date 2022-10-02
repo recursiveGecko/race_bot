@@ -26,17 +26,18 @@
 </div>
 
 <div class="grid gap-4 sm:grid-cols-[min-content_1fr] p-2">
-  <div class="text-2xl">
-    <span
-      class=""
-      :if={@session_clock != nil and not is_race?(@session_info)}
-    >
-      {Format.format_session_clock(@session_clock)}
-    </span>
+  <div class="flex flex-col">
+    {#if is_race?(@session_info)}
+      <span class="text-2xl">
+        Lap {@session_info.lap_number || 1}
+      </span>
+    {/if}
 
-    <span class="" :if={is_race?(@session_info)}>
-      Lap {@session_info.lap_number || 1}
-    </span>
+    {#if @session_clock != nil}
+      <span class={"text-sm": is_race?(@session_info), "text-2xl": not is_race?(@session_info)}>
+        {Format.format_session_clock(@session_clock)}
+      </span>
+    {/if}
   </div>
 
   <div class="text-2xl">
