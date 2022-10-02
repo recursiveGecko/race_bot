@@ -10,7 +10,7 @@
     <title>F1Bot.F1Session.Common.Event — f1_bot v0.3.1</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-b51c323938.js"></script>
+    <script src="dist/sidebar_items-6f25f8ff3a.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -128,22 +128,6 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#t:event_scope/0" translate="no">event_scope()</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#t:event_type/0" translate="no">event_type()</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
           <a href="#t:t/0" translate="no">t()</a>
 
         </div>
@@ -158,6 +142,22 @@ f1_bot
     <h2>
       <a href="#functions">Functions</a>
     </h2>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#hydrate_driver_info/3" translate="no">hydrate_driver_info(events, session, driver_numbers)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#hydrate_session_info/2" translate="no">hydrate_session_info(events, session)</a>
+
+        </div>
+
+      </div>
 
       <div class="summary-row">
         <div class="summary-signature">
@@ -181,14 +181,14 @@ f1_bot
 Types
     </h1>
     <div class="types-list">
-<section class="detail" id="t:event_scope/0">
+<section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#t:event_scope/0" class="detail-link" title="Link to this type">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">event_scope()</h1>
+    <h1 class="signature" translate="no">t()</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L7" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -202,82 +202,12 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> event_scope() ::
-  :driver | :aggregate_stats | :session_status | :race_control | :session_info</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="t:event_type/0">
-
-  <div class="detail-header">
-    <a href="#t:event_type/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">event_type()</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L8" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@type</span> event_type() ::
-  :fastest_lap
-  | :fastest_sector
-  | :top_speed
-  | :tyre_change
-  | :started
-  | :message
-  | :summary
-  | :session_clock
-  | :list
-  | :session_info_changed
-  | :reset_session</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="t:t/0">
-
-  <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">t()</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L21" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
           <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.Common.Event{
-  driver_cache: <a href="F1Bot.F1Session.DriverCache.html#t:t/0">F1Bot.F1Session.DriverCache.t</a>() | nil,
+  meta: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | nil,
   payload: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(),
-  scope: <a href="#t:event_scope/0">event_scope</a>(),
-  session_info: <a href="F1Bot.F1Session.SessionInfo.html#t:t/0">F1Bot.F1Session.SessionInfo.t</a>() | nil,
-  session_status: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>() | nil,
+  scope: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
   timestamp: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>() | nil,
-  type: <a href="#t:event_type/0">event_type</a>()
+  type: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()
 }</pre>
 
       </div>
@@ -298,6 +228,50 @@ Types
 Functions
     </h1>
     <div class="functions-list">
+<section class="detail" id="hydrate_driver_info/3">
+
+  <div class="detail-header">
+    <a href="#hydrate_driver_info/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hydrate_driver_info(events, session, driver_numbers)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L27" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="hydrate_session_info/2">
+
+  <div class="detail-header">
+    <a href="#hydrate_session_info/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hydrate_session_info(events, session)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L46" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="new/3">
 
   <div class="detail-header">
@@ -307,7 +281,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new(scope, type, payload)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L34" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/common/event.ex#L18" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -319,7 +293,7 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> new(<a href="#t:event_scope/0">event_scope</a>(), <a href="#t:event_type/0">event_type</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: <a href="#t:t/0">t</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> new(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: <a href="#t:t/0">t</a>()</pre>
 
       </div>
 

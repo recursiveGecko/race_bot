@@ -10,7 +10,7 @@
     <title>F1Bot.F1Session.SessionInfo — f1_bot v0.3.1</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
-    <script src="dist/sidebar_items-b51c323938.js"></script>
+    <script src="dist/sidebar_items-6f25f8ff3a.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -169,22 +169,6 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#push_lap_number/2" translate="no">push_lap_number(session_info, lap_number)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#reset_counters/1" translate="no">reset_counters(session_info)</a>
-
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
           <a href="#update/2" translate="no">update(old, new)</a>
 
         </div>
@@ -229,7 +213,6 @@ Types
           <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.SessionInfo{
   end_date: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>() | nil,
   gp_name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
-  lap_number: (<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>() | nil) | nil,
   start_date: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>() | nil,
   type: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
   www_path: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil
@@ -262,7 +245,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">is_race?(session_info)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L109" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L79" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -284,7 +267,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L23" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L21" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -306,51 +289,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">parse_from_json(json)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L27" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="push_lap_number/2">
-
-  <div class="detail-header">
-    <a href="#push_lap_number/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">push_lap_number(session_info, lap_number)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L87" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="reset_counters/1">
-
-  <div class="detail-header">
-    <a href="#reset_counters/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">reset_counters(session_info)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L113" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L25" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -372,7 +311,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">update(old, new)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L60" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/session_info.ex#L58" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

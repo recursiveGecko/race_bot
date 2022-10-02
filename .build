@@ -35,9 +35,11 @@ F1Bot.F1Session.DriverDataRepo.Stint.html
 F1Bot.F1Session.DriverDataRepo.Stints.html
 F1Bot.F1Session.DriverDataRepo.html
 F1Bot.F1Session.EventGenerator.html
+F1Bot.F1Session.LapCounter.html
 F1Bot.F1Session.LiveTimingHandlers.CarTelemetry.html
 F1Bot.F1Session.LiveTimingHandlers.DriverList.html
 F1Bot.F1Session.LiveTimingHandlers.ExtrapolatedClock.html
+F1Bot.F1Session.LiveTimingHandlers.LapCount.html
 F1Bot.F1Session.LiveTimingHandlers.LapData.html
 F1Bot.F1Session.LiveTimingHandlers.Packet.html
 F1Bot.F1Session.LiveTimingHandlers.PositionData.html
@@ -96,8 +98,8 @@ dist/html/fonts/remixicon.svg
 dist/html/fonts/remixicon.ttf
 dist/html/fonts/remixicon.woff
 dist/html/fonts/remixicon.woff2
-dist/search_items-2cab62458f.js
-dist/sidebar_items-b51c323938.js
+dist/search_items-496d2bee2e.js
+dist/sidebar_items-6f25f8ff3a.js
 index.html
 license.html
 readme.html

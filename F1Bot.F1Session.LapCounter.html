@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.28.4">
     <meta name="project" content="f1_bot v0.3.1">
 
-    <title>F1Bot.F1Session.DriverDataRepo.Stint — f1_bot v0.3.1</title>
+    <title>F1Bot.F1Session.LapCounter — f1_bot v0.3.1</title>
     <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
 
     <script src="dist/sidebar_items-6f25f8ff3a.js"></script>
@@ -96,19 +96,19 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stint.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/lap_counter.ex#L1" title="View Source" class="view-source" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.F1Session.DriverDataRepo.Stint</span> 
+  <span translate="no">F1Bot.F1Session.LapCounter</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.3.1)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Holds information about a single stint.</p>
+<p>Stores current and maximum lap number for the session</p>
   </section>
 
 
@@ -132,8 +132,6 @@ f1_bot
 
         </div>
 
-          <div class="summary-synopsis"><p>Stint information</p></div>
-
       </div>
 
   </div>
@@ -145,7 +143,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#count_laps/1" translate="no">count_laps(self)</a>
+          <a href="#new/0" translate="no">new()</a>
 
         </div>
 
@@ -153,7 +151,7 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#new/1" translate="no">new(stint_data)</a>
+          <a href="#new/2" translate="no">new(current, total)</a>
 
         </div>
 
@@ -161,7 +159,15 @@ f1_bot
 
       <div class="summary-row">
         <div class="summary-signature">
-          <a href="#update/2" translate="no">update(self, stint_data)</a>
+          <a href="#to_event/1" translate="no">to_event(lap_counter)</a>
+
+        </div>
+
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-signature">
+          <a href="#update/2" translate="no">update(old, new)</a>
 
         </div>
 
@@ -190,7 +196,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stint.ex#L7" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/lap_counter.ex#L9" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -202,19 +208,14 @@ Types
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.DriverDataRepo.Stint{
-  age: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
-  compound: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>(),
-  lap_number: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
-  number: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  timestamp: DateTime,
-  total_laps: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
-  tyres_changed: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
+          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.LapCounter{
+  current: (<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>() | nil) | nil,
+  total: (<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>() | nil) | nil
 }</pre>
 
       </div>
 
-<p>Stint information</p>
+
   </section>
 </section>
 
@@ -230,16 +231,16 @@ Types
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="count_laps/1">
+<section class="detail" id="new/0">
 
   <div class="detail-header">
-    <a href="#count_laps/1" class="detail-link" title="Link to this function">
+    <a href="#new/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">count_laps(self)</h1>
+    <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stint.ex#L53" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/lap_counter.ex#L14" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -252,16 +253,38 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="new/1">
+<section class="detail" id="new/2">
 
   <div class="detail-header">
-    <a href="#new/1" class="detail-link" title="Link to this function">
+    <a href="#new/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">new(stint_data)</h1>
+    <h1 class="signature" translate="no">new(current, total)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stint.ex#L19" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/lap_counter.ex#L21" class="view-source" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="to_event/1">
+
+  <div class="detail-header">
+    <a href="#to_event/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">to_event(lap_counter)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/lap_counter.ex#L44" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -281,9 +304,9 @@ Functions
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">update(self, stint_data)</h1>
+    <h1 class="signature" translate="no">update(old, new)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stint.ex#L23" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/lap_counter.ex#L28" class="view-source" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
