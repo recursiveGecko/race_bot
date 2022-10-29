@@ -145,7 +145,15 @@ defmodule F1Bot.Replay.Server do
       end
     }
 
-    replay_state = F1Bot.Replay.replay_dataset(replay_state, options)
+    # Prevent server crashes in development when code is recompiled and module is temporarily unloaded
+    replay_state =
+      try do
+        F1Bot.Replay.replay_dataset(replay_state, options)
+      rescue
+        e ->
+          Logger.error("Error replaying chunk: #{inspect(e)}")
+          replay_state
+      end
 
     %{state | replay_state: replay_state}
   end

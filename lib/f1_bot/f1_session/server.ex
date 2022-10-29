@@ -247,11 +247,21 @@ defmodule F1Bot.F1Session.Server do
 
   @impl true
   def handle_info(:periodic_tick, state = %{session: session}) do
-    {session, events} = F1Session.periodic_tick(session)
-    Helpers.publish_events(events)
+    # Prevent server crashes in development when code is recompiled and module is temporarily unloaded
+    try do
+      {session, events} = F1Session.periodic_tick(session)
+      Helpers.publish_events(events)
 
-    state = %{state | session: session}
-    {:noreply, state}
+      state = %{state | session: session}
+      {:noreply, state}
+
+    rescue
+      _e ->
+        Logger.error("Rescued an error in periodic tick")
+        Logger.error("Stacktrace: \n#{Exception.format_stacktrace(__STACKTRACE__)}")
+
+        {:noreply, state}
+    end
   end
 
   defp after_live_timing_packet(_packet = %Packet{topic: "SessionInfo"}, session) do
