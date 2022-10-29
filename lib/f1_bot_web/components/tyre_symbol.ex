@@ -4,7 +4,7 @@ defmodule F1BotWeb.Component.TyreSymbol do
 
   Thanks to https://github.com/f1multiviewer for the tyre SVG path.
   """
-  use Surface.Component
+  use F1BotWeb, :component
 
   prop class, :css_class
   prop tyre_age, :number, required: true

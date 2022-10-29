@@ -1,5 +1,5 @@
 defmodule F1BotWeb.Component.LapTimeField do
-  use Surface.Component
+  use F1BotWeb, :component
   alias F1Bot.DataTransform.Format
 
   prop class, :css_class
