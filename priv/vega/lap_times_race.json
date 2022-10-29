@@ -1,0 +1,132 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [{"name": "current_lap", "value": 20}],
+  "datasets": {
+    "track_data": [
+      {"ts_from": null, "ts_to": null, "lap_from": 2.3, "lap_to": 3, "status": "VSC", "type": "interval"},
+      {"ts_from": null, "ts_to": null, "lap_from": 3, "lap_to": 3, "status": "Red Flag", "type": "instant"},
+      {"ts_from": null, "ts_to": null, "lap_from": 6.3, "lap_to": null, "status": "SC", "type": "interval"}
+    ],
+    "driver_data": [
+      {"lap": 1, "n": "VER", "t": "1:10.234", "c": "#08faac"},
+      {"lap": 2, "n": "VER", "t": "1:11.434", "c": "#08faac"},
+      {"lap": 3, "n": "VER", "t": "1:10.834", "c": "#08faac"},
+      {"lap": 1, "n": "PER", "t": "1:11.934", "c": "#08faac"},
+      {"lap": 2, "n": "PER", "t": "1:11.734", "c": "#08faac"},
+      {"lap": 3, "n": "PER", "t": "1:11.134", "c": "#08faac"},
+      {"lap": 1, "n": "HAM", "t": "1:10.834", "c": "#BBAAAA"},
+      {"lap": 2, "n": "HAM", "t": "1:10.794", "c": "#BBAAAA"},
+      {"lap": 10, "n": "HAM", "t": "1:11.034", "c": "#BBAAAA"}
+    ]
+  },
+  "data": {
+    "name": "driver_data",
+    "format": {"parse": {"t": "date:'%M:%S.%L'"}}
+  },
+  "encoding": {
+    "detail": {"field": "n", "type": "nominal"},
+    "color": {"field": "c", "type": "nominal", "legend": null, "scale": null}
+  },
+  "layer": [
+    {
+      "data": {"name": "track_data"},
+      "transform": [
+        {"calculate": "datum.lap_to || current_lap", "as": "lap_to"},
+        {"calculate": "(datum.lap_from + datum.lap_to) / 2", "as": "lap_center"}
+      ],
+      "layer": [
+        {
+          "comment": "Highlight SC and VSC",
+          "mark": {"type": "rect", "opacity": 0.3},
+          "encoding": {
+            "x": {"field": "lap_from", "type": "quantitative"},
+            "x2": {"field": "lap_to"},
+            "color": {"value": "#fcfc00"}
+          },
+          "transform": [
+            {"filter": "datum.type == 'interval'"}
+          ]
+        },
+        {
+          "comment": "Label red flags",
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "bottom",
+            "dy": {"expr": "-(height/2) - 5"}
+          },
+          "encoding": {
+            "text": {"field": "status"},
+            "color": {"value": "black"},
+            "x": {"field": "lap_center", "type": "quantitative"}
+          },
+          "transform": [
+            {"filter": "datum.type == 'instant'"}
+          ]
+        },
+        {
+          "comment": "Vertical line for red flags",
+          "mark": {
+            "type": "rule",
+            "strokeWidth": 2
+          },
+          "encoding": {
+            "text": {"field": "status"},
+            "color": {"value": "#ff1200"},
+            "x": {"field": "lap_from", "type": "quantitative"}
+          },
+          "transform": [
+            {"filter": "datum.type == 'instant'"}
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "Line plot for lap times",
+      "mark": {"type": "line"},
+      "encoding": {
+        "x": {
+          "field": "lap",
+          "type": "quantitative",
+          "title": "Lap",
+          "axis": {"tickMinStep": 1}
+        },
+        "y": {
+          "field": "t",
+          "type": "temporal",
+          "sort": null,
+          "title": null,
+          "axis": {"labelExpr": "timeFormat(datum.value, '%M:%S.%L')"}
+        }
+      }
+    },
+    {
+      "comment": "Line labels",
+      "encoding": {
+        "x": {"aggregate": "max", "field": "lap", "type": "quantitative"},
+        "y": {"aggregate": {"argmax": "lap"}, "field": "t", "type": "temporal"}
+      },
+      "layer": [
+        {"mark": {"type": "circle"}},
+        {
+          "mark": {"type": "text", "align": "left", "dx": 6},
+          "encoding": {"text": {"field": "n"}, "color": {"value": "black"}}
+        }
+      ]
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF00",
+    "font": "Roboto",
+    "title": {"fontSize": 16, "fontWeight": 500, "font": "Exo 2"},
+    "axis": {
+      "labelFontSize": 12,
+      "titleFontSize": 14,
+      "titleFont": "Exo 2",
+      "titleFontWeight": 500
+    }
+  },
+  "title": "REPLACE ME",
+  "width": "container",
+  "height": "container"
+}

@@ -1,0 +1,134 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "datasets": {
+    "driver_data": [
+      {"ts": 1665167034500, "n": "VER", "t": "1:10.234", "c": "#08faac"},
+      {"ts": 1665167134500, "n": "VER", "t": "1:11.434", "c": "#08faac"},
+      {"ts": 1665167234500, "n": "VER", "t": "1:10.834", "c": "#08faac"},
+      {"ts": 1665167034500, "n": "PER", "t": "1:11.934", "c": "#08faac"},
+      {"ts": 1665167134500, "n": "PER", "t": "1:12.734", "c": "#08faac"},
+      {"ts": 1665167234500, "n": "PER", "t": "1:11.134", "c": "#08faac"},
+      {"ts": 1665167034500, "n": "HAM", "t": "1:10.834", "c": "#BBAAAA"},
+      {"ts": 1665167134500, "n": "HAM", "t": "1:10.794", "c": "#BBAAAA"},
+      {"ts": 1665168834500, "n": "HAM", "t": "1:11.034", "c": "#BBAAAA"}
+    ],
+    "track_data": [
+      {
+        "ts_from": 1665167174500,
+        "ts_to": 1665167234500,
+        "lap_from": null,
+        "lap_to": null,
+        "status": "VSC",
+        "type": "interval"
+      },
+      {
+        "ts_from": 1665167934500,
+        "ts_to": null,
+        "lap_from": null,
+        "lap_to": null,
+        "status": "Red Flag",
+        "type": "instant"
+      }
+    ]
+  },
+  "data": {
+    "name": "driver_data",
+    "format": {"parse": {"t": "date:'%M:%S.%L'"}}
+  },
+  "encoding": {
+    "detail": {"field": "n", "type": "nominal"},
+    "color": {"field": "c", "type": "nominal", "legend": null, "scale": null}
+  },
+  "layer": [
+    {
+      "data": {"name": "track_data"},
+      "transform": [
+        {"calculate": "(datum.ts_from + datum.ts_to) / 2", "as": "ts_center"}
+      ],
+      "layer": [
+        {
+          "comment": "Highlight SC and VSC",
+          "mark": {"type": "rect", "opacity": 0.3},
+          "encoding": {
+            "x": {"field": "ts_from", "type": "temporal"},
+            "x2": {"field": "ts_to"},
+            "color": {"value": "#fcfc00"}
+          },
+          "transform": [{"filter": "datum.type == 'interval'"}]
+        },
+        {
+          "comment": "Label red flags",
+          "mark": {
+            "type": "text",
+            "align": "center",
+            "baseline": "bottom",
+            "dy": {"expr": "-(height/2) - 5"}
+          },
+          "encoding": {
+            "text": {"field": "status"},
+            "color": {"value": "black"},
+            "x": {"field": "ts_from", "type": "temporal"}
+          },
+          "transform": [{"filter": "datum.type == 'instant'"}]
+        },
+        {
+          "comment": "Vertical line for red flags",
+          "mark": {"type": "rule", "strokeWidth": 2},
+          "encoding": {
+            "text": {"field": "status"},
+            "color": {"value": "#ff1200"},
+            "x": {"field": "ts_from", "type": "temporal"}
+          },
+          "transform": [{"filter": "datum.type == 'instant'"}]
+        }
+      ]
+    },
+    {
+      "comment": "Lap time line graph",
+      "encoding": {
+        "x": {
+          "field": "ts",
+          "type": "temporal",
+          "title": "Time of day",
+          "axis": {"format": "%H:%M"}
+        },
+        "y": {
+          "field": "t",
+          "type": "temporal",
+          "sort": null,
+          "title": null,
+          "axis": {"format": "%M:%S.%L"}
+        }
+      },
+      "layer": [{"mark": {"type": "line"}}, {"mark": {"type": "circle"}}]
+    },
+    {
+      "comment": "Line labels",
+      "encoding": {
+        "x": {"aggregate": "max", "field": "ts", "type": "temporal"},
+        "y": {"aggregate": {"argmax": "ts"}, "field": "t", "type": "temporal"}
+      },
+      "layer": [
+        {"mark": {"type": "circle"}},
+        {
+          "mark": {"type": "text", "align": "left", "dx": 6},
+          "encoding": {"text": {"field": "n"}, "color": {"value": "black"}}
+        }
+      ]
+    }
+  ],
+  "config": {
+    "background": "#FFFFFF00",
+    "font": "Roboto",
+    "title": {"fontSize": 16, "fontWeight": 500, "font": "Exo 2"},
+    "axis": {
+      "labelFontSize": 12,
+      "titleFontSize": 14,
+      "titleFont": "Exo 2",
+      "titleFontWeight": 500
+    }
+  },
+  "title": "REPLACE ME",
+  "width": "container",
+  "height": "container"
+}
