@@ -3,63 +3,46 @@
     <img class="h-14 mr-3" src="/favicon.png" alt="logo">
     <span class="text-2xl">Race Bot for F1</span>
   </div>
-
-  <div class="flex flex-col">
-    <span class="font-semibold text-l">Delay</span>
-
-    <div class="flex mt-1 text-xl">
-      <button
-        class="mr-2 bg-transparent inline hover:bg-blue-500 text-blue-700 font-semibold hover:text-white px-2 border border-blue-500 hover:border-transparent rounded"
-        :on-click="delay-dec"
-        disabled={@pubsub_delay_ms <= min_delay_ms()}
-      >−</button>
-
-      <span class="w-8 text-center">{(@pubsub_delay_ms / 1000) |> trunc()}s</span>
-
-      <button
-        class="ml-2 bg-transparent inline hover:bg-blue-500 text-blue-700 font-semibold hover:text-white px-2 border border-blue-500 hover:border-transparent rounded"
-        :on-click="delay-inc"
-        disabled={@pubsub_delay_ms >= max_delay_ms()}
-      >+</button>
-    </div>
-  </div>
 </div>
 
-<div class="grid gap-4 sm:grid-cols-[min-content_1fr] p-2">
-  <div class="row-start-3 sm:row-start-1 flex items-baseline sm:flex-col">
-    {#if is_race?(@session_info) and @lap_counter != nil}
-      <div class="text-2xl flex items-baseline mr-4 sm:mr-0">
-        <span class="mr-2">Lap</span>
-        <span>{@lap_counter.current || 0}</span>
-        <span class="text-lg mx-1">/</span>
-        <span class="text-lg" :if={@lap_counter.total != nil}>{@lap_counter.total}</span>
-      </div>
-    {/if}
+<div class="flex flex-col sm:flex-row mt-4 mx-2 gap-4">
+  <!-- Left sidebar -->
+  <div class="flex flex-wrap sm:flex-col justify-between gap-2 sm:mr-0">
+    <div class="order-2 sm:order-1 basis-2/6 self-end sm:self-auto sm:basis-auto">
+      <Component.LapAndClock is_race={is_race?(@session_info)} {=@lap_counter} {=@session_clock} />
+    </div>
 
-    {#if @session_clock != nil}
-      <span class={"sm:text-sm": is_race?(@session_info), "text-2xl": not is_race?(@session_info)}>
-        {Format.format_session_clock(@session_clock)}
-      </span>
-    {/if}
-  </div>
-
-  <div class="text-2xl">
-    <span class="" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}
-    </span>
-  </div>
-
-  <div class="sm:row-start-2">
-    <Component.DriverSelector {=@driver_list} {=@drivers_of_interest} toggle_driver="toggle-driver" />
-  </div>
-
-  <div class="grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,25rem)] auto-rows-min sm:row-start-2">
-    {#for driver_info <- @driver_list}
-      <Component.DriverSummary
-        :if={driver_info.driver_number in @drivers_of_interest}
-        id={driver_info.driver_number}
-        driver_info={driver_info}
-        delay_ms={@pubsub_delay_ms}
+    <div class="order-3 sm:order-2 basis-2/6 sm:basis-auto">
+      <Component.DelayControl
+        {=@pubsub_delay_ms}
+        increase_delay="delay-inc"
+        decrease_delay="delay-dec"
+        min_delay_ms={min_delay_ms()}
+        max_delay_ms={max_delay_ms()}
       />
-    {/for}
+    </div>
+
+    <div class="order-1 sm:order-3 basis-6/6 mt-2 grow">
+      <Component.DriverSelector {=@driver_list} {=@drivers_of_interest} toggle_driver="toggle-driver" />
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="grow flex flex-col">
+    <div class="text-2xl">
+      <span class="" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}</span>
+    </div>
+
+    <div class="mt-4 grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,25rem)] auto-rows-min">
+      {#for driver_info <- @driver_list}
+        <Component.DriverSummary
+          :if={driver_info.driver_number in @drivers_of_interest}
+          id={driver_info.driver_number}
+          driver_info={driver_info}
+          delay_ms={@pubsub_delay_ms}
+        />
+      {/for}
+    </div>
+  </div>
   </div>
 </div>

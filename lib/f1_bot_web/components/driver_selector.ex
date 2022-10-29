@@ -1,5 +1,5 @@
 defmodule F1BotWeb.Component.DriverSelector do
-  use Surface.Component
+  use F1BotWeb, :component
 
   prop driver_list, :list, required: true
   prop drivers_of_interest, :list, required: true
