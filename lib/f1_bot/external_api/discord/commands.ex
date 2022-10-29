@@ -19,6 +19,42 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
     Consumer.start_link(__MODULE__)
   end
 
+  def create_commands() do
+    server_ids = F1Bot.get_env(:discord_server_ids_commands, [])
+
+    for guild_id <- server_ids do
+      Logger.info("Creating commands for guild #{guild_id}")
+      Api.bulk_overwrite_guild_application_commands(guild_id, commands())
+    end
+  end
+
+  def commands do
+    [
+      Definition.cmd_graph(%{
+        name: "f1graph",
+        description: "Create a graph for the current F1 session (responds privately)",
+        default_permission: true
+      }),
+      Definition.cmd_graph(%{
+        name: "f1graphall",
+        description: "Create a graph for the current F1 session (responds publicly)",
+        default_permission: false
+      }),
+      Definition.cmd_driver_summary(%{
+        name: "f1summary",
+        description:
+          "Display driver's fastest lap, top speed and detailed stint information (responds privately)",
+        default_permission: true
+      }),
+      Definition.cmd_driver_summary(%{
+        name: "f1summaryall",
+        description:
+          "Display driver's fastest lap, top speed and detailed stint information (responds publicly)",
+        default_permission: false
+      })
+    ]
+  end
+
   def handle_event({:READY, _, _}) do
     Logger.info("Discord API Gateway READY")
     create_commands()
@@ -66,40 +102,5 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
 
   defp handle_interaction(unknown_interaction = %Interaction{data: %{name: name}}) do
     Logger.error("Received unknown interaction #{inspect(name)}: #{inspect(unknown_interaction)}")
-  end
-
-  defp create_commands() do
-    server_ids = F1Bot.get_env(:discord_server_ids_commands, [])
-
-    for guild_id <- server_ids do
-      Api.bulk_overwrite_guild_application_commands(guild_id, commands())
-    end
-  end
-
-  defp commands do
-    [
-      Definition.cmd_graph(%{
-        name: "f1graph",
-        description: "Create a graph for the current F1 session (responds privately)",
-        default_permission: true
-      }),
-      Definition.cmd_graph(%{
-        name: "f1graphall",
-        description: "Create a graph for the current F1 session (responds publicly)",
-        default_permission: false
-      }),
-      Definition.cmd_driver_summary(%{
-        name: "f1summary",
-        description:
-          "Display driver's fastest lap, top speed and detailed stint information (responds privately)",
-        default_permission: true
-      }),
-      Definition.cmd_driver_summary(%{
-        name: "f1summaryall",
-        description:
-          "Display driver's fastest lap, top speed and detailed stint information (responds publicly)",
-        default_permission: false
-      })
-    ]
   end
 end
