@@ -16,6 +16,13 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     %__MODULE__{}
   end
 
+  def fetch_by_number(laps, lap_no) do
+    case Enum.find(laps.data, fn l -> l.number == lap_no end) do
+      nil -> {:error, :not_found}
+      lap -> {:ok, lap}
+    end
+  end
+
   def sort_by_number(laps, direction \\ :asc) do
     Enum.sort_by(laps, fn l -> l.number end, direction)
   end

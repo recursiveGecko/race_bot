@@ -4,6 +4,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
   """
   use TypedStruct
 
+  alias F1Bot.F1Session.DriverDataRepo.Stints
   alias F1Bot.F1Session.TrackStatusHistory
 
   @type sector_data :: %{
@@ -62,6 +63,29 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
         started_during_neutral or ended_during_neutral or short_neutral_during_lap
       end)
     end
+  end
+
+  @spec is_outlap_after_red_flag?(t()) :: boolean()
+  def is_outlap_after_red_flag?(lap = %__MODULE__{}) do
+    lap.sectors == nil and lap.time != nil and Timex.Duration.to_seconds(lap.time) > 180
+  end
+
+  @spec is_inlap?(t(), Stints.t()) :: boolean()
+  def is_inlap?(lap = %__MODULE__{}, stints = %Stints{}) do
+    inlaps =
+      stints.data
+      |> Enum.map(& &1.lap_number - 1)
+
+    lap.number in inlaps
+  end
+
+  @spec is_outlap?(t(), Stints.t()) :: boolean()
+  def is_outlap?(lap = %__MODULE__{}, stints = %Stints{}) do
+    outlaps =
+      stints.data
+      |> Enum.map(& &1.lap_number)
+
+    lap.number in outlaps
   end
 
   @spec has_any_sector_time?(sector_map()) :: boolean()
