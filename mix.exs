@@ -80,7 +80,7 @@ defmodule F1Bot.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup"],
+      setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install --ignore-scripts"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
@@ -108,6 +108,7 @@ defmodule F1Bot.MixProject do
       {:gnuplot, "~> 1.20"},
       {:extwitter, "~> 0.13.0"},
       {:oauther, "~> 1.1"},
+      {:memoize, "~> 1.4"},
       {:scribe, "~> 0.10.0", only: :dev},
       {:kino, "~> 0.4.1", only: :dev},
       {:vega_lite, "~> 0.1.2", only: :dev},

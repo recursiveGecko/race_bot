@@ -16,11 +16,19 @@ An [Elixir](https://elixir-lang.org/) project dedicated to processing live data 
 
 *All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.*
 
+## Requirements
+
+* [Elixir 1.13+](https://elixir-lang.org/install.html)
+* [NodeJS 16+](https://nodejs.org/en/) to install NPM dependencies
+
+Alternatively you can use `asdf` to manage tool versions, but be aware that it builds Erlang from source which 
+[requires installation of additional system dependencies](https://github.com/asdf-vm/asdf-erlang#before-asdf-install).
+
 ## Basic usage
 
 ```bash
 # Install dependencies
-mix deps.get
+mix setup
 
 # Configuration file `.env` must be created by copying `.env.example`
 cp .env.example .env
@@ -33,7 +41,7 @@ source env.fish
 mix docs
 
 # Run locally
-iex -S mix
+iex -S mix phx.server
 
 # Run a backtest on an old session
 iex -S mix backtest --url "http://livetiming.formula1.com/static/2022/2022-05-08_Miami_Grand_Prix/2022-05-07_Qualifying"
