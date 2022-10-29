@@ -17,7 +17,23 @@ defmodule F1BotWeb.Live.Telemetry do
       |> Surface.init()
       |> subscribe_with_delay(initial_delay)
 
+    {:ok, spec} =
+      F1Bot.session_copy(true)
+      |> F1Bot.Analysis.LapTimes.plot_vegalite(socket.assigns.drivers_of_interest)
+
+    socket = Component.VegaChart.push_update(socket, :lap_times, spec)
+
     {:ok, socket}
+  end
+
+  def pubsub_topics do
+    [
+      {:driver, :list},
+      {:lap_counter, :changed},
+      {:session_info, :session_info_changed},
+      {:session_clock, :changed}
+      # {:chart, :lap_times}
+    ]
   end
 
   @impl true
@@ -115,15 +131,8 @@ defmodule F1BotWeb.Live.Telemetry do
       F1Bot.PubSub.unsubscribe_all(existing_topics)
     end
 
-    global_topics = [
-      {:driver, :list},
-      {:lap_counter, :changed},
-      {:session_info, :session_info_changed},
-      {:session_clock, :changed}
-    ]
-
+    global_topics = pubsub_topics()
     per_driver_topics = per_driver_topic_pairs(socket.assigns.drivers_of_interest)
-
     topics_to_subscribe = global_topics ++ per_driver_topics
 
     {:ok, subscribed_topics} =

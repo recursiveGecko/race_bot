@@ -1,5 +1,6 @@
 defmodule F1Bot.DelayedEvents do
   alias F1Bot.DelayedEvents.Rebroadcaster
+  alias F1BotWeb.Live
 
   @min_delay 15_000
   @max_delay 45_000
@@ -42,12 +43,7 @@ defmodule F1Bot.DelayedEvents do
   end
 
   def delayed_topic_pairs do
-    topics = [
-      {:driver, :list},
-      {:lap_counter, :changed},
-      {:session_info, :session_info_changed},
-      {:session_clock, :changed}
-    ]
+    topics = Live.Telemetry.pubsub_topics()
 
     per_driver_topics =
       @min_driver..@max_driver
