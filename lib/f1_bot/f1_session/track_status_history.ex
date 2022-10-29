@@ -48,6 +48,18 @@ defmodule F1Bot.F1Session.TrackStatusHistory do
     Enum.filter(intervals, fn i -> i.status in statuses end)
   end
 
+  @spec humanize_status(interval()) :: String.t()
+  def humanize_status(interval) do
+    case interval.status do
+      :all_clear -> "Clear"
+      :yellow_flag -> "Yellow"
+      :safety_car -> "SC"
+      :red_flag -> "Red Flag"
+      :virtual_safety_car -> "VSC"
+      x -> Atom.to_string(x)
+    end
+  end
+
   defp maybe_end_previous_interval([last | rest], timestamp) do
     last =
       if last.ends_at == nil do

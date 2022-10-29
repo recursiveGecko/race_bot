@@ -132,10 +132,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
       n = lap.number
       n != nil and n >= min_lap and n <= max_lap
     end)
-    |> Stream.reject(fn lap = %Lap{} ->
-      # Remove what is likely to be an outlap after a red flag
-      lap.sectors == nil and lap.time != nil and Timex.Duration.to_seconds(lap.time) > 180
-    end)
+    |> Stream.reject(&Lap.is_outlap_after_red_flag?/1)
     |> Stream.reject(&Lap.is_neutralized?(&1, neutralized_intervals))
     |> Enum.sort_by(fn %Lap{number: number} -> number end, :asc)
   end
