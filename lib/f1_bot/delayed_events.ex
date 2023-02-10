@@ -2,7 +2,7 @@ defmodule F1Bot.DelayedEvents do
   alias F1Bot.DelayedEvents.Rebroadcaster
   alias F1BotWeb.Live
 
-  @min_delay 15_000
+  @min_delay 1_000
   @max_delay 45_000
   @delay_step 1_000
   @available_delays @min_delay..@max_delay//@delay_step
@@ -18,7 +18,7 @@ defmodule F1Bot.DelayedEvents do
   def max_delay_ms, do: @max_delay
   def delay_step, do: @delay_step
 
-  def subscribe_with_delay!(topic_pairs, delay_ms, send_init_events \\ false) do
+  def subscribe_with_delay(topic_pairs, delay_ms, send_init_events) do
     if delay_ms in @available_delays do
       topics =
         Enum.map(topic_pairs, fn {scope, type} ->
@@ -37,6 +37,20 @@ defmodule F1Bot.DelayedEvents do
     end
   end
 
+  @doc """
+  Send the latest event for each topic pair for topics that follow the
+  init + delta pattern, e.g. charts where the init event contains the bulky
+  chart specification and later events only contain new data points to add.
+  """
+  def oneshot_init(topic_pairs, delay_ms) do
+    if delay_ms in @available_delays do
+      send_init_events(topic_pairs, delay_ms, self())
+      :ok
+    else
+      {:error, :invalid_delay}
+    end
+  end
+
   def topic_for_event(scope, type, delay_ms) do
     base_topic = F1Bot.PubSub.topic_for_event(scope, type)
     "delayed:#{delay_ms}::#{base_topic}"
@@ -44,14 +58,15 @@ defmodule F1Bot.DelayedEvents do
 
   def delayed_topic_pairs do
     topics = Live.Telemetry.pubsub_topics()
+    delta_topics = Live.Telemetry.pubsub_delta_topics()
 
     per_driver_topics =
       @min_driver..@max_driver
-      |> Enum.map(fn driver_no ->
-        {:"driver:#{driver_no}", :summary}
-      end)
+      |> Live.Telemetry.pubsub_per_driver_topics()
 
-    topics ++ per_driver_topics
+    oneshot_topics = Live.Telemetry.pubsub_oneshot_topics()
+
+    topics ++ delta_topics ++ per_driver_topics ++ oneshot_topics
   end
 
   def push_to_all_caches(events) do

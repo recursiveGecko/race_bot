@@ -71,7 +71,14 @@ defmodule F1Bot.Analysis.LapTimes do
         |> put_in(["datasets", "driver_data"], data)
         # TODO: Add data
         |> put_in(["datasets", "track_data"], [])
-        |> put_in(["params", Access.filter(&(&1["name"] == "current_lap")), "value"], 0)
+        |> put_in(
+          [
+            "params",
+            Access.filter(fn el -> el["name"] == "current_lap" end),
+            "value"
+          ],
+          0
+        )
         |> put_in(["title"], "Lap times")
 
       {:ok, spec}

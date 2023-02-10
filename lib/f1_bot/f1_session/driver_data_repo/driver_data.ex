@@ -9,8 +9,6 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
   alias F1Bot.F1Session.DriverDataRepo.{Laps, Stints}
   alias F1Bot.F1Session.Common.TimeSeriesStore
 
-  @max_fill_delay_ms 15_000
-
   typedstruct do
     @typedoc "Driver session data"
 
@@ -38,7 +36,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
       ) do
     fill_result =
       self.laps
-      |> Laps.fill_by_close_timestamp([time: lap_time], timestamp, @max_fill_delay_ms)
+      |> Laps.fill_by_close_timestamp([time: lap_time], timestamp)
 
     case fill_result do
       {:ok, laps} ->
@@ -78,7 +76,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
       ) do
     laps =
       self.laps
-      |> Laps.fill_sector_times(sector, sector_time, timestamp, @max_fill_delay_ms)
+      |> Laps.fill_sector_times(sector, sector_time, timestamp)
 
     %{self | laps: laps}
   end
@@ -92,7 +90,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
       when is_integer(lap_number) do
     {:ok, laps} =
       self.laps
-      |> Laps.fill_by_close_timestamp([number: lap_number], timestamp, @max_fill_delay_ms)
+      |> Laps.fill_by_close_timestamp([number: lap_number], timestamp)
 
     new_lap_number =
       if lap_number >= self.current_lap_number do

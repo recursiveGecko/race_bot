@@ -27,7 +27,7 @@ defmodule F1Bot.F1Session do
     field(:session_status, atom())
     field(:clock, F1Session.Clock.t())
     field(:lap_counter, F1Session.LapCounter.t(), default: F1Session.LapCounter.new())
-    field(:event_deduplication, map(), default: %{})
+    field(:event_generator, F1Session.EventGenerator.t(), default: F1Session.EventGenerator.new())
   end
 
   def new(), do: %__MODULE__{}
@@ -37,12 +37,8 @@ defmodule F1Bot.F1Session do
   end
 
   def driver_summary(session, driver_number) when is_integer(driver_number) do
-    data =
-      session.driver_data_repo
-      |> F1Session.DriverDataRepo.info(driver_number)
-      |> F1Session.DriverDataRepo.DriverData.Summary.generate(session.track_status_history)
-
-    {:ok, data}
+    session.driver_data_repo
+    |> F1Session.DriverDataRepo.driver_summary(driver_number, session.track_status_history)
   end
 
   def driver_info_by_number(session, driver_number) when is_integer(driver_number) do
@@ -69,6 +65,27 @@ defmodule F1Bot.F1Session do
     {session, events}
   end
 
+  def push_sector_time(session, driver_number, sector, sector_time, timestamp)
+      when is_integer(driver_number) do
+    {repo, events} =
+      session.driver_data_repo
+      |> F1Session.DriverDataRepo.push_sector_time(driver_number, sector, sector_time, timestamp)
+
+    session = %{session | driver_data_repo: repo}
+
+    events =
+      events
+      |> Event.hydrate_session_info(session)
+      |> Event.hydrate_driver_info(session, [driver_number])
+
+    driver_data_events =
+      F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)
+
+    events = events ++ driver_data_events
+
+    {session, events}
+  end
+
   def push_lap_time(session, driver_number, lap_time, timestamp) when is_integer(driver_number) do
     push_result =
       session.driver_data_repo
@@ -90,33 +107,23 @@ defmodule F1Bot.F1Session do
       |> Event.hydrate_session_info(session)
       |> Event.hydrate_driver_info(session, [driver_number])
 
-    summary_events =
-      F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
+    driver_data_events =
+      F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)
 
-    events = summary_events ++ events
+    events = events ++ driver_data_events
 
     {session, events}
   end
 
-  def push_sector_time(session, driver_number, sector, sector_time, timestamp)
+  def push_lap_number(session, driver_number, lap_number, timestamp)
       when is_integer(driver_number) do
-    {repo, events} =
+    driver_data_repo =
       session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_sector_time(driver_number, sector, sector_time, timestamp)
+      |> F1Session.DriverDataRepo.push_lap_number(driver_number, lap_number, timestamp)
 
-    session = %{session | driver_data_repo: repo}
+    session = %{session | driver_data_repo: driver_data_repo}
 
-    events =
-      events
-      |> Event.hydrate_session_info(session)
-      |> Event.hydrate_driver_info(session, [driver_number])
-
-    summary_events =
-      F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
-
-    events = summary_events ++ events
-
-    {session, events}
+    {session, []}
   end
 
   def push_telemetry(session, driver_number, channels) when is_integer(driver_number) do
@@ -133,17 +140,6 @@ defmodule F1Bot.F1Session do
       |> F1Session.DriverDataRepo.push_position(driver_number, position)
 
     %{session | driver_data_repo: repo}
-  end
-
-  def push_lap_number(session, driver_number, lap_number, timestamp)
-      when is_integer(driver_number) do
-    driver_data_repo =
-      session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_lap_number(driver_number, lap_number, timestamp)
-
-    session = %{session | driver_data_repo: driver_data_repo}
-
-    {session, []}
   end
 
   def push_session_lap_counter(session, partial_lap_counter) do
@@ -222,10 +218,10 @@ defmodule F1Bot.F1Session do
       |> Event.hydrate_session_info(session)
       |> Event.hydrate_driver_info(session, [driver_number])
 
-    summary_events =
-      F1Session.EventGenerator.generate_driver_summary_events(session, driver_number)
+    driver_data_events =
+      F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)
 
-    events = summary_events ++ events
+    events = events ++ driver_data_events
 
     {session, events}
   end
@@ -259,30 +255,16 @@ defmodule F1Bot.F1Session do
   end
 
   def periodic_tick(session) do
-    {session, events} =
-      [
-        &F1Session.EventGenerator.maybe_generate_session_clock_events/1
-      ]
-      |> Enum.reduce(
-        {session, []},
-        fn fun, {session, events} ->
-          {new_session, new_events} = fun.(session)
-          {new_session, events ++ new_events}
-        end
-      )
+    {event_generator, events} =
+      F1Session.EventGenerator.make_periodic_events(session, session.event_generator)
 
+    session = %{session | event_generator: event_generator}
     {session, events}
   end
 
   def reset_session(session) do
-    # We reset the session then generate the summary events ...
-    # (which should contain an empty summary because the DriverDataRepo has been reset
-    # and an empty DriverData container should be created on access)
-    # ... for all drivers in the previous session (because we pass a list of drivers
-    # from the previous session),
-    {:ok, driver_list} = F1Session.DriverCache.driver_list(session.driver_cache)
-    driver_numbers = Enum.map(driver_list, & &1.driver_number)
-
+    # We reset the session then generate the summary events which contain an empty
+    # summary because the DriverDataRepo had been reset.
     session = %__MODULE__{
       session
       | driver_data_repo: F1Session.DriverDataRepo.new(),
@@ -292,10 +274,10 @@ defmodule F1Bot.F1Session do
         clock: nil
     }
 
-    reset_events = F1Session.EventGenerator.generate_session_reset_events(session, driver_numbers)
+    reset_events = F1Session.EventGenerator.make_session_reset_events(session)
 
     {session, reset_events}
   end
 
-  defdelegate generate_state_sync_events(session), to: F1Session.EventGenerator
+  defdelegate make_state_sync_events(session), to: F1Session.EventGenerator
 end

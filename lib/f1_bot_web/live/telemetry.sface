@@ -44,5 +44,9 @@
       {/for}
     </div>
   </div>
+
+  <!-- Right sidebar -->
+  <div class="min-w-0 w-full sm:w-[600px]">
+    <Component.VegaChart class="h-[350px]" chart_id="lap_times" />
   </div>
 </div>

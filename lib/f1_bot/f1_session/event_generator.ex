@@ -1,61 +1,39 @@
 defmodule F1Bot.F1Session.EventGenerator do
-  alias F1Bot.F1Session
-  alias F1Bot.F1Session.Common.Event
+  use TypedStruct
+  alias F1Bot.F1Session.EventGenerator
 
-  def generate_driver_summary_events(session = %F1Session{}, driver_number)
-      when is_integer(driver_number) do
-    with {:ok, summary} <- F1Session.driver_summary(session, driver_number),
-         {:ok, session_best_stats} <- F1Session.session_best_stats(session) do
-      payload = %{
-        driver_number: driver_number,
-        driver_summary: summary,
-        session_best_stats: Map.from_struct(session_best_stats)
-      }
-
-      scope = :"driver:#{driver_number}"
-      [Event.new(scope, :summary, payload)]
-    else
-      {:error, _} -> []
-    end
+  typedstruct do
+    field(:event_deduplication, map(), default: %{})
   end
 
-  def generate_session_reset_events(session = %F1Session{}, driver_numbers) do
-    primary_event = F1Session.Common.Event.new(:session_info, :reset_session, nil)
-
-    summary_events =
-      driver_numbers
-      |> Enum.map(&generate_driver_summary_events(session, &1))
-      |> List.flatten()
-
-    [primary_event | summary_events]
+  def new do
+    %__MODULE__{}
   end
 
-  def maybe_generate_session_clock_events(session = %F1Session{}) do
-    with clock when clock != nil <- session.clock,
-         session_clock <- F1Session.Clock.session_clock_from_local_time(clock, Timex.now()),
-         last_session_clock <- session.event_deduplication[:session_clock],
-         true <- session_clock != last_session_clock do
-      events = [F1Session.Clock.to_event(clock)]
-      session = put_in(session, [Access.key(:event_deduplication), :session_clock], session_clock)
-      {session, events}
-    else
-      _ -> {session, []}
-    end
-  end
+  defdelegate make_driver_summary_events(session, driver_number),
+    to: EventGenerator.Driver,
+    as: :summary_events
 
-  def generate_state_sync_events(session = %F1Session{}) do
-    driver_numbers =
-      session
-      |> F1Session.driver_list()
-      |> elem(1)
-      |> Enum.map(& &1.driver_number)
+  defdelegate make_periodic_events(session, event_generator),
+    to: EventGenerator.Periodic,
+    as: :periodic_events
 
+  defdelegate make_session_reset_events(session),
+    to: EventGenerator.SessionReset,
+    as: :session_reset_events
+
+  defdelegate make_state_sync_events(session),
+    to: EventGenerator.StateSync,
+    as: :state_sync_events
+
+  defdelegate make_lap_time_chart_init_events(session),
+    to: EventGenerator.StateSync,
+    as: :lap_time_chart_init_events
+
+  def make_events_on_new_driver_data(session, driver_number) do
     [
-      F1Session.DriverCache.to_event(session.driver_cache),
-      F1Session.SessionInfo.to_event(session.session_info),
-      F1Session.LapCounter.to_event(session.lap_counter),
-      Enum.map(driver_numbers, &generate_driver_summary_events(session, &1)),
-      F1Session.Clock.to_event(session.clock),
+      make_driver_summary_events(session, driver_number),
+      make_lap_time_chart_init_events(session)
     ]
     |> List.flatten()
   end

@@ -25,6 +25,15 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     |> fetch_or_create_driver_from_repo(driver_number)
   end
 
+  def driver_summary(repo, driver_number, track_status_history) when is_integer(driver_number) do
+    data =
+      repo
+      |> info(driver_number)
+      |> DriverData.Summary.generate(track_status_history)
+
+    {:ok, data}
+  end
+
   def session_best_stats(repo) do
     repo.best_stats
   end

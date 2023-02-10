@@ -7,6 +7,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
 
   alias F1Bot.F1Session.DriverDataRepo.Lap
 
+  @max_data_fill_delay_ms 15_000
+
   typedstruct do
     field(:data, [Lap.t()], default: [])
     field(:sectors, Lap.sector_map(), default: Lap.new_clean_sector_map())
@@ -43,30 +45,28 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     end
   end
 
-  @spec fill_by_close_timestamp(t(), keyword(), DateTime.t(), pos_integer()) ::
+  @spec fill_by_close_timestamp(t(), keyword(), DateTime.t()) ::
           {:ok, t()} | {:error, atom()}
   def fill_by_close_timestamp(
         self = %__MODULE__{},
         args,
-        timestamp,
-        max_deviation_ms
+        timestamp
       ) do
     if accept_lap_information?(self, args, timestamp) do
-      self = do_fill_by_close_timestamp(self, args, timestamp, max_deviation_ms)
+      self = do_fill_by_close_timestamp(self, args, timestamp)
       {:ok, self}
     else
       {:error, :missing_prerequisites}
     end
   end
 
-  @spec fill_sector_times(t(), pos_integer(), Timex.Duration.t(), DateTime.t(), pos_integer) ::
+  @spec fill_sector_times(t(), pos_integer(), Timex.Duration.t(), DateTime.t()) ::
           t()
   def fill_sector_times(
         self = %__MODULE__{sectors: sectors},
         sector,
         sector_time,
-        timestamp,
-        max_deviation_ms
+        timestamp
       )
       when sector in [1, 2, 3] do
     sectors =
@@ -75,7 +75,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
       |> put_in([sector, :timestamp], timestamp)
 
     if sector == 3 do
-      {:ok, laps} = fill_by_close_timestamp(self, [sectors: sectors], timestamp, max_deviation_ms)
+      {:ok, laps} = fill_by_close_timestamp(self, [sectors: sectors], timestamp)
       laps = clear_sector_data(laps)
 
       laps
@@ -97,8 +97,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
   defp do_fill_by_close_timestamp(
          self = %__MODULE__{data: data},
          args,
-         timestamp,
-         max_deviation_ms
+         timestamp
        ) do
     {found, data_reversed} =
       Enum.reduce(data, {_skip = false, _new_data = []}, fn lap, {skip, data} ->
@@ -107,7 +106,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
             data = [lap | data]
             {skip, data}
 
-          should_fill_lap?(lap, timestamp, max_deviation_ms) ->
+          should_fill_lap?(lap, timestamp) ->
             lap = Lap.merge_with_args(lap, args)
             data = [lap | data]
             {true, data}
@@ -163,9 +162,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     %{self | sectors: Lap.new_clean_sector_map()}
   end
 
-  defp should_fill_lap?(lap, ts, max_ms) do
+  defp should_fill_lap?(lap, ts) do
     delta_ms = Timex.diff(lap.timestamp, ts, :milliseconds) |> abs()
-
-    delta_ms < max_ms
+    delta_ms < @max_data_fill_delay_ms
   end
 end

@@ -61,7 +61,7 @@ defmodule F1Bot do
     F1Bot.F1Session.Server.session_clock_from_local_time(Timex.now())
   end
 
-  def reload_live_data(url \\ nil, light_data) when is_boolean(light_data) do
+  def reload_session(url \\ nil, light_data) when is_boolean(light_data) do
     url_result =
       if url == nil do
         F1Bot.ExternalApi.F1LiveTiming.current_archive_url_if_completed()
@@ -94,6 +94,14 @@ defmodule F1Bot do
         Logger.error("Unable to reload data, error: #{inspect(err)}")
         {:error, err}
     end
+  end
+
+  def replay_session_realtime(url) do
+    F1Bot.Replay.Server.start_replay(url)
+  end
+
+  def stop_session_replay() do
+    F1Bot.Replay.Server.stop_replay()
   end
 
   def lap_number() do

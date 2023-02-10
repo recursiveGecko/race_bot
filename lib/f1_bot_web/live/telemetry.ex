@@ -1,7 +1,6 @@
 defmodule F1BotWeb.Live.Telemetry do
   use F1BotWeb, :live_view
   alias F1BotWeb.Component
-  alias F1Bot.DataTransform.Format
 
   data session_clock, :any, default: nil
   data session_info, :any, default: nil
@@ -10,18 +9,12 @@ defmodule F1BotWeb.Live.Telemetry do
   data drivers_of_interest, :list, default: [1, 11, 16, 55, 44, 63]
 
   def mount(_params, _session, socket) do
-    initial_delay = 25_000
+    initial_delay = 1_000
 
     socket =
       socket
       |> Surface.init()
       |> subscribe_with_delay(initial_delay)
-
-    {:ok, spec} =
-      F1Bot.session_copy(true)
-      |> F1Bot.Analysis.LapTimes.plot_vegalite(socket.assigns.drivers_of_interest)
-
-    socket = Component.VegaChart.push_update(socket, :lap_times, spec)
 
     {:ok, socket}
   end
@@ -32,7 +25,27 @@ defmodule F1BotWeb.Live.Telemetry do
       {:lap_counter, :changed},
       {:session_info, :session_info_changed},
       {:session_clock, :changed}
-      # {:chart, :lap_times}
+    ]
+  end
+
+  def pubsub_per_driver_topics(driver_numbers) do
+    for driver_no <- driver_numbers do
+      [
+        {:"driver:#{driver_no}", :summary}
+      ]
+    end
+    |> List.flatten()
+  end
+
+  def pubsub_oneshot_topics do
+    [
+      {:chart_init, :lap_times}
+    ]
+  end
+
+  def pubsub_delta_topics do
+    [
+      {:chart_update, :lap_times}
     ]
   end
 
@@ -117,6 +130,15 @@ defmodule F1BotWeb.Live.Telemetry do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_info(
+        %{scope: :chart_init, type: id, payload: spec},
+        socket
+      ) do
+    socket = Component.VegaChart.push_init(socket, id, spec)
+    {:noreply, socket}
+  end
+
   defp subscribe_with_delay(socket, delay_ms \\ nil) do
     delay_ms =
       if delay_ms == nil do
@@ -132,26 +154,30 @@ defmodule F1BotWeb.Live.Telemetry do
     end
 
     global_topics = pubsub_topics()
-    per_driver_topics = per_driver_topic_pairs(socket.assigns.drivers_of_interest)
+    per_driver_topics = pubsub_per_driver_topics(socket.assigns.drivers_of_interest)
     topics_to_subscribe = global_topics ++ per_driver_topics
 
     {:ok, subscribed_topics} =
-      F1Bot.DelayedEvents.subscribe_with_delay!(
+      F1Bot.DelayedEvents.subscribe_with_delay(
         topics_to_subscribe,
         delay_ms,
         true
       )
 
+    {:ok, subscribed_delta_topics} =
+      F1Bot.DelayedEvents.subscribe_with_delay(
+        pubsub_delta_topics(),
+        delay_ms,
+        false
+      )
+
+    all_subscribed_topics = subscribed_topics ++ subscribed_delta_topics
+
+    F1Bot.DelayedEvents.oneshot_init(pubsub_oneshot_topics(), delay_ms)
+
     socket
     |> assign(:pubsub_delay_ms, delay_ms)
-    |> assign(:pubsub_delayed_topics, subscribed_topics)
-  end
-
-  defp per_driver_topic_pairs(driver_numbers) do
-    driver_numbers
-    |> Enum.map(fn driver_no ->
-      {:"driver:#{driver_no}", :summary}
-    end)
+    |> assign(:pubsub_delayed_topics, all_subscribed_topics)
   end
 
   defp min_delay_ms(), do: F1Bot.DelayedEvents.min_delay_ms()

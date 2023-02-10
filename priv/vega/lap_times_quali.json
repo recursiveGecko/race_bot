@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [{"name": "current_lap", "value": 20}],
   "datasets": {
     "driver_data": [
       {"ts": 1665167034500, "n": "VER", "t": "1:10.234", "c": "#08faac"},
