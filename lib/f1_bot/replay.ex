@@ -6,15 +6,18 @@ defmodule F1Bot.Replay do
 
   This module is flexible enough to support different use cases:
 
-    * Silently replaying the entire dataset to obtain the final F1Session state for analysis purposes
-    (see `F1Bot.reload_session/2`)
+    * Silently replay the entire dataset in an inert/side-effect free fashion to obtain the
+    final F1Session state for analysis purposes (see `F1Bot.reload_session/2`)
 
-    * Replaying the dataset while using mock implementations of Discord/Twitter modules which print
+    * Quickly replay the dataset while using mock implementations of Discord/Twitter modules which print
     the output to console. This allows us to see what messages would be sent to Discord/Twitter
     if we were to run the bot in a live session (see `Mix.Tasks.Backtest`)
 
-    * Slowly replaying the dataset in real time, allowing us to provide a demo environment
-    for the bot which acts as if it was running in a live session (see `F1Bot.Replay.Server.start_demo_mode/1`)
+    * Fast forward to the session start (using `:replay_while_fn` to quickly process everything until we
+    encounter a session started packet), then slowly replay the dataset in real time
+    (again using `:replay_while_fn` to process narrow time slices of packets),
+    allowing us to provide a demo environment for the bot which behaves as if it was running in a live
+    session (see `F1Bot.Replay.Server.start_demo_mode/1`)
 
   Replay state contains the following fields:
 
@@ -55,7 +58,7 @@ defmodule F1Bot.Replay do
     * `:replay_while_fn` - a 3-arity function that receives the current replay state,
     current packet and its timestamp in milliseconds.
     This function is called *before* the packet is processed. If the function
-    returns false, the packet is left unprocessed, replay is paused and `start_replay/2`
+    returns false, the packet is left unprocessed (kept), replay is paused and `start_replay/2`
     will return the current replay state.
     Replay can by resumed by calling `replay_dataset/2` with the returned state and new
     options (e.g. different `replay_while_fn/3`).
@@ -107,6 +110,11 @@ defmodule F1Bot.Replay do
     end
   end
 
+  @doc """
+  Resume replaying the dataset using the given replay state and options.
+
+  For documentation on options, see `start_replay/2`.
+  """
   def replay_dataset(
         state = %{dataset: [_ | _]},
         options
