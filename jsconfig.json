@@ -1,0 +1,10 @@
+{
+    // This file exists to allow VS Code to resolve Javascript references imported in `.hooks.js` files
+    // https://code.visualstudio.com/docs/languages/jsconfig
+
+    // Without this file in place, VS Code wouldn't provide type information for imported NPM packages that
+    // live in `assets/node_modules`
+    "compilerOptions": {
+        "baseUrl": "assets/node_modules"
+    }
+}
