@@ -23,10 +23,7 @@ defmodule F1Bot.Replay.Server do
 
     state =
       if F1Bot.demo_mode_url() != nil do
-        state
-        |> Map.put(:demo_mode, true)
-        |> initialize_replay(F1Bot.demo_mode_url())
-        |> skip_to_start_and_start_playing()
+        start_demo_mode(state)
       else
         %{state | demo_mode: false}
       end
@@ -79,6 +76,13 @@ defmodule F1Bot.Replay.Server do
     else
       {:noreply, state}
     end
+  end
+
+  defp start_demo_mode(state) do
+    state
+    |> Map.put(:demo_mode, true)
+    |> initialize_replay(F1Bot.demo_mode_url())
+    |> skip_to_start_and_start_playing()
   end
 
   defp skip_to_start_and_start_playing(state) do

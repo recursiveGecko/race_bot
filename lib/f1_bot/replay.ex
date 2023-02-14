@@ -1,10 +1,79 @@
 defmodule F1Bot.Replay do
+  @moduledoc """
+  Given a URL to a base URL of a live timing dataset, this module takes care of downloading known
+  `.jsonStream` datasets, pre-processes them into a single stream of live timing packets,
+  and consecutively processes them using arbitrary implementations.
+
+  This module is flexible enough to support different use cases:
+
+    * Silently replaying the entire dataset to obtain the final F1Session state for analysis purposes
+    (see `F1Bot.reload_session/2`)
+
+    * Replaying the dataset while using mock implementations of Discord/Twitter modules which print
+    the output to console. This allows us to see what messages would be sent to Discord/Twitter
+    if we were to run the bot in a live session (see `Mix.Tasks.Backtest`)
+
+    * Slowly replaying the dataset in real time, allowing us to provide a demo environment
+    for the bot which acts as if it was running in a live session (see `F1Bot.Replay.Server.start_demo_mode/1`)
+
+  Replay state contains the following fields:
+
+    * `:session` - the current F1Session state
+
+    * `:dataset` - a list of unprocessed tuples, containing session timestamp in milliseconds,
+    source `.jsonStream` name, session timestamp as DateTime, and live timing packet payload (unparsed);
+    sorted by timestamp
+
+    * `:processed_packets` - a number of processed packets, used for logging purposes
+
+    * `:total_packets` - a total number of packets in the dataset, used for logging purposes
+
+    * `:base_ts` - DateTime that denotes the start of the replay session, used to calculate the absolute
+    timestamp of each packet in the dataset
+  """
   require Logger
 
   alias F1Bot.F1Session.LiveTimingHandlers.Packet
   alias F1Bot.F1Session.LiveTimingHandlers
   alias F1Bot.F1Session
 
+  @doc """
+  Given a URL to a live timing dataset, download the `.jsonStream` datasets and process
+  them using the F1Session module, with or without side effects, up to an
+  arbitrary point in time.
+
+  ## Options
+
+  All options are optional unless otherwise noted.
+
+    * `:report_progress` - If true, logs processing progress to the console.
+
+    * `:exclude_files_regex` - A regex that excludes matching `.jsonStream`
+    files from the download and replay, e.g. to exclude bulky `*.z.jsonStream` files
+    when they are not needed.
+
+    * `:replay_while_fn` - a 3-arity function that receives the current replay state,
+    current packet and its timestamp in milliseconds.
+    This function is called *before* the packet is processed. If the function
+    returns false, the packet is left unprocessed, replay is paused and `start_replay/2`
+    will return the current replay state.
+    Replay can by resumed by calling `replay_dataset/2` with the returned state and new
+    options (e.g. different `replay_while_fn/3`).
+
+    * `:packets_fn` - a 3-arity function that receives the current replay state,
+    current packet and its timestamp in milliseconds.
+    This function is called for every packet and can be used to implement custom packet
+    processing logic (e.g. to simply print all received packets to console).
+    By default this function will process the packet using
+    `LiveTimingHandlers.process_live_timing_packet/3` and store the resulting `F1Session`
+    state in the replay state.
+
+    * `:events_fn` - a 1-arity function that will receive a list of events produced by **default**
+    `:packets_fn` implementation. This option has no effect when `:packets_fn` is overriden.
+    By default `:events_fn` is unspecified, but `Mix.Tasks.Backtest` for example overrides
+    it to broadcast events on the PubSub bus. See module docs for more details.
+
+  """
   def start_replay(url, options \\ %{}) do
     if String.match?(url, ~r"^https?://livetiming.formula1.com/static/") do
       url = String.replace_trailing(url, "/", "")
@@ -73,7 +142,7 @@ defmodule F1Bot.Replay do
       timestamp: timestamp
     }
 
-    # Pause the replay if provided `replay_while_fn/1` returns false, this allows
+    # Pause the replay if provided `replay_while_fn/3` returns false, this allows
     # us to process events in small chunks to provide a live-like experience.
     # This only makes sense in conjunction with a custom packets_fn as described below.
     if options[:replay_while_fn] != nil and !options[:replay_while_fn].(state, packet, ts_ms) do
