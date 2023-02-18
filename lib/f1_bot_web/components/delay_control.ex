@@ -1,11 +1,32 @@
 defmodule F1BotWeb.Component.DelayControl do
-  use F1BotWeb, :component
+  use F1BotWeb, :live_component
+  alias F1Bot.DelayedEvents
 
   prop pubsub_delay_ms, :integer, required: true
-  prop increase_delay, :event, required: true
-  prop decrease_delay, :event, required: true
-  prop min_delay_ms, :integer, required: true
-  prop max_delay_ms, :integer, required: true
+  data delay_step_ms, :integer, default: DelayedEvents.delay_step()
+  data min_delay_ms, :integer, default: DelayedEvents.min_delay_ms()
+  data max_delay_ms, :integer, default: DelayedEvents.max_delay_ms()
+  data can_decrease, :boolean, default: false
+  data can_increase, :boolean, default: false
+
+  def update(new_assigns, socket) do
+    socket = assign(socket, new_assigns)
+
+    assigns = socket.assigns
+
+    socket =
+      socket
+      |> assign(
+        :can_increase,
+        assigns.pubsub_delay_ms + assigns.delay_step_ms <= assigns.max_delay_ms
+      )
+      |> assign(
+        :can_decrease,
+        assigns.pubsub_delay_ms - assigns.delay_step_ms >= assigns.min_delay_ms
+      )
+
+    {:ok, socket}
+  end
 
   @impl true
   def render(assigns) do
@@ -15,20 +36,46 @@ defmodule F1BotWeb.Component.DelayControl do
 
       <div class="flex text-xl items-baseline">
         <button
-          class="w-8 h-8 mr-2 bg-transparent inline hover:bg-blue-500 text-blue-700 font-semibold hover:text-white px-2 border border-blue-500 hover:border-transparent rounded"
-          :on-click={@decrease_delay}
-          disabled={@pubsub_delay_ms <= @min_delay_ms}
+          class={
+            "w-8 h-8 mr-2 inline bg-blue-500 text-white font-semibold px-2 rounded",
+            "hover:bg-blue-700": @can_decrease,
+            "bg-gray-500": not @can_decrease
+          }
+          :on-click="delay-dec"
+          disabled={not @can_decrease}
         >−</button>
 
         <span class="w-8 text-center">{(@pubsub_delay_ms / 1000) |> trunc()}s</span>
 
         <button
-          class="w-8 h-8 ml-2 bg-transparent inline hover:bg-blue-500 text-blue-700 font-semibold hover:text-white px-2 border border-blue-500 hover:border-transparent rounded"
-          :on-click={@increase_delay}
-          disabled={@pubsub_delay_ms >= @max_delay_ms}
+          class={
+            "w-8 h-8 ml-2 inline bg-blue-500 text-white font-semibold px-2 rounded",
+            "hover:bg-blue-700": @can_increase,
+            "bg-gray-500": not @can_increase
+          }
+          :on-click="delay-inc"
+          disabled={not @can_increase}
         >+</button>
       </div>
     </div>
     """
+  end
+
+  @impl true
+  def handle_event("delay-inc", _params, socket) do
+    delay_ms = socket.assigns.pubsub_delay_ms + socket.assigns.delay_step_ms
+
+    send(self(), {:delay_control_set, delay_ms})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("delay-dec", _params, socket) do
+    delay_ms = socket.assigns.pubsub_delay_ms - socket.assigns.delay_step_ms
+
+    send(self(), {:delay_control_set, delay_ms})
+
+    {:noreply, socket}
   end
 end

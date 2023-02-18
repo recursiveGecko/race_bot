@@ -14,11 +14,8 @@
 
     <div class="order-3 sm:order-2 basis-2/6 sm:basis-auto">
       <Component.DelayControl
+        id="delay_control"
         {=@pubsub_delay_ms}
-        increase_delay="delay-inc"
-        decrease_delay="delay-dec"
-        min_delay_ms={min_delay_ms()}
-        max_delay_ms={max_delay_ms()}
       />
     </div>
 
@@ -29,8 +26,11 @@
 
   <!-- Main content -->
   <div class="grow flex flex-col">
-    <div class="text-2xl">
-      <span class="" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}</span>
+    <div class="">
+      <span class="text-2xl" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}</span>
+      <Component.PopupLink id="chart_link" class="ml-3" href="/chart">
+        Open charts
+      </Component.PopupLink>
     </div>
 
     <div class="mt-4 grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,25rem)] auto-rows-min">

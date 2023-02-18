@@ -8,12 +8,12 @@ defmodule F1BotWeb.Live.Telemetry do
   data lap_counter, :map, default: nil
   data drivers_of_interest, :list, default: [1, 11, 16, 55, 44, 63]
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     initial_delay = 1_000
 
     socket =
       socket
-      |> Surface.init()
+      |> subscribe_to_own_events(session)
       |> subscribe_with_delay(initial_delay)
 
     {:ok, socket}
@@ -45,7 +45,8 @@ defmodule F1BotWeb.Live.Telemetry do
 
   def pubsub_delta_topics do
     [
-      {:chart_update, :lap_times}
+      {:chart_insert, :lap_times},
+      {:chart_replace, :track_status}
     ]
   end
 
@@ -70,20 +71,22 @@ defmodule F1BotWeb.Live.Telemetry do
   end
 
   @impl true
-  def handle_event("delay-inc", _params, socket) do
-    step_ms = F1Bot.DelayedEvents.delay_step()
-    delay_ms = socket.assigns.pubsub_delay_ms + step_ms
-    socket = subscribe_with_delay(socket, delay_ms)
-
+  def handle_info(
+        {:delay_control_set, delay_ms},
+        socket
+      ) do
+    # Broadcast event for all LiveViews to synchronize delay across tabs/windows
+    broadcast_own_event(socket.assigns.user_uuid, {:user_set_delay_ms, delay_ms})
     {:noreply, socket}
   end
 
   @impl true
-  def handle_event("delay-dec", _params, socket) do
-    step_ms = F1Bot.DelayedEvents.delay_step()
-    delay_ms = socket.assigns.pubsub_delay_ms - step_ms
+  def handle_info(
+        {:user_set_delay_ms, delay_ms},
+        socket
+      ) do
+    # Handle broadcasted delay control event to synchronize all tabs/windows
     socket = subscribe_with_delay(socket, delay_ms)
-
     {:noreply, socket}
   end
 
@@ -135,7 +138,25 @@ defmodule F1BotWeb.Live.Telemetry do
         %{scope: :chart_init, type: id, payload: spec},
         socket
       ) do
-    socket = Component.VegaChart.push_init(socket, id, spec)
+    socket = Component.VegaChart.initialize(socket, id, spec)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(
+        %{scope: :chart_insert, type: id, payload: %{dataset: dataset, data: data}},
+        socket
+      ) do
+    socket = Component.VegaChart.insert_data(socket, id, dataset, data)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(
+        %{scope: :chart_replace, type: id, payload: %{dataset: dataset, data: data}},
+        socket
+      ) do
+    socket = Component.VegaChart.replace_data(socket, id, dataset, data)
     {:noreply, socket}
   end
 
@@ -157,6 +178,8 @@ defmodule F1BotWeb.Live.Telemetry do
     per_driver_topics = pubsub_per_driver_topics(socket.assigns.drivers_of_interest)
     topics_to_subscribe = global_topics ++ per_driver_topics
 
+    F1Bot.DelayedEvents.oneshot_init(pubsub_oneshot_topics(), delay_ms)
+
     {:ok, subscribed_topics} =
       F1Bot.DelayedEvents.subscribe_with_delay(
         topics_to_subscribe,
@@ -173,15 +196,10 @@ defmodule F1BotWeb.Live.Telemetry do
 
     all_subscribed_topics = subscribed_topics ++ subscribed_delta_topics
 
-    F1Bot.DelayedEvents.oneshot_init(pubsub_oneshot_topics(), delay_ms)
-
     socket
     |> assign(:pubsub_delay_ms, delay_ms)
     |> assign(:pubsub_delayed_topics, all_subscribed_topics)
   end
-
-  defp min_delay_ms(), do: F1Bot.DelayedEvents.min_delay_ms()
-  defp max_delay_ms(), do: F1Bot.DelayedEvents.max_delay_ms()
 
   defp is_race?(_session_info = nil), do: false
   defp is_race?(session_info), do: F1Bot.F1Session.SessionInfo.is_race?(session_info)

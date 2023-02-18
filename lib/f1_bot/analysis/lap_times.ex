@@ -2,9 +2,9 @@ defmodule F1Bot.Analysis.LapTimes do
   @moduledoc """
   Collects lap times for creating visualizations
   """
-  use Memoize
   import F1Bot.Analysis.Common
 
+  alias F1Bot.Analysis.GraphSpec
   alias F1Bot.DataTransform.Format
   alias F1Bot.F1Session
   alias F1Bot.F1Session.DriverDataRepo.{Lap, Laps}
@@ -23,10 +23,13 @@ defmodule F1Bot.Analysis.LapTimes do
 
       all_driver_numbers = Map.keys(all_driver_data)
 
-      # Find all lap times for all drivers
+      # Find all relevant lap times for all drivers
+      # TODO: Optimise this, it's hard to cache results such as 'is_neutralized?'
+      # because the underlying data is not always consistent with the API occasionally
+      # providing garbage stint data and then correcting it later
       data =
-        for driver_no <- all_driver_numbers,
-            driver_no in driver_numbers,
+        for driver_no <- driver_numbers,
+            driver_no in all_driver_numbers,
             {:ok, %Laps{data: laps}} = fetch_driver_all_laps(all_driver_data, driver_no),
             {:ok, stints} = fetch_driver_stints(all_driver_data, driver_no),
             lap = %Lap{} <- laps,
@@ -34,6 +37,7 @@ defmodule F1Bot.Analysis.LapTimes do
             not Lap.is_inlap?(lap, stints),
             not Lap.is_outlap?(lap, stints),
             not Lap.is_outlap_after_red_flag?(lap),
+            # not false do
             not Lap.is_neutralized?(lap, neutralized_periods) do
           %{
             driver_number: driver_no,
@@ -59,7 +63,7 @@ defmodule F1Bot.Analysis.LapTimes do
         "lap_times_quali"
       end
 
-    with {:ok, spec} <- load_spec(spec_name),
+    with {:ok, spec} <- GraphSpec.load(spec_name),
          {:ok, data} <- calculate(session, driver_numbers) do
       data =
         session
@@ -99,13 +103,5 @@ defmodule F1Bot.Analysis.LapTimes do
     end
   end
 
-  defp load_spec(file_name) do
-    :f1_bot
-    |> Application.app_dir("priv/vega/#{file_name}.json")
-    |> File.read()
-    |> case do
-      {:ok, json} -> Jason.decode(json)
-      {:error, reason} -> {:error, reason}
-    end
-  end
+
 end

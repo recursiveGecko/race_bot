@@ -12,7 +12,7 @@ defmodule F1Bot.Replay.Server do
   def init(_init_arg) do
     state = %{
       url: nil,
-      demo_mode: nil,
+      demo_mode: false,
       in_progress: false,
       initial_replay_state: nil,
       replay_state: nil,
@@ -25,7 +25,7 @@ defmodule F1Bot.Replay.Server do
       if F1Bot.demo_mode_url() != nil do
         start_demo_mode(state)
       else
-        %{state | demo_mode: false}
+        state
       end
 
     {:ok, state}
@@ -85,20 +85,12 @@ defmodule F1Bot.Replay.Server do
     |> skip_to_start_and_start_playing()
   end
 
-  defp skip_to_start_and_start_playing(state) do
-    # Manually reset the session. The automatic reset logic won't
-    # work for replays as the session name and type don't change.
-    F1Bot.F1Session.Server.reset_session()
-
-    state
-    |> fast_forward_to_session_start()
-    |> schedule_ticks()
-  end
-
   defp initialize_replay(state, url) do
     options = %{
       report_progress: true,
-      packets_fn: &handle_packet/3,
+      packets_fn: fn _replay_state, _options, _packet ->
+        raise "We will never reach this point because the replay will be paused immediately"
+      end,
       replay_while_fn: fn _replay_state, _packet, _ts_ms ->
         false
       end
@@ -110,10 +102,23 @@ defmodule F1Bot.Replay.Server do
     |> sync_time()
   end
 
+  defp skip_to_start_and_start_playing(state) do
+    # Manually reset the session. The automatic reset logic won't
+    # work for replays as the session name and type don't change.
+    F1Bot.F1Session.Server.reset_session()
+
+    state
+    |> fast_forward_to_session_start()
+    |> schedule_ticks()
+  end
+
   defp fast_forward_to_session_start(state) do
     options = %{
       report_progress: true,
-      packets_fn: &handle_packet/3,
+      packets_fn: fn replay_state, _options, packet ->
+        F1Bot.F1Session.Server.push_live_timing_packet(packet)
+        replay_state
+      end,
       replay_while_fn: fn _replay_state, packet, _ts_ms ->
         not match?(%{topic: "SessionStatus", data: %{"Status" => "Started"}}, packet)
       end
@@ -143,7 +148,10 @@ defmodule F1Bot.Replay.Server do
 
     options = %{
       report_progress: true,
-      packets_fn: &handle_packet/3,
+      packets_fn: fn replay_state, _options, packet ->
+        F1Bot.F1Session.Server.push_live_timing_packet(packet)
+        replay_state
+      end,
       replay_while_fn: fn _replay_state, _packet, ts_ms ->
         ts_ms < max_ms
       end
@@ -160,11 +168,6 @@ defmodule F1Bot.Replay.Server do
       end
 
     %{state | replay_state: replay_state}
-  end
-
-  defp handle_packet(replay_state, _options, packet) do
-    F1Bot.F1Session.Server.push_live_timing_packet(packet)
-    replay_state
   end
 
   defp maybe_handle_replay_end(state) do

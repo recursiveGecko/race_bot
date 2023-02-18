@@ -18,5 +18,6 @@ defmodule F1BotWeb.Router do
     pipe_through :browser
 
     live "/", Live.Telemetry
+    live "/chart", Live.Chart
   end
 end

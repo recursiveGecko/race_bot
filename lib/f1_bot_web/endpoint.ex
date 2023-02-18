@@ -52,6 +52,8 @@ defmodule F1BotWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
 
+  plug F1BotWeb.Plug.UserUUID
+
   plug :add_response_headers
 
   plug F1BotWeb.Router
