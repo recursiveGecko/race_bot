@@ -72,6 +72,8 @@ Pull requests, bug reports and feature suggestions are welcome!
 💙 [theOehrly/Fast-F1](https://github.com/theOehrly/Fast-F1): For inspiration, their effort and
 documentation. Fast-F1 was extremely valuable in quickly understanding how F1's live timing service works. 
 
+💙 [MultiViewer for F1](https://github.com/f1multiviewer): For tyre icons used in this project
+
 ## License
 
 This project is licensed under GNU Affero General Public License version 3, see `LICENSE.md` for details.

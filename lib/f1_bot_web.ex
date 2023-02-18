@@ -32,6 +32,8 @@ defmodule F1BotWeb do
         root: "lib/f1_bot_web/templates",
         namespace: F1BotWeb
 
+      alias F1BotWeb.Component
+
       # Import convenience functions from controllers
       import Phoenix.Controller,
         only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
@@ -46,7 +48,7 @@ defmodule F1BotWeb do
   def live_view do
     quote do
       use Surface.LiveView,
-        layout: {F1BotWeb.LayoutView, "live.html"}
+        layout: {F1BotWeb.LayoutView, :live}
 
       import F1BotWeb.LiveHelpers
 
@@ -93,8 +95,9 @@ defmodule F1BotWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      # Import LiveView and .heex helpers (live_render, live_patch, <.form>, etc)
-      import Phoenix.LiveView.Helpers
+      # https://github.com/phoenixframework/phoenix_live_view/blob/master/CHANGELOG.md#0180-2022-09-20
+      # Exclude slot/1 and slot/2 because it conflicts with Surface (see Surface.Component.__using__/1)
+      import Phoenix.Component, except: [slot: 1, slot: 2]
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View

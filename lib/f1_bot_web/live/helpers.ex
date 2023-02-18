@@ -14,7 +14,7 @@ defmodule F1BotWeb.LiveHelpers do
     end
 
     socket
-    |> Phoenix.LiveView.assign(:user_uuid, user_uuid)
+    |> Phoenix.Component.assign(:user_uuid, user_uuid)
   end
 
   def broadcast_own_event(_user_uuid = nil, _message), do: :ignore

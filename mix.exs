@@ -39,7 +39,7 @@ defmodule F1Bot.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :tools],
       mod: {F1Bot.Application, []}
     ]
   end
@@ -98,7 +98,6 @@ defmodule F1Bot.MixProject do
       {:jason, "~> 1.2"},
       {:finch, "~> 0.9.1"},
       {:nostrum, "~> 0.6", runtime: false},
-      {:phoenix_pubsub, "~> 2.0"},
       {:certifi, "~> 2.8"},
       {:typed_struct, "~> 0.2.1"},
       {:timex, "~> 3.7"},
@@ -117,20 +116,23 @@ defmodule F1Bot.MixProject do
       {:ex_doc, "~> 0.28", runtime: false, override: true},
       {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev},
       {:phoenix, "~> 1.6.12"},
-      {:surface, "~> 0.8.0"},
+      {:phoenix_pubsub, "~> 2.1"},
       {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.6"},
-      {:ecto_sqlite3, ">= 0.0.0"},
-      {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.17.5"},
+      {:phoenix_html, "~> 3.3"},
+      {:phoenix_live_reload, "~> 1.4", only: :dev},
+      {:phoenix_live_dashboard, "~> 0.7.2"},
+      {:phoenix_live_view, "~> 0.18.15"},
+      {:surface, "~> 0.9.4"},
+      {:ecto_sql, "~> 3.9"},
+      {:ecto_sqlite3, "~> 0.9.1"},
       {:floki, ">= 0.30.0", only: :test},
-      {:phoenix_live_dashboard, "~> 0.6"},
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:plug_cowboy, "~> 2.5"},
-      {:flame_on, "~> 0.5.2", only: :dev}
+      {:heroicons, "~> 0.5.2"},
+      # {:flame_on, "~> 0.5.2", only: :dev},
+      {:eflame, "~> 1.0"}
     ]
   end
 end

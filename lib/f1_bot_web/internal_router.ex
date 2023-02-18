@@ -23,7 +23,8 @@ defmodule F1BotWeb.InternalRouter do
     live_dashboard "/",
       metrics: F1BotWeb.Telemetry,
       additional_pages: [
-        flame_on: FlameOn.DashboardPage
+        # TODO: Current flame_on doesn't support phoenix_live_dashboard 0.7.x
+        # flame_on: FlameOn.DashboardPage
       ]
   end
 end
