@@ -11,7 +11,6 @@ defmodule F1Bot.DelayedEvents.Supervisor do
       for delay_ms <- F1Bot.DelayedEvents.available_delays() do
         init_arg = [
           delay_ms: delay_ms,
-          topic_pairs: F1Bot.DelayedEvents.delayed_topic_pairs()
         ]
 
         module = F1Bot.DelayedEvents.Rebroadcaster

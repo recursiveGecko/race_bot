@@ -1,6 +1,5 @@
 defmodule F1Bot.DelayedEvents do
   alias F1Bot.DelayedEvents.Rebroadcaster
-  alias F1BotWeb.Live
 
   @min_delay 1_000
   @max_delay 45_000
@@ -22,7 +21,7 @@ defmodule F1Bot.DelayedEvents do
     if delay_ms in @available_delays do
       topics =
         Enum.map(topic_pairs, fn {scope, type} ->
-          topic_for_event(scope, type, delay_ms)
+          delayed_topic_for_event(scope, type, delay_ms)
         end)
 
       F1Bot.PubSub.subscribe_all(topics)
@@ -51,25 +50,12 @@ defmodule F1Bot.DelayedEvents do
     end
   end
 
-  def topic_for_event(scope, type, delay_ms) do
+  def delayed_topic_for_event(scope, type, delay_ms) do
     base_topic = F1Bot.PubSub.topic_for_event(scope, type)
     "delayed:#{delay_ms}::#{base_topic}"
   end
 
-  def delayed_topic_pairs do
-    topics = Live.Telemetry.pubsub_topics()
-    delta_topics = Live.Telemetry.pubsub_delta_topics()
-
-    per_driver_topics =
-      @min_driver..@max_driver
-      |> Live.Telemetry.pubsub_per_driver_topics()
-
-    oneshot_topics = Live.Telemetry.pubsub_oneshot_topics()
-
-    topics ++ delta_topics ++ per_driver_topics ++ oneshot_topics
-  end
-
-  def push_to_all_caches(events) do
+  def push_to_all(events) do
     for delay_ms <- @available_delays do
       via = Rebroadcaster.server_via(delay_ms)
 

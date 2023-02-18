@@ -7,7 +7,7 @@ defmodule F1Bot.Output.Twitter do
   require Logger
 
   alias F1Bot.Output.Common
-  alias F1Bot.F1Session.Common.Helpers
+  alias F1Bot.PubSub
   alias F1Bot.DataTransform.Format
 
   @common_hashtags "#f1"
@@ -18,12 +18,12 @@ defmodule F1Bot.Output.Twitter do
 
   @impl true
   def init(_init_arg) do
-    Helpers.subscribe_to_event(:aggregate_stats, :fastest_lap)
-    Helpers.subscribe_to_event(:aggregate_stats, :fastest_sector)
-    Helpers.subscribe_to_event(:aggregate_stats, :top_speed)
-    Helpers.subscribe_to_event(:driver, :tyre_change)
-    Helpers.subscribe_to_event(:session_status, :started)
-    Helpers.subscribe_to_event(:race_control, :message)
+    PubSub.subscribe_to_event(:aggregate_stats, :fastest_lap)
+    PubSub.subscribe_to_event(:aggregate_stats, :fastest_sector)
+    PubSub.subscribe_to_event(:aggregate_stats, :top_speed)
+    PubSub.subscribe_to_event(:driver, :tyre_change)
+    PubSub.subscribe_to_event(:session_status, :started)
+    PubSub.subscribe_to_event(:race_control, :message)
 
     state = %{}
 

@@ -10,7 +10,7 @@ defmodule F1Bot.F1Session.Server do
   alias F1Bot.F1Session
   alias F1Bot.F1Session.LiveTimingHandlers
   alias F1Bot.F1Session.LiveTimingHandlers.Packet
-  alias F1Bot.F1Session.Common.Helpers
+  alias F1Bot.PubSub
 
   def start_link(init_arg) do
     GenServer.start_link(__MODULE__, init_arg, name: server_via())
@@ -191,7 +191,7 @@ defmodule F1Bot.F1Session.Server do
 
           e ->
             Logger.warn(
-              "Recoverable error occurred while processing live timing packet: #{inspect(e)}"
+              "Unable to process live timing packet: #{inspect(e)}"
             )
 
             {session, []}
@@ -205,7 +205,7 @@ defmodule F1Bot.F1Session.Server do
           {session, []}
       end
 
-    Helpers.publish_events(events)
+    PubSub.broadcast_events(events)
 
     state = %{state | session: session}
     {:reply, :ok, state}
@@ -215,7 +215,7 @@ defmodule F1Bot.F1Session.Server do
   def handle_call({:replace_session, session}, _from, state) do
     state = %{state | session: session}
     events = F1Session.make_state_sync_events(session)
-    F1Bot.DelayedEvents.push_to_all_caches(events)
+    F1Bot.DelayedEvents.push_to_all(events)
 
     Logger.info("Session replaced!")
 
@@ -227,7 +227,7 @@ defmodule F1Bot.F1Session.Server do
     # Ensure all session reset events are sent
     {_session, events} = F1Session.reset_session(state.session)
 
-    Helpers.publish_events(events)
+    PubSub.broadcast_events(events)
 
     state = %{state | session: F1Session.new()}
     Logger.info("Session reset!")
@@ -250,7 +250,7 @@ defmodule F1Bot.F1Session.Server do
     # Prevent server crashes in development when code is recompiled and module is temporarily unloaded
     try do
       {session, events} = F1Session.periodic_tick(session)
-      Helpers.publish_events(events)
+      PubSub.broadcast_events(events)
 
       state = %{state | session: session}
       {:noreply, state}

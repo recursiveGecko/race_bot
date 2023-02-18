@@ -1,6 +1,6 @@
 defmodule F1Bot.Replay do
   @moduledoc """
-  Given a URL to a base URL of a live timing dataset, this module takes care of downloading known
+  Given a base URL of a live timing dataset, this module takes care of downloading known
   `.jsonStream` datasets, pre-processes them into a single stream of live timing packets,
   and consecutively processes them using arbitrary implementations.
 
