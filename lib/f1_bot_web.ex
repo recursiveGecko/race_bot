@@ -1,58 +1,57 @@
 defmodule F1BotWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
-  as controllers, views, channels and so on.
+  as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
       use F1BotWeb, :controller
-      use F1BotWeb, :view
+      use F1BotWeb, :html
 
-  The definitions below will be executed for every view,
-  controller, etc, so keep them short and clean, focused
+  The definitions below will be executed for every controller,
+  component, etc, so keep them short and clean, focused
   on imports, uses and aliases.
 
   Do NOT define functions inside the quoted expressions
-  below. Instead, define any helper function in modules
-  and import those modules here.
+  below. Instead, define additional modules and import
+  those modules here.
   """
+
+  def static_paths, do: ~w(assets fonts images favicon.png robots.txt)
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: F1BotWeb
+      use Phoenix.Controller,
+        formats: [:html, :json],
+        layouts: [html: F1BotWeb.Layouts]
 
       import Plug.Conn
-      alias F1BotWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
-  def view do
+  def html do
     quote do
-      use Phoenix.View,
-        root: "lib/f1_bot_web/templates",
-        namespace: F1BotWeb
-
-      alias F1BotWeb.Component
+      use Phoenix.Component
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
-        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
 
-      # Include shared imports and aliases for views
-      unquote(view_helpers())
-      import Surface
-      use Surface.View, root: "lib/f1_bot_web/templates"
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
     end
   end
 
   def live_view do
     quote do
       use Surface.LiveView,
-        layout: {F1BotWeb.LayoutView, :live}
+        layout: {F1BotWeb.Layouts, :app}
 
       import F1BotWeb.LiveHelpers
 
-      unquote(view_helpers())
+      unquote(html_helpers())
     end
   end
 
@@ -62,7 +61,7 @@ defmodule F1BotWeb do
 
       import F1BotWeb.LiveHelpers
 
-      unquote(view_helpers())
+      unquote(html_helpers())
     end
   end
 
@@ -70,7 +69,7 @@ defmodule F1BotWeb do
     quote do
       use Surface.Component
 
-      unquote(view_helpers())
+      unquote(html_helpers())
     end
   end
 
@@ -90,20 +89,28 @@ defmodule F1BotWeb do
     end
   end
 
-  defp view_helpers do
+  defp html_helpers do
     quote do
-      # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components and translation
+      # import SampleAppWeb.CoreComponents
+      # import SampleAppWeb.Gettext
 
-      # https://github.com/phoenixframework/phoenix_live_view/blob/master/CHANGELOG.md#0180-2022-09-20
-      # Exclude slot/1 and slot/2 because it conflicts with Surface (see Surface.Component.__using__/1)
-      import Phoenix.Component, except: [slot: 1, slot: 2]
+      # Shortcut for generating JS commands
+      alias Phoenix.LiveView.JS
 
-      # Import basic rendering functionality (render, render_layout, etc)
-      import Phoenix.View
+      # Routes generation with the ~p sigil
+      unquote(verified_routes())
+    end
+  end
 
-      import F1BotWeb.ErrorHelpers
-      alias F1BotWeb.Router.Helpers, as: Routes
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: F1BotWeb.Endpoint,
+        router: F1BotWeb.Router,
+        statics: F1BotWeb.static_paths()
     end
   end
 

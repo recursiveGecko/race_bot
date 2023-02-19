@@ -1,0 +1,11 @@
+<main class="flex flex-col">
+  <p class="alert alert-info" role="alert" phx-click="lv:clear-flash" phx-value-key="info">
+    <%= Phoenix.Flash.get(@flash, :info) %>
+  </p>
+
+  <p class="alert alert-danger" role="alert" phx-click="lv:clear-flash" phx-value-key="error">
+    <%= Phoenix.Flash.get(@flash, :error) %>
+  </p>
+
+  <%= @inner_content %>
+</main>

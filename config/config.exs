@@ -27,12 +27,18 @@ config :f1_bot,
 
 # Configures the endpoint
 config :f1_bot, F1BotWeb.Endpoint,
-  render_errors: [view: F1BotWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [
+    formats: [html: F1BotWeb.ErrorHTML, json: F1BotWeb.ErrorJSON],
+    layout: false
+  ],
   live_view: [signing_salt: "nDtTgwk3"],
   pubsub_server: F1Bot.PubSub
 
 config :f1_bot, F1BotWeb.InternalEndpoint,
-  render_errors: [view: F1BotWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [
+    formats: [html: F1BotWeb.ErrorHTML, json: F1BotWeb.ErrorJSON],
+    layout: false
+  ],
   live_view: [signing_salt: "BlByFUSB8j91iHK0qEAfCcjXHGvQBxjs"],
   pubsub_server: F1Bot.PubSub
 

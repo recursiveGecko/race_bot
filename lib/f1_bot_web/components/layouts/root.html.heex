@@ -4,25 +4,25 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {csrf_meta_tag()}
+    <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix="~ Race Bot">
-      {assigns[:page_title] || "F1 Live Telemetry"}
+      <%= assigns[:page_title] || "F1 Live Telemetry" %>
     </.live_title>
     <link rel="icon" type="image/png" href="/favicon.png">
-    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"}>
     <script defer data-domain={phx_host()} src="https://hits.recursiveprojects.cloud/js/script.js"></script>
     <script
       defer
       phx-track-static
       type="text/javascript"
-      src={Routes.static_path(@conn, "/assets/app.js")}
+      src={~p"/assets/app.js"}
     />
   </head>
   <body class="bg-slate-50 font-exo2 min-h-screen flex flex-col">
     <div class="flex-[1_0_auto]">
-      {@inner_content}
+      <%= @inner_content %>
     </div>
-    
+
     <footer class="mt-4 p-2 bg-slate-200 flex flex-col">
       <div class="flex justify-center">
         <a class="inline-flex items-center font-semibold p-2 mr-4" href="https://github.com/recursiveGecko/race_bot">

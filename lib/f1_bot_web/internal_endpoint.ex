@@ -20,7 +20,7 @@ defmodule F1BotWeb.InternalEndpoint do
     at: "/",
     from: :f1_bot,
     gzip: false,
-    only: ~w(assets fonts images favicon.png robots.txt)
+    only: F1BotWeb.static_paths()
 
   plug Phoenix.LiveDashboard.RequestLogger,
     param_key: "request_logger",
