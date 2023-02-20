@@ -5,7 +5,7 @@ defmodule F1Bot.MixProject do
     [
       app: :f1_bot,
       version: "0.3.1",
-      elixir: "~> 1.13",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       source_url: "https://github.com/recursiveGecko/race_bot",
       homepage_url: "https://github.com/recursiveGecko/race_bot",
@@ -80,10 +80,12 @@ defmodule F1Bot.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install --ignore-scripts"],
+      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing", "cmd --cd assets npm install --ignore-scripts"],
+      "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end

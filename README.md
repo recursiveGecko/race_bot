@@ -18,7 +18,7 @@ An [Elixir](https://elixir-lang.org/) project dedicated to processing live data 
 
 ## Requirements
 
-* [Elixir 1.13+](https://elixir-lang.org/install.html)
+* [Elixir 1.14+](https://elixir-lang.org/install.html)
 * [NodeJS 16+](https://nodejs.org/en/) to install NPM dependencies
 
 Alternatively you can use `asdf` to manage tool versions, but be aware that it builds Erlang from source which 

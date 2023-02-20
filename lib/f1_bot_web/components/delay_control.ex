@@ -37,7 +37,7 @@ defmodule F1BotWeb.Component.DelayControl do
       <div class="flex text-xl items-baseline">
         <button
           class={
-            "w-8 h-8 mr-2 inline bg-blue-500 text-white font-semibold px-2 rounded",
+            "transition-all w-8 h-8 mr-2 inline bg-blue-500 text-white font-semibold px-2 rounded",
             "hover:bg-blue-700": @can_decrease,
             "bg-gray-500": not @can_decrease
           }
@@ -49,7 +49,7 @@ defmodule F1BotWeb.Component.DelayControl do
 
         <button
           class={
-            "w-8 h-8 ml-2 inline bg-blue-500 text-white font-semibold px-2 rounded",
+            "transition-all w-8 h-8 ml-2 inline bg-blue-500 text-white font-semibold px-2 rounded",
             "hover:bg-blue-700": @can_increase,
             "bg-gray-500": not @can_increase
           }

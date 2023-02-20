@@ -17,3 +17,26 @@
 .vega-embed summary {
   right: 10px !important;
 }
+
+.data-update-highlight {
+  animation: data-update-highlight 2s ease-in-out;
+}
+
+@keyframes data-update-highlight {
+  0% {
+    /* opacity: 1; */
+    background-color: none;
+  }
+  25% {
+    /* opacity: 0.3; */
+    background-color: rgb(255, 251, 0);
+  }
+  75% {
+    /* opacity: 0.3; */
+    background-color: rgb(255, 251, 0);
+  }  
+  100% {
+    /* opacity: 1; */
+    background-color: none;
+  }
+}

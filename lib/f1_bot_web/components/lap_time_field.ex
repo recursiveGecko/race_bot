@@ -2,6 +2,7 @@ defmodule F1BotWeb.Component.LapTimeField do
   use F1BotWeb, :component
   alias F1Bot.DataTransform.Format
 
+  prop id, :string, required: true
   prop class, :css_class
   prop stats, :map, required: true
   prop personal_best_stats, :map, required: true
@@ -27,14 +28,16 @@ defmodule F1BotWeb.Component.LapTimeField do
         not_fastest_class: @not_fastest_class
       )
     }>
-      {format_value(@stats, @kind)}
+      <span id={@id} :hook={"HighlightOnChange", from: Component.Utility}>
+        {format_value(@stats, @kind)}
+      </span>
     </span>
     """
   end
 
   defp format_value(stats, kind) do
     case extract_stat(stats, kind) do
-      nil -> "N/A"
+      nil -> "—"
       value -> Format.format_lap_time(value)
     end
   end

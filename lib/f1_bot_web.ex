@@ -100,6 +100,8 @@ defmodule F1BotWeb do
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 
+      alias F1BotWeb.Component
+
       # Routes generation with the ~p sigil
       unquote(verified_routes())
     end
