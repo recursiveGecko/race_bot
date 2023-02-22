@@ -4,21 +4,24 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.28.4">
+    <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.3.1">
 
     <title>F1Bot.DelayedEvents — f1_bot v0.3.1</title>
-    <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
+    <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
-    <script src="dist/sidebar_items-275070c72f.js"></script>
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
+    <script src="dist/sidebar_items-25CA45E2.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/app-bd1cb213813bf4825aa2.js"></script>
+    <script async src="dist/html-XN2TSG4M.js"></script>
 
 
   </head>
-  <body data-type="modules">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
@@ -35,12 +38,11 @@
 
 <div class="main">
 
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
 
 <section class="sidebar">
-  <button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
-    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
-  </button>
-
   <form class="sidebar-search" action="search.html">
     <button type="submit" class="search-button" aria-label="Submit Search">
       <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
@@ -50,7 +52,7 @@
     </button>
     <label class="search-label">
       <p class="sr-only">Search</p>
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </label>
   </form>
 
@@ -90,13 +92,13 @@ f1_bot
     <div id="content" class="content-inner">
 
 <h1>
-<button class="settings display-settings">
+<button class="icon-action display-settings">
   <i class="ri-settings-3-line"></i>
   <span class="sr-only">Settings</span>
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -116,87 +118,90 @@ f1_bot
       </a>
       Summary
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#available_delays/0" translate="no">available_delays()</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#available_delays/0" translate="no">available_delays()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#delay_step/0" translate="no">delay_step()</a>
+    </div>
 
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#delayed_topic_pairs/0" translate="no">delayed_topic_pairs()</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#delay_step/0" translate="no">delay_step()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#fetch_latest_event/3" translate="no">fetch_latest_event(delay_ms, event_scope, event_type)</a>
+    </div>
 
-        </div>
-
-          <div class="summary-synopsis"><p>See <a href="F1Bot.DelayedEvents.Rebroadcaster.html#fetch_latest_event/3"><code class="inline">F1Bot.DelayedEvents.Rebroadcaster.fetch_latest_event/3</code></a>.</p></div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#delayed_topic_for_event/3" translate="no">delayed_topic_for_event(scope, type, delay_ms)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#max_delay_ms/0" translate="no">max_delay_ms()</a>
+    </div>
 
-        </div>
-
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#min_delay_ms/0" translate="no">min_delay_ms()</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#fetch_latest_event/3" translate="no">fetch_latest_event(delay_ms, event_scope, event_type)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#push_to_all_caches/1" translate="no">push_to_all_caches(events)</a>
+        <div class="summary-synopsis"><p>See <a href="F1Bot.DelayedEvents.Rebroadcaster.html#fetch_latest_event/3"><code class="inline">F1Bot.DelayedEvents.Rebroadcaster.fetch_latest_event/3</code></a>.</p></div>
 
-        </div>
+    </div>
 
-      </div>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#subscribe_with_delay!/3" translate="no">subscribe_with_delay!(topic_pairs, delay_ms, send_init_events \\ false)</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#max_delay_ms/0" translate="no">max_delay_ms()</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#topic_for_event/3" translate="no">topic_for_event(scope, type, delay_ms)</a>
+    </div>
 
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#min_delay_ms/0" translate="no">min_delay_ms()</a>
 
       </div>
 
-  </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#oneshot_init/2" translate="no">oneshot_init(topic_pairs, delay_ms)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Send the latest event for each topic pair for topics that follow the
+init + delta pattern, e.g. charts where the init event contains the bulky
+chart specification and later events only contain new data points to add.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#push_to_all/1" translate="no">push_to_all(events)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#subscribe_with_delay/3" translate="no">subscribe_with_delay(topic_pairs, delay_ms, send_init_events)</a>
+
+      </div>
+
+    </div>
+
+</div>
 
   </section>
 
@@ -219,7 +224,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">available_delays()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L15" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L12" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -241,7 +246,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">delay_step()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L18" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L15" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -254,16 +259,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="delayed_topic_pairs/0">
+<section class="detail" id="delayed_topic_for_event/3">
 
   <div class="detail-header">
-    <a href="#delayed_topic_pairs/0" class="detail-link" title="Link to this function">
+    <a href="#delayed_topic_for_event/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">delayed_topic_pairs()</h1>
+    <h1 class="signature" translate="no">delayed_topic_for_event(scope, type, delay_ms)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L44" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L50" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -285,7 +290,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">fetch_latest_event(delay_ms, event_scope, event_type)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L12" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L9" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -307,7 +312,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">max_delay_ms()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L17" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L14" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -329,7 +334,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">min_delay_ms()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L16" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L13" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -342,16 +347,40 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_to_all_caches/1">
+<section class="detail" id="oneshot_init/2">
 
   <div class="detail-header">
-    <a href="#push_to_all_caches/1" class="detail-link" title="Link to this function">
+    <a href="#oneshot_init/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_to_all_caches(events)</h1>
+    <h1 class="signature" translate="no">oneshot_init(topic_pairs, delay_ms)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L61" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L41" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Send the latest event for each topic pair for topics that follow the
+init + delta pattern, e.g. charts where the init event contains the bulky
+chart specification and later events only contain new data points to add.</p>
+  </section>
+</section>
+<section class="detail" id="push_to_all/1">
+
+  <div class="detail-header">
+    <a href="#push_to_all/1" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">push_to_all(events)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L55" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -364,40 +393,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="subscribe_with_delay!/3">
-
-    <span id="subscribe_with_delay!/2"></span>
+<section class="detail" id="subscribe_with_delay/3">
 
   <div class="detail-header">
-    <a href="#subscribe_with_delay!/3" class="detail-link" title="Link to this function">
+    <a href="#subscribe_with_delay/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">subscribe_with_delay!(topic_pairs, delay_ms, send_init_events \\ false)</h1>
+    <h1 class="signature" translate="no">subscribe_with_delay(topic_pairs, delay_ms, send_init_events)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L20" class="view-source" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="topic_for_event/3">
-
-  <div class="detail-header">
-    <a href="#topic_for_event/3" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">topic_for_event(scope, type, delay_ms)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L39" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/delayed_events.ex#L17" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -415,10 +420,23 @@ Functions
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="f1_bot.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.4) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.1) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 

@@ -4,21 +4,24 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.28.4">
+    <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.3.1">
 
     <title>F1Bot.Replay — f1_bot v0.3.1</title>
-    <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
+    <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
-    <script src="dist/sidebar_items-275070c72f.js"></script>
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
+    <script src="dist/sidebar_items-25CA45E2.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/app-bd1cb213813bf4825aa2.js"></script>
+    <script async src="dist/html-XN2TSG4M.js"></script>
 
 
   </head>
-  <body data-type="modules">
+  <body data-type="modules" class="page-module">
     <script>
 
       try {
@@ -35,12 +38,11 @@
 
 <div class="main">
 
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
 
 <section class="sidebar">
-  <button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
-    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
-  </button>
-
   <form class="sidebar-search" action="search.html">
     <button type="submit" class="search-button" aria-label="Submit Search">
       <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
@@ -50,7 +52,7 @@
     </button>
     <label class="search-label">
       <p class="sr-only">Search</p>
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </label>
   </form>
 
@@ -90,13 +92,13 @@ f1_bot
     <div id="content" class="content-inner">
 
 <h1>
-<button class="settings display-settings">
+<button class="icon-action display-settings">
   <i class="ri-settings-3-line"></i>
   <span class="sr-only">Settings</span>
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
@@ -107,6 +109,22 @@ f1_bot
 </h1>
 
 
+  <section id="moduledoc">
+<p>Given a base URL of a live timing dataset, this module takes care of downloading known
+<code class="inline">.jsonStream</code> datasets, pre-processes them into a single stream of live timing packets,
+and consecutively processes them using arbitrary implementations.</p><p>This module is flexible enough to support different use cases:</p><ul><li><p>Silently replay the entire dataset in an inert/side-effect free fashion to obtain the
+final F1Session state for analysis purposes (see <a href="F1Bot.html#reload_session/2"><code class="inline">F1Bot.reload_session/2</code></a>)</p></li><li><p>Quickly replay the dataset while using mock implementations of Discord/Twitter modules which print
+the output to console. This allows us to see what messages would be sent to Discord/Twitter
+if we were to run the bot in a live session (see <a href="Mix.Tasks.Backtest.html"><code class="inline">Mix.Tasks.Backtest</code></a>)</p></li><li><p>Fast forward to the session start (using <code class="inline">:replay_while_fn</code> to quickly process everything until we
+encounter a session started packet), then slowly replay the dataset in real time
+(again using <code class="inline">:replay_while_fn</code> to process narrow time slices of packets),
+allowing us to provide a demo environment for the bot which behaves as if it was running in a live
+session (see <code class="inline">F1Bot.Replay.Server.start_demo_mode/1</code>)</p></li></ul><p>Replay state contains the following fields:</p><ul><li><p><code class="inline">:session</code> - the current F1Session state</p></li><li><p><code class="inline">:dataset</code> - a list of unprocessed tuples, containing session timestamp in milliseconds,
+source <code class="inline">.jsonStream</code> name, session timestamp as DateTime, and live timing packet payload (unparsed);
+sorted by timestamp</p></li><li><p><code class="inline">:processed_packets</code> - a number of processed packets, used for logging purposes</p></li><li><p><code class="inline">:total_packets</code> - a total number of packets in the dataset, used for logging purposes</p></li><li><p><code class="inline">:base_ts</code> - DateTime that denotes the start of the replay session, used to calculate the absolute
+timestamp of each packet in the dataset</p></li></ul>
+  </section>
+
 
   <section id="summary" class="details-list">
     <h1 class="section-heading">
@@ -116,29 +134,34 @@ f1_bot
       </a>
       Summary
     </h1>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
 
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#replay_dataset/2" translate="no">replay_dataset(state, options)</a>
-
-        </div>
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#replay_dataset/2" translate="no">replay_dataset(state, options)</a>
 
       </div>
 
-      <div class="summary-row">
-        <div class="summary-signature">
-          <a href="#start_replay/2" translate="no">start_replay(url, options \\ %{})</a>
+        <div class="summary-synopsis"><p>Resume replaying the dataset using the given replay state and options.</p></div>
 
-        </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#start_replay/2" translate="no">start_replay(url, options \\ %{})</a>
 
       </div>
 
-  </div>
+        <div class="summary-synopsis"><p>Given a URL to a live timing dataset, download the <code class="inline">.jsonStream</code> datasets and process
+them using the F1Session module, with or without side effects, up to an
+arbitrary point in time.</p></div>
+
+    </div>
+
+</div>
 
   </section>
 
@@ -161,7 +184,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">replay_dataset(state, options)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L41" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L118" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -171,7 +194,7 @@ Functions
 
   <section class="docstring">
 
-
+<p>Resume replaying the dataset using the given replay state and options.</p><p>For documentation on options, see <a href="#start_replay/2"><code class="inline">start_replay/2</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="start_replay/2">
@@ -185,7 +208,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">start_replay(url, options \\ %{})</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L8" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L80" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -195,7 +218,32 @@ Functions
 
   <section class="docstring">
 
-
+<p>Given a URL to a live timing dataset, download the <code class="inline">.jsonStream</code> datasets and process
+them using the F1Session module, with or without side effects, up to an
+arbitrary point in time.</p><h2 id="start_replay/2-options" class="section-heading">
+  <a href="#start_replay/2-options" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">options</p>
+  </a>
+  Options
+</h2>
+<p>All options are optional unless otherwise noted.</p><ul><li><p><code class="inline">:report_progress</code> - If true, logs processing progress to the console.</p></li><li><p><code class="inline">:exclude_files_regex</code> - A regex that excludes matching <code class="inline">.jsonStream</code>
+files from the download and replay, e.g. to exclude bulky <code class="inline">*.z.jsonStream</code> files
+when they are not needed.</p></li><li><p><code class="inline">:replay_while_fn</code> - a 3-arity function that receives the current replay state,
+current packet and its timestamp in milliseconds.
+This function is called <em>before</em> the packet is processed. If the function
+returns false, the packet is left unprocessed (kept), replay is paused and <a href="#start_replay/2"><code class="inline">start_replay/2</code></a>
+will return the current replay state.
+Replay can by resumed by calling <a href="#replay_dataset/2"><code class="inline">replay_dataset/2</code></a> with the returned state and new
+options (e.g. different <code class="inline">replay_while_fn/3</code>).</p></li><li><p><code class="inline">:packets_fn</code> - a 3-arity function that receives the current replay state,
+current packet and its timestamp in milliseconds.
+This function is called for every packet and can be used to implement custom packet
+processing logic (e.g. to simply print all received packets to console).
+By default this function will process the packet using
+<code class="inline">LiveTimingHandlers.process_live_timing_packet/3</code> and store the resulting <code class="inline">F1Session</code>
+state in the replay state.</p></li><li><p><code class="inline">:events_fn</code> - a 1-arity function that will receive a list of events produced by <strong>default</strong>
+<code class="inline">:packets_fn</code> implementation. This option has no effect when <code class="inline">:packets_fn</code> is overriden.
+By default <code class="inline">:events_fn</code> is unspecified, but <a href="Mix.Tasks.Backtest.html"><code class="inline">Mix.Tasks.Backtest</code></a> for example overrides
+it to broadcast events on the PubSub bus. See module docs for more details.</p></li></ul>
   </section>
 </section>
 
@@ -203,10 +251,23 @@ Functions
   </section>
 
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="f1_bot.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.4) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.1) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 

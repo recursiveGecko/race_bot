@@ -4,21 +4,24 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.28.4">
+    <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.3.1">
 
     <title>Race Bot — f1_bot v0.3.1</title>
-    <link rel="stylesheet" href="dist/elixir-b6f1ed5df9b1d42a7309.css" />
+    <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
-    <script src="dist/sidebar_items-275070c72f.js"></script>
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
+    <script src="dist/sidebar_items-25CA45E2.js"></script>
 
       <script src="docs_config.js"></script>
 
-    <script async src="dist/app-bd1cb213813bf4825aa2.js"></script>
+    <script async src="dist/html-XN2TSG4M.js"></script>
 
 
   </head>
-  <body data-type="extras">
+  <body data-type="extras" class="page-extra">
     <script>
 
       try {
@@ -35,12 +38,11 @@
 
 <div class="main">
 
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
 
 <section class="sidebar">
-  <button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
-    <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
-  </button>
-
   <form class="sidebar-search" action="search.html">
     <button type="submit" class="search-button" aria-label="Submit Search">
       <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
@@ -50,7 +52,7 @@
     </button>
     <label class="search-label">
       <p class="sr-only">Search</p>
-      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     </label>
   </form>
 
@@ -90,30 +92,38 @@ f1_bot
     <div id="content" class="content-inner">
 
 <h1>
-<button class="settings display-settings">
+<button class="icon-action display-settings">
   <i class="ri-settings-3-line"></i>
   <span class="sr-only">Settings</span>
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/README.md#L1" title="View Source" class="view-source" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/README.md#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
+
 
   <span>Race Bot</span>
 </h1>
 
 <p><a href="https://recursivegecko.github.io/race_bot"><img src="https://img.shields.io/badge/pages-docs-informational" alt="Docs"/></a> 
 <a href="license.html"><img src="https://img.shields.io/github/license/recursiveGecko/race_bot" alt="License"/></a> 
-<a href="https://twitter.com/LiveRaceBot"><img src="https://img.shields.io/twitter/follow/LiveRaceBot?style=social" alt="Twitter"/></a></p><p>An <a href="https://elixir-lang.org/">Elixir</a> project dedicated to processing live data from Formula 1 races.</p><p><a href="https://racing.recursiveprojects.cloud/">Project's Website</a> displays live telemetry and analysis (Work in progress).</p><p><a href="https://racing-dev.recursiveprojects.cloud/">Development &amp; Demo Website</a> displays telemetry of previous events to demonstate the functionality.</p><h4><a href="https://twitter.com/LiveRaceBot/status/1528040470961692673">Guide for end users (Twitter)</a></h4><h4><a href="https://recursivegecko.github.io/race_bot">Documentation</a></h4><p><em>All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.</em></p><h2 id="basic-usage" class="section-heading">
+<a href="https://twitter.com/LiveRaceBot"><img src="https://img.shields.io/twitter/follow/LiveRaceBot?style=social" alt="Twitter"/></a></p><p>An <a href="https://elixir-lang.org/">Elixir</a> project dedicated to processing live data from Formula 1 races.</p><p><a href="https://racing.recursiveprojects.cloud/">Project's Website</a> displays live telemetry and analysis (Work in progress).</p><p><a href="https://racing-dev.recursiveprojects.cloud/">Development &amp; Demo Website</a> displays telemetry of previous events to demonstate the functionality.</p><h4><a href="https://twitter.com/LiveRaceBot/status/1528040470961692673">Guide for end users (Twitter)</a></h4><h4><a href="https://recursivegecko.github.io/race_bot">Documentation</a></h4><p><em>All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.</em></p><h2 id="requirements" class="section-heading">
+  <a href="#requirements" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">requirements</p>
+  </a>
+  Requirements
+</h2>
+<ul><li><a href="https://elixir-lang.org/install.html">Elixir 1.14+</a></li><li><a href="https://nodejs.org/en/">NodeJS 16+</a> to install NPM dependencies</li></ul><p>Alternatively you can use <code class="inline">asdf</code> to manage tool versions, but be aware that it builds Erlang from source which 
+<a href="https://github.com/asdf-vm/asdf-erlang#before-asdf-install">requires installation of additional system dependencies</a>.</p><h2 id="basic-usage" class="section-heading">
   <a href="#basic-usage" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">basic-usage</p>
   </a>
   Basic usage
 </h2>
 <pre><code class="makeup bash" translate="no"><span class=""># Install dependencies
-</span><span class="">mix deps.get
+</span><span class="">mix setup
 </span><span class="">
 </span><span class=""># Configuration file `.env` must be created by copying `.env.example`
 </span><span class="">cp .env.example .env
@@ -126,7 +136,7 @@ f1_bot
 </span><span class="">mix docs
 </span><span class="">
 </span><span class=""># Run locally
-</span><span class="">iex -S mix
+</span><span class="">iex -S mix phx.server
 </span><span class="">
 </span><span class=""># Run a backtest on an old session
 </span><span class="">iex -S mix backtest --url &quot;http://livetiming.formula1.com/static/2022/2022-05-08_Miami_Grand_Prix/2022-05-07_Qualifying&quot;
@@ -149,7 +159,7 @@ f1_bot
   Thanks
 </h2>
 <p>💙 <a href="https://github.com/theOehrly/Fast-F1">theOehrly/Fast-F1</a>: For inspiration, their effort and
-documentation. Fast-F1 was extremely valuable in quickly understanding how F1's live timing service works. </p><h2 id="license" class="section-heading">
+documentation. Fast-F1 was extremely valuable in quickly understanding how F1's live timing service works. </p><p>💙 <a href="https://github.com/f1multiviewer">MultiViewer for F1</a>: For tyre icons used in this project</p><h2 id="license" class="section-heading">
   <a href="#license" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">license</p>
   </a>
@@ -182,12 +192,24 @@ LICENSE
 
   </div>
 </div>
-
       <footer class="footer">
-
         <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+              Search HexDocs
+            </button>
+
+              <a href="f1_bot.epub" title="ePub version">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.28.4) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.1) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
