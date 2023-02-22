@@ -28,9 +28,9 @@
   <div class="grow flex flex-col">
     <div class="">
       <span class="text-2xl" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}</span>
-      <Component.PopupLink id="chart_link" class="ml-3" href={~p"/chart"}>
+      <!-- <Component.PopupLink id="chart_link" class="ml-3" href={~p"/chart"}>
         Open charts
-      </Component.PopupLink>
+      </Component.PopupLink> -->
     </div>
 
     <div class="mt-4 grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,25rem)] auto-rows-min">
@@ -43,10 +43,5 @@
         />
       {/for}
     </div>
-  </div>
-
-  <!-- Right sidebar -->
-  <div class="min-w-0 w-full sm:w-[600px]">
-    <Component.VegaChart class="h-[350px]" chart_id="lap_times" />
   </div>
 </div>

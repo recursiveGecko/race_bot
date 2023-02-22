@@ -7,6 +7,13 @@ defmodule F1Bot.Analysis.GraphSpec do
     "lap_times_race"
   ]
 
+  def load!(file_name) do
+    case load(file_name) do
+      {:ok, json_spec} -> json_spec
+      {:error, reason} -> raise "Failed to load graph spec: #{inspect(reason)}"
+    end
+  end
+
   defmemo load(file_name) do
     if file_name in @allowed_file_names do
       with {:ok, json_spec} <- load_from_file(file_name) do
@@ -27,7 +34,7 @@ defmodule F1Bot.Analysis.GraphSpec do
     end)
   end
 
-  defmemop load_from_file(file_name) do
+  defp load_from_file(file_name) do
     :f1_bot
     |> Application.app_dir("priv/vega/#{file_name}.json")
     |> File.read()

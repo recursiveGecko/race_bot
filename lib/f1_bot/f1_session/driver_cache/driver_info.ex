@@ -42,22 +42,6 @@ defmodule F1Bot.F1Session.DriverCache.DriverInfo do
     struct!(__MODULE__, data)
   end
 
-  def merge(old, new) do
-    old = if is_struct(old), do: Map.from_struct(old), else: old
-    new = if is_struct(new), do: Map.from_struct(new), else: new
-
-    data =
-      Map.merge(old, new, fn _k, v1, v2 ->
-        if v2 == nil do
-          v1
-        else
-          v2
-        end
-      end)
-
-    struct!(__MODULE__, data)
-  end
-
   def team_color_int(%__MODULE__{team_color: color_hex}) when is_binary(color_hex) do
     case Integer.parse(color_hex, 16) do
       {int, _} -> int

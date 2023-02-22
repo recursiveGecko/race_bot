@@ -68,7 +68,7 @@ defmodule F1Bot.F1Session.SessionInfo do
     old = Map.from_struct(old)
     new = Map.from_struct(new)
 
-    merged = merge(old, new)
+    merged = MapUtils.patch_ignore_nil(old, new)
     session_info = struct!(__MODULE__, merged)
 
     events = [to_event(session_info)]
@@ -82,15 +82,5 @@ defmodule F1Bot.F1Session.SessionInfo do
 
   def to_event(session_info = %__MODULE__{}) do
     Event.new(:session_info, :session_info_changed, session_info)
-  end
-
-  defp merge(old, new) do
-    Map.merge(old, new, fn _k, a, b ->
-      if b == nil do
-        a
-      else
-        b
-      end
-    end)
   end
 end

@@ -81,10 +81,10 @@ defmodule F1Bot.F1Session.DriverCache do
     old_driver =
       case get_driver_by_number(driver_cache, driver_number) do
         {:ok, d} -> d
-        _ -> %{}
+        _ -> %DriverInfo{}
       end
 
-    merged_driver = DriverInfo.merge(old_driver, partial_driver)
+    merged_driver = MapUtils.patch_ignore_nil(old_driver, partial_driver)
     put_driver(driver_cache, merged_driver)
   end
 

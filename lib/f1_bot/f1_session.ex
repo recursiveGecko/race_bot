@@ -142,8 +142,8 @@ defmodule F1Bot.F1Session do
     %{session | driver_data_repo: repo}
   end
 
-  def push_session_lap_counter(session, partial_lap_counter) do
-    lap_counter = F1Session.LapCounter.update(session.lap_counter, partial_lap_counter)
+  def push_lap_counter_update(session, current_lap, total_laps, timestamp) do
+    lap_counter = F1Session.LapCounter.update(session.lap_counter, current_lap, total_laps, timestamp)
     session = %{session | lap_counter: lap_counter}
 
     event = F1Session.LapCounter.to_event(lap_counter)
@@ -227,12 +227,14 @@ defmodule F1Bot.F1Session do
   end
 
   def push_track_status(session, track_status, timestamp) do
-    track_status =
+    lap_number = session.lap_counter.current
+
+    {track_status, events} =
       session.track_status_history
-      |> F1Session.TrackStatusHistory.push_track_status(track_status, timestamp)
+      |> F1Session.TrackStatusHistory.push_track_status(track_status, lap_number, timestamp)
 
     session = %{session | track_status_history: track_status}
-    {session, []}
+    {session, events}
   end
 
   def session_clock_from_local_time(session, local_time) do

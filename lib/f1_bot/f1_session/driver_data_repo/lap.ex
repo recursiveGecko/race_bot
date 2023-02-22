@@ -100,19 +100,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
   end
 
   def merge_with_args(lap, args) do
-    old_args = Map.from_struct(lap)
     new_args = args |> Enum.into(%{})
 
     # Do not replace existing fields
-    args =
-      Map.merge(new_args, old_args, fn _key, new, old ->
-        if old == nil do
-          new
-        else
-          old
-        end
-      end)
-
-    struct!(__MODULE__, args)
+    MapUtils.patch_missing(lap, new_args)
   end
 end

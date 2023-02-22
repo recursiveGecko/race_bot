@@ -39,69 +39,48 @@ defmodule F1Bot.Analysis.LapTimes do
             not Lap.is_outlap_after_red_flag?(lap),
             # not false do
             not Lap.is_neutralized?(lap, neutralized_periods) do
-          %{
-            driver_number: driver_no,
-            lap: lap.number,
-            t: lap.time,
-            ts: lap.timestamp
-          }
+          gen_datum(driver_no, lap)
         end
 
       {:ok, data}
-    else
-      false -> {:error, :missing_current_lap}
     end
   end
 
-  def plot_vegalite(session = %F1Session{}, driver_numbers) do
-    is_race = F1Session.SessionInfo.is_race?(session.session_info)
+  def lap_to_vegalite_datum(lap = %Lap{}, driver_number, session = %F1Session{}) do
+    gen_datum(driver_number, lap)
+    |> serialize_datum_values()
+    |> extend_vega_datum_with_driver_info(session)
+  end
 
-    spec_name =
-      if is_race do
-        "lap_times_race"
-      else
-        "lap_times_quali"
-      end
+  def generate_vegalite_dataset(session = %F1Session{}, driver_numbers) do
+    with {:ok, data} <- calculate(session, driver_numbers) do
+      dataset =
+        data
+        |> Enum.map(&serialize_datum_values/1)
+        |> extend_vega_data_with_driver_info(session)
 
-    with {:ok, spec} <- GraphSpec.load(spec_name),
-         {:ok, data} <- calculate(session, driver_numbers) do
-      data =
-        session
-        |> extend_vega_data_with_driver_info(data)
-        |> serialize_data_values()
-
-      spec =
-        spec
-        |> put_in(["datasets", "driver_data"], data)
-        # TODO: Add data
-        |> put_in(["datasets", "track_data"], [])
-        |> put_in(
-          [
-            "params",
-            Access.filter(fn el -> el["name"] == "current_lap" end),
-            "value"
-          ],
-          0
-        )
-        |> put_in(["title"], "Lap times")
-
-      {:ok, spec}
+      {:ok, dataset}
     end
   end
 
-  defp serialize_data_values(data) do
-    for datum <- data do
-      datum
-      |> update_in([:ts], fn
-        nil -> nil
-        ts -> DateTime.to_unix(ts, :second)
-      end)
-      |> update_in([:t], fn
-        nil -> nil
-        time -> Format.format_lap_time(time)
-      end)
-    end
+  defp gen_datum(driver_number, lap) do
+    %{
+      driver_number: driver_number,
+      lap: lap.number,
+      t: lap.time,
+      ts: lap.timestamp
+    }
   end
 
-
+  defp serialize_datum_values(datum) do
+    datum
+    |> update_in([:ts], fn
+      nil -> nil
+      ts -> DateTime.to_unix(ts, :second)
+    end)
+    |> update_in([:t], fn
+      nil -> nil
+      time -> Format.format_lap_time(time)
+    end)
+  end
 end

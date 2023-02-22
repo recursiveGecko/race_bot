@@ -26,14 +26,9 @@ defmodule F1Bot.F1Session.EventGenerator do
     to: EventGenerator.StateSync,
     as: :state_sync_events
 
-  defdelegate make_lap_time_chart_init_events(session),
-    to: EventGenerator.StateSync,
-    as: :lap_time_chart_init_events
-
   def make_events_on_new_driver_data(session, driver_number) do
     [
       make_driver_summary_events(session, driver_number),
-      make_lap_time_chart_init_events(session)
     ]
     |> List.flatten()
   end

@@ -37,18 +37,7 @@ defmodule F1BotWeb.Live.Telemetry do
     |> List.flatten()
   end
 
-  def pubsub_oneshot_topics do
-    [
-      {:chart_init, :lap_times}
-    ]
-  end
 
-  def pubsub_delta_topics do
-    [
-      {:chart_insert, :lap_times},
-      {:chart_replace, :track_status}
-    ]
-  end
 
   @impl true
   def handle_event("toggle-driver", params, socket) do
@@ -129,34 +118,11 @@ defmodule F1BotWeb.Live.Telemetry do
         %{scope: :session_info, type: :session_info_changed, payload: session_info},
         socket
       ) do
-    socket = assign(socket, session_info: session_info)
-    {:noreply, socket}
-  end
+    socket =
+      socket
+      |> assign(session_info: session_info)
+      |> assign(page_title: session_info.gp_name)
 
-  @impl true
-  def handle_info(
-        %{scope: :chart_init, type: id, payload: spec},
-        socket
-      ) do
-    socket = Component.VegaChart.initialize(socket, id, spec)
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info(
-        %{scope: :chart_insert, type: id, payload: %{dataset: dataset, data: data}},
-        socket
-      ) do
-    socket = Component.VegaChart.insert_data(socket, id, dataset, data)
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info(
-        %{scope: :chart_replace, type: id, payload: %{dataset: dataset, data: data}},
-        socket
-      ) do
-    socket = Component.VegaChart.replace_data(socket, id, dataset, data)
     {:noreply, socket}
   end
 
@@ -178,8 +144,6 @@ defmodule F1BotWeb.Live.Telemetry do
     per_driver_topics = pubsub_per_driver_topics(socket.assigns.drivers_of_interest)
     topics_to_subscribe = global_topics ++ per_driver_topics
 
-    F1Bot.DelayedEvents.oneshot_init(pubsub_oneshot_topics(), delay_ms)
-
     {:ok, subscribed_topics} =
       F1Bot.DelayedEvents.subscribe_with_delay(
         topics_to_subscribe,
@@ -187,18 +151,9 @@ defmodule F1BotWeb.Live.Telemetry do
         true
       )
 
-    {:ok, subscribed_delta_topics} =
-      F1Bot.DelayedEvents.subscribe_with_delay(
-        pubsub_delta_topics(),
-        delay_ms,
-        false
-      )
-
-    all_subscribed_topics = subscribed_topics ++ subscribed_delta_topics
-
     socket
     |> assign(:pubsub_delay_ms, delay_ms)
-    |> assign(:pubsub_delayed_topics, all_subscribed_topics)
+    |> assign(:pubsub_delayed_topics, subscribed_topics)
   end
 
   defp is_race?(_session_info = nil), do: false

@@ -41,7 +41,7 @@ defmodule F1Bot.Analysis.Common do
     end
   end
 
-  def extend_vega_data_with_driver_info(session = %F1Session{}, data) do
+  def extend_vega_data_with_driver_info(data, session = %F1Session{}) when is_list(data) do
     with {:ok, all_info} <- all_driver_basic_info(session) do
       for datum <- data,
           info = all_info[datum.driver_number],
@@ -51,6 +51,23 @@ defmodule F1Bot.Analysis.Common do
         |> Map.put(:c, "##{info.color}")
         |> Map.delete(:driver_number)
       end
+    end
+  end
+
+  # TODO: Deduplicate this with extend_vega_data_with_driver_info
+  def extend_vega_datum_with_driver_info(datum = %{}, session = %F1Session{}) do
+    case F1Session.driver_info_by_number(session, datum.driver_number) do
+      {:ok, info} ->
+        datum =
+          datum
+          |> Map.put(:n, info.driver_abbr)
+          |> Map.put(:c, "##{info.color}")
+          |> Map.delete(:driver_number)
+
+        {:ok, datum}
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 
