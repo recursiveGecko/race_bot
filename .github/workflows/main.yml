@@ -100,12 +100,6 @@ jobs:
           private_key: ${{ secrets.WG_PRIVATE_KEY }}
 
       -
-        name: Add WG route
-        run: |
-          ifname=$(ls /sys/class/net/ | grep '^wg')
-          sudo ip route add ${{ secrets.WG_ALLOWED_IPS }} dev $ifname
-
-      -
         name: Download Nomad
         run: |
           cd /usr/local/bin && \
