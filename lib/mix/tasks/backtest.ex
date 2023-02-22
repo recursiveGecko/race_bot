@@ -25,22 +25,30 @@ defmodule Mix.Tasks.Backtest do
 
     replay_options = %{
       exclude_files_regex: ~r/\.z\./,
-      events_fn: &F1Bot.F1Session.Common.Helpers.publish_events/1,
+      # Broadcast events on the PubSub bus, this allows us to quickly review
+      # the sanity of F1 packet processing logic by inspecting the console output
+      # for simulated Discord and Twitter messages.
+      events_fn: &F1Bot.PubSub.broadcast_events/1,
       report_progress: true
     }
 
+    # profile_start()
     {:ok, %{session: session}} = F1Bot.Replay.start_replay(url, replay_options)
+    # profile_end()
+
     F1Bot.F1Session.Server.replace_session(session)
-
-    Logger.info("Creating lap time graph.")
-
-    # F1Bot.Plotting.plot_gap([16, 1], style: :lines) |> IO.inspect()
-    # F1Bot.Plotting.plot_lap_times([16, 1], style: :lines, x_axis: :timestamp) |> IO.inspect()
-    # F1Bot.Plotting.plot_lap_times([16, 1], style: :lines, x_axis: :timestamp) |> IO.inspect()
-    # F1Bot.Plotting.plot_lap_times([16, 1], style: :lines) |> IO.inspect()
 
     total_mem_mb = (:erlang.memory(:total) / 1024 / 1024) |> round()
     Logger.info("Total memory usage: #{total_mem_mb} MB")
+  end
+
+  def profile_start() do
+    :eprof.start_profiling([self()])
+  end
+
+  def profile_end() do
+    :eprof.stop_profiling()
+    :eprof.analyze()
   end
 
   def parse_argv(argv) do

@@ -6,9 +6,6 @@ defmodule F1Bot.DelayedEvents do
   @delay_step 1_000
   @available_delays @min_delay..@max_delay//@delay_step
 
-  @min_driver 1
-  @max_driver 100
-
   defdelegate fetch_latest_event(delay_ms, event_scope, event_type),
     to: F1Bot.DelayedEvents.Rebroadcaster
 

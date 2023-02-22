@@ -4,7 +4,6 @@ defmodule F1Bot.Analysis.LapTimes do
   """
   import F1Bot.Analysis.Common
 
-  alias F1Bot.Analysis.GraphSpec
   alias F1Bot.DataTransform.Format
   alias F1Bot.F1Session
   alias F1Bot.F1Session.DriverDataRepo.{Lap, Laps}

@@ -1,6 +1,5 @@
 defmodule F1Bot.F1Session.EventGenerator.StateSync do
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.Common.Event
   alias F1Bot.F1Session.EventGenerator.{Driver, Charts}
 
   def state_sync_events(session = %F1Session{}) do
