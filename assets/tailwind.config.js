@@ -9,6 +9,7 @@ module.exports = {
     '../lib/*_web.ex',
     '../lib/*_web/**/*.*ex',
     '../lib/*_web/**/*.sface',
+    '../lib/*_web/**/*.heex',
   ],
   theme: {
     extend: {
@@ -18,6 +19,11 @@ module.exports = {
       },
       screens: {
         'xs': '350px',
+        'sm': '640px',  
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
       }
     }
   },

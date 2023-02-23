@@ -105,7 +105,7 @@ job "f1bot-____INSERT_ENV_HERE____" {
 
       resources {
         cpu    = 4000 # Mhz
-        memory = 10000 # MB
+        memory = 4096 # MB
       }
 
       kill_timeout = "20s"
