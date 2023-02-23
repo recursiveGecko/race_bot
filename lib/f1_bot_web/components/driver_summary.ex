@@ -25,7 +25,7 @@ defmodule F1BotWeb.Component.DriverSummary do
     delay_ms = socket.assigns.delay_ms
     driver_no = socket.assigns.driver_info.driver_number
 
-    delayed_payload = fetch_delayed_event_payload("driver:#{driver_no}", :summary, delay_ms, nil)
+    delayed_payload = fetch_delayed_event_payload("driver:#{driver_no}:summary", delay_ms, nil)
 
     driver_summary =
       case delayed_payload[:driver_summary] do
@@ -52,7 +52,7 @@ defmodule F1BotWeb.Component.DriverSummary do
     |> assign(:session_best_stats, session_best_stats)
   end
 
-  def handle_summary_event(_event = %{type: :summary, payload: payload}) do
+  def handle_summary_event(_event = %{scope: "driver_summary:" <> _driver_number, payload: payload}) do
     %{
       driver_number: driver_number,
       driver_summary: driver_summary,

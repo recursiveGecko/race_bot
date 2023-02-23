@@ -19,10 +19,10 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
     :"#{__MODULE__}::#{delay_ms}"
   end
 
-  def fetch_latest_event(delay_ms, event_scope, event_type) do
+  def fetch_latest_event(delay_ms, event_scope) do
     delay_ms
     |> ets_table_name()
-    |> Ets.fetch({atom(event_scope), atom(event_type)})
+    |> Ets.fetch(to_string(event_scope))
   end
 
   @impl true
@@ -54,7 +54,7 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
 
   @impl true
   def handle_info(
-        event = %{scope: _, type: _, payload: _},
+        event = %{scope: _, payload: _},
         state
       ) do
     state = update_in(state.events, &(&1 ++ [event]))
@@ -78,18 +78,15 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
   end
 
   defp do_rebroadcast(state, event) do
-    topic = DelayedEvents.delayed_topic_for_event(event.scope, event.type, state.delay_ms)
+    topic = DelayedEvents.delayed_topic_for_event(event.scope, state.delay_ms)
     F1Bot.PubSub.broadcast(topic, event)
   end
 
   defp save_latest_event(state, event) do
     state.delay_ms
     |> ets_table_name()
-    |> Ets.insert({atom(event.scope), atom(event.type)}, event)
+    |> Ets.insert(to_string(event.scope), event)
   end
 
   defp ets_table_name(delay_ms), do: :"#{@ets_table_prefix}_#{delay_ms}"
-
-  defp atom(x) when is_atom(x), do: x
-  defp atom(x) when is_binary(x), do: String.to_atom(x)
 end

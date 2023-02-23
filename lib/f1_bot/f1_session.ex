@@ -189,8 +189,9 @@ defmodule F1Bot.F1Session do
     events =
       if old_status != session_status do
         event =
-          F1Session.Common.Event.new(:session_status, session_status, %{
+          F1Session.Common.Event.new("session_status:#{session_status}", %{
             gp_name: session.session_info.gp_name,
+            session_status: session_status,
             session_type: session.session_info.type
           })
 

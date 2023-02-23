@@ -23,7 +23,7 @@ defmodule F1Bot.F1Session.EventGenerator.Charts do
     }
 
     [
-      Event.new(:chart_init, :lap_times, lap_time_init_payload)
+      Event.new("chart_init:lap_times", lap_time_init_payload)
     ]
   end
 

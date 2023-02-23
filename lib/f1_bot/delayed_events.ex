@@ -6,7 +6,7 @@ defmodule F1Bot.DelayedEvents do
   @delay_step 1_000
   @available_delays @min_delay..@max_delay//@delay_step
 
-  defdelegate fetch_latest_event(delay_ms, event_scope, event_type),
+  defdelegate fetch_latest_event(delay_ms, event_scope),
     to: F1Bot.DelayedEvents.Rebroadcaster
 
   def available_delays, do: @available_delays
@@ -14,17 +14,17 @@ defmodule F1Bot.DelayedEvents do
   def max_delay_ms, do: @max_delay
   def delay_step, do: @delay_step
 
-  def subscribe_with_delay(topic_pairs, delay_ms, send_init_events) do
+  def subscribe_with_delay(scopes, delay_ms, send_init_events) do
     if delay_ms in @available_delays do
       topics =
-        Enum.map(topic_pairs, fn {scope, type} ->
-          delayed_topic_for_event(scope, type, delay_ms)
+        Enum.map(scopes, fn scope ->
+          delayed_topic_for_event(scope, delay_ms)
         end)
 
       F1Bot.PubSub.subscribe_all(topics)
 
       if send_init_events do
-        send_init_events(topic_pairs, delay_ms, self())
+        send_init_events(scopes, delay_ms, self())
       end
 
       {:ok, topics}
@@ -38,17 +38,17 @@ defmodule F1Bot.DelayedEvents do
   init + delta pattern, e.g. charts where the init event contains the bulky
   chart specification and later events only contain new data points to add.
   """
-  def oneshot_init(topic_pairs, delay_ms) do
+  def oneshot_init(scopes, delay_ms) do
     if delay_ms in @available_delays do
-      send_init_events(topic_pairs, delay_ms, self())
+      send_init_events(scopes, delay_ms, self())
       :ok
     else
       {:error, :invalid_delay}
     end
   end
 
-  def delayed_topic_for_event(scope, type, delay_ms) do
-    base_topic = F1Bot.PubSub.topic_for_event(scope, type)
+  def delayed_topic_for_event(scope, delay_ms) do
+    base_topic = F1Bot.PubSub.topic_for_event(scope)
     "delayed:#{delay_ms}::#{base_topic}"
   end
 
@@ -62,9 +62,9 @@ defmodule F1Bot.DelayedEvents do
     end
   end
 
-  defp send_init_events(topic_pairs, delay_ms, pid) do
-    for {scope, type} <- topic_pairs do
-      case fetch_latest_event(delay_ms, scope, type) do
+  defp send_init_events(scopes, delay_ms, pid) do
+    for scope <- scopes do
+      case fetch_latest_event(delay_ms, scope) do
         {:ok, event} -> send(pid, event)
         {:error, :no_data} -> :skip
       end

@@ -52,7 +52,7 @@ defmodule F1Bot.F1Session.LapCounter do
   end
 
   def to_event(lap_counter = %__MODULE__{}) do
-    Event.new(:lap_counter, :changed, lap_counter)
+    Event.new("lap_counter:changed", lap_counter)
   end
 
   defp update_timestamps(lap_counter, _current_lap = nil, _timestamp), do: lap_counter

@@ -90,7 +90,7 @@ defmodule F1Bot.F1Session.TrackStatusHistory do
       end)
 
     payload = %{dataset: "track_data", data: track_data}
-    e = Event.new(:chart_data_replace, :track_status_data, payload)
+    e = Event.new("chart_data_replace:track_status_data", payload)
     [e]
   end
 

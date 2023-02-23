@@ -39,7 +39,7 @@ defmodule F1BotWeb.Live.Chart do
 
   @impl true
   def handle_info(
-        %{scope: :chart_init, type: :lap_times, payload: chart_init},
+        %{scope: "chart_init:lap_times", payload: chart_init},
         socket
       ) do
     socket = Component.VegaChart.initialize(socket, "lap_times", chart_init.spec)
@@ -48,7 +48,7 @@ defmodule F1BotWeb.Live.Chart do
 
   @impl true
   def handle_info(
-        %{scope: :lap_time_chart_data_init, type: _driver_number, payload: lt_data},
+        %{scope: "lap_time_chart_data_init:" <> _driver_number, payload: lt_data},
         socket
       ) do
     socket = Component.VegaChart.replace_data(socket, "lap_times", lt_data.dataset, lt_data.data)
@@ -57,7 +57,7 @@ defmodule F1BotWeb.Live.Chart do
 
   @impl true
   def handle_info(
-        %{scope: :chart_data_replace, type: :track_status_data, payload: ts_data},
+        %{scope: "chart_data_replace:track_status_data", payload: ts_data},
         socket
       ) do
     socket = Component.VegaChart.replace_data(socket, "lap_times", ts_data.dataset, ts_data.data)
@@ -98,15 +98,15 @@ defmodule F1BotWeb.Live.Chart do
 
   defp permanent_topics do
     [
-      {:chart_init, :lap_times},
-      {:chart_data_replace, :track_status_data}
+      "chart_init:lap_times",
+      "chart_data_replace:track_status_data"
     ]
   end
 
   defp oneshot_topics(driver_numbers) do
     [
       (for driver_no <- driver_numbers do
-        {:lap_time_chart_data_init, :"#{driver_no}"}
+        "lap_time_chart_data_init:#{driver_no}"
       end)
     ]
     |> List.flatten()
@@ -115,7 +115,7 @@ defmodule F1BotWeb.Live.Chart do
   defp permanent_topics_noinit(driver_numbers) do
     [
       (for driver_no <- driver_numbers do
-        {:lap_time_chart_data_insert, :"#{driver_no}"}
+        "lap_time_chart_data_insert:#{driver_no}"
       end)
     ]
     |> List.flatten()

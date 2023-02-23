@@ -4,13 +4,13 @@ defmodule F1Bot.PubSub do
   alias F1Bot.F1Session.Common.Event
   alias F1Bot.DelayedEvents
 
-  def topic_for_event(scope, type) do
-    "f1bot:#{scope}:#{type}"
+  def topic_for_event(scope) do
+    "f1bot:#{scope}"
   end
 
-  @spec subscribe_to_event(String.t() | atom(), String.t() | atom()) :: any()
-  def subscribe_to_event(scope, type) do
-    topic = topic_for_event(scope, type)
+  @spec subscribe_to_event(String.t()) :: any()
+  def subscribe_to_event(scope) do
+    topic = topic_for_event(scope)
     subscribe(topic)
   end
 
@@ -25,7 +25,7 @@ defmodule F1Bot.PubSub do
   @spec broadcast_events([Event.t()], boolean()) :: any()
   def broadcast_events(events, rebroadcast_delayed \\ true) do
     for e <- events do
-      topic = topic_for_event(e.scope, e.type)
+      topic = topic_for_event(e.scope)
       broadcast(topic, e)
     end
 

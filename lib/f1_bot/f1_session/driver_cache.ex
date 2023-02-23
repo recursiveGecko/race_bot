@@ -97,6 +97,6 @@ defmodule F1Bot.F1Session.DriverCache do
 
   def to_event(driver_cache = %__MODULE__{}) do
     {:ok, driver_list} = driver_list(driver_cache)
-    Event.new(:driver, :list, driver_list)
+    Event.new("driver:list", driver_list)
   end
 end

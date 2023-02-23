@@ -4,7 +4,7 @@ defmodule F1Bot.F1Session.EventGenerator.SessionReset do
   alias F1Bot.F1Session.EventGenerator.{Driver, Charts}
 
   def session_reset_events(session = %F1Session{}) do
-    reset_event = Event.new(:session_info, :reset_session, nil)
+    reset_event = Event.new("session_info:reset_session", nil)
 
     summary_events =
       1..99

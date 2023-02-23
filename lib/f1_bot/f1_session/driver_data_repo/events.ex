@@ -53,10 +53,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.Events do
       payload
       |> Map.put(:driver_number, self.number)
 
-    Event.new(:driver, type, payload)
+    Event.new("driver:#{type}", payload)
   end
 
   defp make_aggregate_stats_event(type, payload) do
-    Event.new(:aggregate_stats, type, payload)
+    Event.new("aggregate_stats:#{type}", payload)
   end
 end

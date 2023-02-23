@@ -14,8 +14,8 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
         session_best_stats: Map.from_struct(session_best_stats)
       }
 
-      scope = :"driver:#{driver_number}"
-      [Event.new(scope, :summary, payload)]
+      scope = "driver_summary:#{driver_number}"
+      [Event.new(scope, payload)]
     else
       {:error, _} -> []
     end
@@ -29,7 +29,7 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
       case Analysis.LapTimes.generate_vegalite_dataset(session, [driver_number]) do
         {:ok, dataset} ->
           payload = %{dataset: dataset_name, data: dataset}
-          e = Event.new(:lap_time_chart_data_init, :"#{driver_number}", payload)
+          e = Event.new("lap_time_chart_data_init:#{driver_number}", payload)
           [e]
 
         _ ->
@@ -40,7 +40,7 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
       case Analysis.LapTimes.lap_to_vegalite_datum(lap, driver_number, session) do
         {:ok, datum} ->
           payload = %{dataset: dataset_name, data: [datum]}
-          e = Event.new(:lap_time_chart_data_delta, :"#{driver_number}", payload)
+          e = Event.new("lap_time_chart_data_delta:#{driver_number}", payload)
           [e]
 
         _ ->

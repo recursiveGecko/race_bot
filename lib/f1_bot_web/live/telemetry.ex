@@ -21,23 +21,21 @@ defmodule F1BotWeb.Live.Telemetry do
 
   def pubsub_topics do
     [
-      {:driver, :list},
-      {:lap_counter, :changed},
-      {:session_info, :session_info_changed},
-      {:session_clock, :changed}
+      "driver:list",
+      "lap_counter:changed",
+      "session_info:changed",
+      "session_clock:changed"
     ]
   end
 
   def pubsub_per_driver_topics(driver_numbers) do
     for driver_no <- driver_numbers do
       [
-        {:"driver:#{driver_no}", :summary}
+        "driver_summary:#{driver_no}"
       ]
     end
     |> List.flatten()
   end
-
-
 
   @impl true
   def handle_event("toggle-driver", params, socket) do
@@ -80,14 +78,19 @@ defmodule F1BotWeb.Live.Telemetry do
   end
 
   @impl true
-  def handle_info(e = %{type: :summary}, socket) do
+  def handle_info(
+        e = %{
+          scope: "driver_summary:" <> driver_number
+        },
+        socket
+      ) do
     Component.DriverSummary.handle_summary_event(e)
     {:noreply, socket}
   end
 
   @impl true
   def handle_info(
-        %{scope: :driver, type: :list, payload: driver_list},
+        %{scope: "driver:list", payload: driver_list},
         socket
       ) do
     socket = assign(socket, driver_list: driver_list)
@@ -96,7 +99,7 @@ defmodule F1BotWeb.Live.Telemetry do
 
   @impl true
   def handle_info(
-        %{scope: :lap_counter, type: :changed, payload: lap_counter},
+        %{scope: "lap_counter:changed", payload: lap_counter},
         socket
       ) do
     lap_counter = Map.delete(lap_counter, :__struct__)
@@ -106,7 +109,7 @@ defmodule F1BotWeb.Live.Telemetry do
 
   @impl true
   def handle_info(
-        %{scope: :session_clock, type: :changed, payload: session_clock},
+        %{scope: "session_clock:changed", payload: session_clock},
         socket
       ) do
     socket = assign(socket, session_clock: session_clock)
@@ -115,7 +118,7 @@ defmodule F1BotWeb.Live.Telemetry do
 
   @impl true
   def handle_info(
-        %{scope: :session_info, type: :session_info_changed, payload: session_info},
+        %{scope: "session_info:changed", payload: session_info},
         socket
       ) do
     socket =

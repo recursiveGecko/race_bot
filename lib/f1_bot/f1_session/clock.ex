@@ -46,6 +46,6 @@ defmodule F1Bot.F1Session.Clock do
 
   def to_event(clock = %__MODULE__{}, local_time \\ Timex.now()) do
     session_clock = session_clock_from_local_time(clock, local_time)
-    Event.new(:session_clock, :changed, session_clock)
+    Event.new("session_clock:changed", session_clock)
   end
 end

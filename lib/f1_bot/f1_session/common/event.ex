@@ -7,18 +7,16 @@ defmodule F1Bot.F1Session.Common.Event do
   typedstruct do
     @typedoc "Emitted state machine event"
 
-    field(:scope, atom(), enforce: true)
-    field(:type, atom(), enforce: true)
+    field(:scope, binary(), enforce: true)
     field(:payload, any(), enforce: true)
     field(:timestamp, integer())
     field(:meta, map())
   end
 
-  @spec new(atom(), atom(), any()) :: t()
-  def new(scope, type, payload) do
+  @spec new(binary(), any()) :: t()
+  def new(scope, payload) do
     %__MODULE__{
       scope: scope,
-      type: type,
       payload: payload,
       timestamp: System.monotonic_time(:millisecond)
     }

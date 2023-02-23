@@ -18,12 +18,12 @@ defmodule F1Bot.Output.Twitter do
 
   @impl true
   def init(_init_arg) do
-    PubSub.subscribe_to_event(:aggregate_stats, :fastest_lap)
-    PubSub.subscribe_to_event(:aggregate_stats, :fastest_sector)
-    PubSub.subscribe_to_event(:aggregate_stats, :top_speed)
-    PubSub.subscribe_to_event(:driver, :tyre_change)
-    PubSub.subscribe_to_event(:session_status, :started)
-    PubSub.subscribe_to_event(:race_control, :message)
+    PubSub.subscribe_to_event("aggregate_stats:fastest_lap")
+    PubSub.subscribe_to_event("aggregate_stats:fastest_sector")
+    PubSub.subscribe_to_event("aggregate_stats:top_speed")
+    PubSub.subscribe_to_event("driver:tyre_change")
+    PubSub.subscribe_to_event("session_status:started")
+    PubSub.subscribe_to_event("race_control:message")
 
     state = %{}
 
@@ -33,8 +33,7 @@ defmodule F1Bot.Output.Twitter do
   @impl true
   def handle_info(
         e = %{
-          scope: :aggregate_stats,
-          type: :fastest_lap,
+          scope: "aggregate_stats:fastest_lap",
           payload: %{
             driver_number: driver_number,
             lap_time: lap_time,
@@ -78,8 +77,7 @@ defmodule F1Bot.Output.Twitter do
   @impl true
   def handle_info(
         e = %{
-          scope: :aggregate_stats,
-          type: :fastest_sector,
+          scope: "aggregate_stats:fastest_sector",
           payload: %{
             driver_number: driver_number,
             sector: sector,
@@ -113,8 +111,7 @@ defmodule F1Bot.Output.Twitter do
   @impl true
   def handle_info(
         e = %{
-          scope: :aggregate_stats,
-          type: :top_speed,
+          scope: "aggregate_stats:top_speed",
           payload: %{
             driver_number: driver_number,
             speed: speed,
@@ -149,8 +146,7 @@ defmodule F1Bot.Output.Twitter do
   @impl true
   def handle_info(
         e = %{
-          scope: :driver,
-          type: :tyre_change,
+          scope: "driver:tyre_change",
           payload: %{
             driver_number: driver_number,
             is_correction: is_correction,
@@ -187,8 +183,7 @@ defmodule F1Bot.Output.Twitter do
   @impl true
   def handle_info(
         %{
-          scope: :session_status,
-          type: :started,
+          scope: "session_status:started",
           payload: %{
             gp_name: gp_name,
             session_type: session_type
@@ -213,8 +208,7 @@ defmodule F1Bot.Output.Twitter do
   @impl true
   def handle_info(
         %{
-          scope: :race_control,
-          type: :message,
+          scope: "race_control:message",
           payload: %{
             # flag: flag,
             message: message,

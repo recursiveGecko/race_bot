@@ -31,6 +31,6 @@ defmodule F1Bot.F1Session.RaceControl do
   end
 
   defp make_race_control_message_event(payload) do
-    F1Bot.F1Session.Common.Event.new(:race_control, :message, payload)
+    F1Bot.F1Session.Common.Event.new("race_control:message", payload)
   end
 end

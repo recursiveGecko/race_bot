@@ -81,6 +81,6 @@ defmodule F1Bot.F1Session.SessionInfo do
   end
 
   def to_event(session_info = %__MODULE__{}) do
-    Event.new(:session_info, :session_info_changed, session_info)
+    Event.new("session_info:changed", session_info)
   end
 end
