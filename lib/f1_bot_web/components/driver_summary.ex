@@ -76,8 +76,8 @@ defmodule F1BotWeb.Component.DriverSummary do
         >
           <img
             class="max-w-none object-fill xs:w-16 xs:h-16 xs:object-[-3px_-2px] sm:w-20 sm:h-20 sm:object-[-5px_-3px] drop-shadow-[5px_0_10px_rgba(0,0,0,0.8)]"
-            alt={@driver_info.driver_abbr}
             src={@driver_info.picture_url}
+            referrerpolicy="no-referrer"
           />
         </div>
 

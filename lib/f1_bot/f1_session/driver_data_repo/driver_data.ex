@@ -7,6 +7,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
 
   alias F1Bot.LightCopy
   alias F1Bot.F1Session.DriverDataRepo.{Laps, Stints}
+  alias F1Bot.F1Session.DriverDataRepo.DriverData.{
+    EndOfLapResult,
+    EndOfSectorResult
+  }
   alias F1Bot.F1Session.Common.TimeSeriesStore
 
   typedstruct do
@@ -43,7 +47,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
         {self, is_fastest_lap, lap_delta} = maybe_replace_fastest_lap(self, lap_time)
         {self, is_top_speed, speed_delta} = maybe_replace_top_speed_after_lap(self)
 
-        result = %{
+        result = %EndOfLapResult{
+          driver_number: self.number,
+          lap_time: lap_time,
           is_fastest_lap: is_fastest_lap,
           is_top_speed: is_top_speed,
           lap_delta: lap_delta,
@@ -61,13 +67,6 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     end
   end
 
-  @spec outlap_lap_numbers(t()) :: [pos_integer()]
-  def outlap_lap_numbers(self = %__MODULE__{}) do
-    self.stints.data
-    |> Enum.map(fn s -> s.lap_number end)
-    |> Enum.reject(&(&1 == nil))
-  end
-
   def push_sector_time(
         self = %__MODULE__{},
         sector,
@@ -78,7 +77,15 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
       self.laps
       |> Laps.fill_sector_times(sector, sector_time, timestamp)
 
-    %{self | laps: laps}
+    self = %{self | laps: laps}
+
+    result = %EndOfSectorResult{
+      driver_number: self.number,
+      sector: sector,
+      sector_time: sector_time
+    }
+
+    {self, result}
   end
 
   @spec push_lap_number(t(), pos_integer() | nil, DateTime.t()) :: t()
@@ -144,6 +151,13 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     else
       {self, nil}
     end
+  end
+
+  @spec outlap_lap_numbers(t()) :: [pos_integer()]
+  def outlap_lap_numbers(self = %__MODULE__{}) do
+    self.stints.data
+    |> Enum.map(fn s -> s.lap_number end)
+    |> Enum.reject(&(&1 == nil))
   end
 
   # Returns {self, is_fastest_lap, lap_delta}

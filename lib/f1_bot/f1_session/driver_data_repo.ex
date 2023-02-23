@@ -8,6 +8,10 @@ defmodule F1Bot.F1Session.DriverDataRepo do
 
   alias F1Bot.F1Session.DriverDataRepo
   alias F1Bot.F1Session.DriverDataRepo.{DriverData, BestStats, Events}
+  alias F1Bot.F1Session.DriverDataRepo.DriverData.{
+    EndOfLapResult,
+    EndOfSectorResult
+  }
 
   typedstruct do
     @typedoc "Repository for all car, lap time, and stint-related data"
@@ -45,8 +49,14 @@ defmodule F1Bot.F1Session.DriverDataRepo do
       |> DriverData.push_lap_time(lap_time, timestamp)
 
     case push_result do
-      {:ok, {driver_data, result}} ->
-        {repo, events} = handle_push_lap_time_result(repo, driver_data, result, lap_time)
+      {:ok, {driver_data, eol_result = %EndOfLapResult{}}} ->
+        # Save updated DriverData
+        repo = update_driver(repo, driver_data)
+
+        # Determine if this lap had record pace or top speed, creates PB/overall best events
+        {best_stats, events} = BestStats.push_end_of_lap_result(repo.best_stats, eol_result)
+        repo = %{repo | best_stats: best_stats}
+
         {:ok, {repo, events}}
 
       {:error, error} ->
@@ -55,34 +65,16 @@ defmodule F1Bot.F1Session.DriverDataRepo do
   end
 
   def push_sector_time(repo, driver_number, sector, sector_time, timestamp) do
-    driver =
+    {driver_data, eos_result = %EndOfSectorResult{}} =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
       |> DriverData.push_sector_time(sector, sector_time, timestamp)
 
-    best_stats = repo.best_stats
-
-    {best_stats, is_fastest_sector_overall, delta} =
-      BestStats.push_sector_time(best_stats, sector, sector_time)
-
-    events =
-      if is_fastest_sector_overall do
-        event =
-          Events.make_agg_fastest_sector_event(
-            driver.number,
-            :overall,
-            sector,
-            sector_time,
-            delta
-          )
-
-        [event]
-      else
-        []
-      end
+    {best_stats, events} =
+      BestStats.push_end_of_sector_result(repo.best_stats, eos_result)
 
     repo = %{repo | best_stats: best_stats}
-    repo = update_driver(repo, driver)
+    repo = update_driver(repo, driver_data)
     {repo, events}
   end
 
@@ -122,63 +114,6 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     events = Events.make_tyre_change_events(driver, result)
 
     repo = update_driver(repo, driver)
-    {repo, events}
-  end
-
-  defp handle_push_lap_time_result(repo, driver_data, result, lap_time) do
-    driver_no = driver_data.number
-    best_stats = repo.best_stats
-
-    {best_stats, is_fastest_lap_overall, best_lap_delta} =
-      BestStats.push_lap_time(best_stats, lap_time)
-
-    {best_stats, is_top_speed_overall, best_speed_delta} =
-      BestStats.push_top_speed(best_stats, result.lap_top_speed)
-
-    lap_time_events =
-      cond do
-        is_fastest_lap_overall ->
-          delta = best_lap_delta
-          event = Events.make_agg_fastest_lap_event(driver_no, :overall, lap_time, delta)
-
-          [event]
-
-        result.is_fastest_lap ->
-          delta = result.lap_delta
-          event = Events.make_agg_fastest_lap_event(driver_no, :personal, lap_time, delta)
-
-          [event]
-
-        true ->
-          []
-      end
-
-    top_speed_events =
-      cond do
-        is_top_speed_overall ->
-          delta = best_speed_delta
-
-          event =
-            Events.make_agg_top_speed_event(driver_no, :overall, result.lap_top_speed, delta)
-
-          [event]
-
-        result.is_top_speed ->
-          delta = result.speed_delta
-
-          event =
-            Events.make_agg_top_speed_event(driver_no, :personal, result.lap_top_speed, delta)
-
-          [event]
-
-        true ->
-          []
-      end
-
-    events = lap_time_events ++ top_speed_events
-
-    repo = %{repo | best_stats: best_stats}
-    repo = update_driver(repo, driver_data)
     {repo, events}
   end
 
