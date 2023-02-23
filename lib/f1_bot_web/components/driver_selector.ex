@@ -21,7 +21,7 @@ defmodule F1BotWeb.Component.DriverSelector do
           :on-click={@toggle_driver}
           :values={driver_number: driver_info.driver_number}
         >
-          <span class="">{driver_info.last_name}</span>
+          <span class="">{driver_info.short_name}</span>
         </button>
       {/for}
     </div>

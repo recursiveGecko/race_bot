@@ -13,7 +13,9 @@ defmodule F1Bot.Output.Common do
 
   def get_driver_name_by_number(_event = %Event{meta: meta}, driver_number) do
     case meta[:driver_info][driver_number] do
-      %{last_name: name} -> name
+      %{last_name: name} when name != nil -> name
+      %{short_name: name} when name != nil -> name
+      %{driver_abbr: name} when name != nil -> name
       _ -> "Car #{driver_number}"
     end
   end
@@ -21,6 +23,8 @@ defmodule F1Bot.Output.Common do
   def get_driver_abbr_by_number(_event = %Event{meta: meta}, driver_number) do
     case meta[:driver_info][driver_number] do
       %{driver_abbr: abbr} -> abbr
+      %{last_name: name} when name != nil -> name
+      %{short_name: name} when name != nil -> name
       _ -> "Car #{driver_number}"
     end
   end

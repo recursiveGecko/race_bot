@@ -70,19 +70,19 @@ defmodule F1BotWeb.Component.DriverSummary do
     ~F"""
     <div class="px-1 pt-1.5 pb-0.5 bg-slate-100 border border-slate-200 h-min drop-shadow rounded-lg">
       <div class="flex">
-        <div
+        <!--<div
           class="bg-white shrink-0 hidden xs:block xs:w-12 xs:h-12 sm:w-14 sm:h-14 overflow-hidden rounded-full drop-shadow-md"
-          style={"background-color: #" <> @driver_info.team_color}
+          style={"background-color: ##{@driver_info.team_color}"}
         >
           <img
             class="max-w-none object-fill xs:w-16 xs:h-16 xs:object-[-3px_-2px] sm:w-20 sm:h-20 sm:object-[-5px_-3px]"
             alt={@driver_info.driver_abbr}
             src={@driver_info.picture_url}
           />
-        </div>
+        </div>-->
 
         <div class="ml-2 mr-auto flex flex-col min-w-0">
-          <span class="text-md text-ellipsis overflow-hidden">{"#{@driver_info.first_name} #{@driver_info.last_name}"}</span>
+          <span class="text-md text-ellipsis overflow-hidden">{"#{@driver_info.full_name}"}</span>
           <span class="text-sm text-gray-800 text-ellipsis overflow-hidden">{@driver_info.team_name}</span>
         </div>
 
