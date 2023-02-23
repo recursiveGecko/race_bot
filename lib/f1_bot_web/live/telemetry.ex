@@ -80,7 +80,7 @@ defmodule F1BotWeb.Live.Telemetry do
   @impl true
   def handle_info(
         e = %{
-          scope: "driver_summary:" <> driver_number
+          scope: "driver_summary:" <> _driver_number
         },
         socket
       ) do
