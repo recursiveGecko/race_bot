@@ -6,6 +6,10 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
 
   Useful documentation for SignalR 1.2:
   https://blog.3d-logic.com/2015/03/29/signalr-on-the-wire-an-informal-description-of-the-signalr-protocol/
+
+  https://learn.microsoft.com/en-us/aspnet/core/signalr/introduction
+  https://github.com/SignalR/SignalR/blob/f3600c71f83d8312ad61bced0ca547795734d51e/src/Microsoft.AspNet.SignalR.Client/Connection.cs
+  https://github.com/SignalR/SignalR/blob/f3600c71f83d8312ad61bced0ca547795734d51e/src/Microsoft.AspNet.SignalR.Client/Transports/TransportHelper.cs
   """
   use GenServer
   require Logger

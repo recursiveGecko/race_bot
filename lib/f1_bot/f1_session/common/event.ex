@@ -22,7 +22,7 @@ defmodule F1Bot.F1Session.Common.Event do
     }
   end
 
-  def hydrate_driver_info(events, session, driver_numbers) when is_list(events) do
+  def attach_driver_info(events, session, driver_numbers) when is_list(events) do
     driver_info_map =
       for driver_no <- driver_numbers, into: %{} do
         driver_info =
@@ -41,7 +41,7 @@ defmodule F1Bot.F1Session.Common.Event do
     end
   end
 
-  def hydrate_session_info(events, session = %F1Session{}) when is_list(events) do
+  def attach_session_info(events, session = %F1Session{}) when is_list(events) do
     new_meta = %{
       lap_number: session.lap_counter.current,
       session_type: session.session_info.type,

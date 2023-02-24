@@ -75,8 +75,8 @@ defmodule F1Bot.F1Session do
 
     events =
       events
-      |> Event.hydrate_session_info(session)
-      |> Event.hydrate_driver_info(session, [driver_number])
+      |> Event.attach_session_info(session)
+      |> Event.attach_driver_info(session, [driver_number])
 
     driver_data_events =
       F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)
@@ -104,8 +104,8 @@ defmodule F1Bot.F1Session do
 
     events =
       events
-      |> Event.hydrate_session_info(session)
-      |> Event.hydrate_driver_info(session, [driver_number])
+      |> Event.attach_session_info(session)
+      |> Event.attach_driver_info(session, [driver_number])
 
     driver_data_events =
       F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)
@@ -158,7 +158,7 @@ defmodule F1Bot.F1Session do
 
     events =
       events
-      |> Event.hydrate_session_info(session)
+      |> Event.attach_session_info(session)
 
     session = %{session | race_control: race_control}
     {session, events}
@@ -202,7 +202,7 @@ defmodule F1Bot.F1Session do
 
     events =
       events
-      |> Event.hydrate_session_info(session)
+      |> Event.attach_session_info(session)
 
     {session, events}
   end
@@ -216,8 +216,8 @@ defmodule F1Bot.F1Session do
 
     events =
       events
-      |> Event.hydrate_session_info(session)
-      |> Event.hydrate_driver_info(session, [driver_number])
+      |> Event.attach_session_info(session)
+      |> Event.attach_driver_info(session, [driver_number])
 
     driver_data_events =
       F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)

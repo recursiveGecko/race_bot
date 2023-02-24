@@ -5,7 +5,7 @@ defmodule F1Bot.PubSub do
   alias F1Bot.DelayedEvents
 
   def topic_for_event(scope) do
-    "f1bot:#{scope}"
+    "event:#{scope}"
   end
 
   @spec subscribe_to_event(String.t()) :: any()
