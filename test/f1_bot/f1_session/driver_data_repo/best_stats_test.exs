@@ -2,7 +2,11 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStatsTest do
   use ExUnit.Case, async: true
 
   alias F1Bot.F1Session.DriverDataRepo.BestStats
-  alias F1Bot.F1Session.DriverDataRepo.DriverData.EndOfLapResult
+
+  alias F1Bot.F1Session.DriverDataRepo.DriverData.{
+    EndOfLapResult,
+    EndOfSectorResult
+  }
 
   def duration(seconds), do: Timex.Duration.from_seconds(seconds)
 
@@ -179,5 +183,102 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStatsTest do
       |> BestStats.push_end_of_lap_result(eol_result)
 
     assert match?([%{payload: %{type: :personal, speed: 200, speed_delta: -5}}], events)
+  end
+
+  test "push_end_of_lap_result/2 doesn't explode on nil lap time and speed values" do
+    eol_result = %EndOfLapResult{
+      driver_number: 1,
+      lap_time: nil,
+      lap_delta: nil,
+      is_fastest_lap: false,
+      lap_top_speed: nil,
+      speed_delta: nil,
+      is_top_speed: false
+    }
+
+    {best_stats, events} =
+      %BestStats{top_speed: 123, fastest_lap: duration(9999)}
+      |> BestStats.push_end_of_lap_result(eol_result)
+
+    assert best_stats.top_speed == 123
+    assert best_stats.fastest_lap == duration(9999)
+    assert events == []
+  end
+
+  test "push_end_of_sector_result/2 updates best sector times when starting from nil" do
+    eos_result = %EndOfSectorResult{
+      driver_number: 1,
+      sector: 1,
+      sector_time: duration(30)
+    }
+
+    {best_stats, _events} =
+      %BestStats{}
+      |> BestStats.push_end_of_sector_result(eos_result)
+
+    assert best_stats.fastest_sectors[1] == eos_result.sector_time
+  end
+
+  test "push_end_of_sector_result/2 updates best sector times when they're improved" do
+    eos_result = %EndOfSectorResult{
+      driver_number: 1,
+      sector: 2,
+      sector_time: duration(25)
+    }
+
+    initial_sectors = %{
+      1 => duration(999),
+      2 => duration(999),
+      3 => duration(999)
+    }
+
+    wanted_sectors = Map.put(initial_sectors, 2, duration(25))
+
+    {best_stats, _events} =
+      %BestStats{fastest_sectors: initial_sectors}
+      |> BestStats.push_end_of_sector_result(eos_result)
+
+    assert match?(^wanted_sectors, best_stats.fastest_sectors)
+  end
+
+  test "push_end_of_sector_result/2 creates overall best sector time events" do
+    eos_result = %EndOfSectorResult{
+      driver_number: 1,
+      sector: 2,
+      sector_time: duration(25)
+    }
+
+    initial_sectors = %{
+      1 => duration(100),
+      2 => duration(100),
+      3 => duration(100)
+    }
+
+    expected_delta = duration(-75)
+
+    {_best_stats, events} =
+      %BestStats{fastest_sectors: initial_sectors}
+      |> BestStats.push_end_of_sector_result(eos_result)
+
+    assert match?(
+             [
+               %{payload: %{type: :overall, sector: 2, sector_delta: ^expected_delta}}
+             ],
+             events
+           )
+  end
+
+  test "push_end_of_sector_result/2 doesn't explode on nil sector time" do
+    eos_result = %EndOfSectorResult{
+      driver_number: 1,
+      sector: 1,
+      sector_time: nil
+    }
+
+    {best_stats, _events} =
+      %BestStats{}
+      |> BestStats.push_end_of_sector_result(eos_result)
+
+    assert best_stats.fastest_sectors[1] == nil
   end
 end

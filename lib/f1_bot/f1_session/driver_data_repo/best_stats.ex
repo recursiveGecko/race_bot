@@ -49,55 +49,58 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStats do
   when a driver beats a session-wide record.
   """
   def push_end_of_sector_result(
+        self = %__MODULE__{},
+        _eos_result = %EndOfSectorResult{sector_time: nil}
+      ),
+      do: {self, []}
+
+  def push_end_of_sector_result(
         self = %__MODULE__{fastest_sectors: fastest_sectors},
         eos_result = %EndOfSectorResult{}
       ) do
     curr_fastest_time = fastest_sectors[eos_result.sector]
 
-    if curr_fastest_time == nil do
-      fastest_sectors = Map.put(fastest_sectors, eos_result.sector, eos_result.sector_time)
-      self = %{self | fastest_sectors: fastest_sectors}
+    {is_overall_best, overall_best_delta} =
+      if curr_fastest_time == nil do
+        {true, nil}
+      else
+        overall_best_delta = Timex.Duration.diff(eos_result.sector_time, curr_fastest_time)
+        overall_best_delta_ms = Timex.Duration.to_milliseconds(overall_best_delta)
+        is_overall_record = overall_best_delta_ms < 0
 
-      event =
-        Events.make_agg_fastest_sector_event(
-          eos_result.driver_number,
-          :overall,
-          eos_result.sector,
-          eos_result.sector_time,
-          nil
-        )
-
-      {self, List.wrap(event)}
-    else
-      overall_best_delta = Timex.Duration.diff(eos_result.sector_time, curr_fastest_time)
-      overall_best_delta_ms = Timex.Duration.to_milliseconds(overall_best_delta)
-      is_overall_record = overall_best_delta_ms < 0
-
-      self =
         if is_overall_record do
-          fastest_sectors = Map.put(fastest_sectors, eos_result.sector, eos_result.sector_time)
-          %{self | fastest_sectors: fastest_sectors}
+          {true, overall_best_delta}
         else
-          self
+          {false, nil}
         end
+      end
 
-      event =
-        cond do
-          is_overall_record ->
-            Events.make_agg_fastest_sector_event(
-              eos_result.driver_number,
-              :overall,
-              eos_result.sector,
-              eos_result.sector_time,
-              overall_best_delta
-            )
+    event =
+      cond do
+        is_overall_best ->
+          Events.make_agg_fastest_sector_event(
+            eos_result.driver_number,
+            :overall,
+            eos_result.sector,
+            eos_result.sector_time,
+            overall_best_delta
+          )
 
-          true ->
-            nil
-        end
+        # TODO: track personal best sectors
 
-      {self, List.wrap(event)}
-    end
+        true ->
+          nil
+      end
+
+    self =
+      if is_overall_best do
+        fastest_sectors = Map.put(fastest_sectors, eos_result.sector, eos_result.sector_time)
+        %{self | fastest_sectors: fastest_sectors}
+      else
+        self
+      end
+
+    {self, List.wrap(event)}
   end
 
   defp evaluate_end_of_lap_time(
@@ -110,57 +113,51 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStats do
          self = %__MODULE__{fastest_lap: fastest_lap},
          eol_result = %EndOfLapResult{}
        ) do
-    if fastest_lap == nil do
-      self = %{self | fastest_lap: eol_result.lap_time}
+    {is_overall_best, overall_best_delta} =
+      if fastest_lap == nil do
+        {true, nil}
+      else
+        overall_best_delta = Timex.Duration.diff(eol_result.lap_time, fastest_lap)
+        overall_best_delta_ms = Timex.Duration.to_milliseconds(overall_best_delta)
+        is_overall_record = overall_best_delta_ms < 0
 
-      events = [
-        Events.make_agg_fastest_lap_event(
-          eol_result.driver_number,
-          :overall,
-          eol_result.lap_time,
-          nil
-        )
-      ]
-
-      {self, events}
-    else
-      overall_best_delta = Timex.Duration.diff(eol_result.lap_time, fastest_lap)
-      overall_best_delta_ms = Timex.Duration.to_milliseconds(overall_best_delta)
-      is_overall_record = overall_best_delta_ms < 0
-
-      self =
         if is_overall_record do
-          %{self | fastest_lap: eol_result.lap_time}
+          {true, overall_best_delta}
         else
-          self
+          {false, nil}
         end
+      end
 
-      record_event =
-        cond do
-          is_overall_record ->
-            Events.make_agg_fastest_lap_event(
-              eol_result.driver_number,
-              :overall,
-              eol_result.lap_time,
-              overall_best_delta
-            )
+    event =
+      cond do
+        is_overall_best ->
+          Events.make_agg_fastest_lap_event(
+            eol_result.driver_number,
+            :overall,
+            eol_result.lap_time,
+            overall_best_delta
+          )
 
-          eol_result.is_fastest_lap ->
-            Events.make_agg_fastest_lap_event(
-              eol_result.driver_number,
-              :personal,
-              eol_result.lap_time,
-              eol_result.lap_delta
-            )
+        eol_result.is_fastest_lap ->
+          Events.make_agg_fastest_lap_event(
+            eol_result.driver_number,
+            :personal,
+            eol_result.lap_time,
+            eol_result.lap_delta
+          )
 
-          true ->
-            nil
-        end
+        true ->
+          nil
+      end
 
-      events = List.wrap(record_event)
+    self =
+      if is_overall_best do
+        %{self | fastest_lap: eol_result.lap_time}
+      else
+        self
+      end
 
-      {self, events}
-    end
+    {self, List.wrap(event)}
   end
 
   defp evaluate_end_of_lap_speed(
@@ -173,54 +170,49 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStats do
          self = %__MODULE__{top_speed: top_speed},
          eol_result = %EndOfLapResult{}
        ) do
-    if top_speed == nil do
-      self = %{self | top_speed: eol_result.lap_top_speed}
+    {is_overall_best, overall_best_delta} =
+      if top_speed == nil do
+        {true, nil}
+      else
+        overall_best_delta = eol_result.lap_top_speed - top_speed
+        is_overall_record = overall_best_delta > 0
 
-      events = [
-        Events.make_agg_top_speed_event(
-          eol_result.driver_number,
-          :overall,
-          eol_result.lap_top_speed,
-          nil
-        )
-      ]
-
-      {self, events}
-    else
-      overall_speed_delta = eol_result.lap_top_speed - top_speed
-      is_overall_record = overall_speed_delta > 0
-
-      self =
         if is_overall_record do
-          %{self | top_speed: eol_result.lap_top_speed}
+          {true, overall_best_delta}
         else
-          self
+          {false, nil}
         end
+      end
 
-      record_event =
-        cond do
-          is_overall_record ->
-            Events.make_agg_top_speed_event(
-              eol_result.driver_number,
-              :overall,
-              eol_result.lap_top_speed,
-              overall_speed_delta
-            )
+    event =
+      cond do
+        is_overall_best ->
+          Events.make_agg_top_speed_event(
+            eol_result.driver_number,
+            :overall,
+            eol_result.lap_top_speed,
+            overall_best_delta
+          )
 
-          eol_result.is_top_speed ->
-            Events.make_agg_top_speed_event(
-              eol_result.driver_number,
-              :personal,
-              eol_result.lap_top_speed,
-              eol_result.speed_delta
-            )
+        eol_result.is_top_speed ->
+          Events.make_agg_top_speed_event(
+            eol_result.driver_number,
+            :personal,
+            eol_result.lap_top_speed,
+            eol_result.speed_delta
+          )
 
-          true ->
-            nil
-        end
+        true ->
+          nil
+      end
 
-      events = List.wrap(record_event)
-      {self, events}
-    end
+    self =
+      if is_overall_best do
+        %{self | top_speed: eol_result.lap_top_speed}
+      else
+        self
+      end
+
+    {self, List.wrap(event)}
   end
 end
