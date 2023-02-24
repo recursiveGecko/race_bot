@@ -66,13 +66,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStats do
       else
         overall_best_delta = Timex.Duration.diff(eos_result.sector_time, curr_fastest_time)
         overall_best_delta_ms = Timex.Duration.to_milliseconds(overall_best_delta)
-        is_overall_record = overall_best_delta_ms < 0
+        is_overall_best = overall_best_delta_ms < 0
 
-        if is_overall_record do
-          {true, overall_best_delta}
-        else
-          {false, nil}
-        end
+        {is_overall_best, overall_best_delta}
       end
 
     event =
@@ -119,13 +115,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStats do
       else
         overall_best_delta = Timex.Duration.diff(eol_result.lap_time, fastest_lap)
         overall_best_delta_ms = Timex.Duration.to_milliseconds(overall_best_delta)
-        is_overall_record = overall_best_delta_ms < 0
+        is_overall_best = overall_best_delta_ms < 0
 
-        if is_overall_record do
-          {true, overall_best_delta}
-        else
-          {false, nil}
-        end
+        {is_overall_best, overall_best_delta}
       end
 
     event =
@@ -175,13 +167,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.BestStats do
         {true, nil}
       else
         overall_best_delta = eol_result.lap_top_speed - top_speed
-        is_overall_record = overall_best_delta > 0
+        is_overall_best = overall_best_delta > 0
 
-        if is_overall_record do
-          {true, overall_best_delta}
-        else
-          {false, nil}
-        end
+        {is_overall_best, overall_best_delta}
       end
 
     event =
