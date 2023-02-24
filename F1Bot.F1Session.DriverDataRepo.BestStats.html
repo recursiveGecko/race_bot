@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-41B139A4.js"></script>
+    <script src="dist/sidebar_items-49DDE153.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -161,25 +161,23 @@ f1_bot
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#push_lap_time/2" translate="no">push_lap_time(self, lap_time)</a>
+        <a href="#push_end_of_lap_result/2" translate="no">push_end_of_lap_result(self, eol_result)</a>
 
       </div>
+
+        <div class="summary-synopsis"><p>Tracks session-wide best lap and top speed stats, and creates events
+when a driver beats a session-wide or personal best record.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#push_sector_time/3" translate="no">push_sector_time(self, sector, sector_time)</a>
+        <a href="#push_end_of_sector_result/2" translate="no">push_end_of_sector_result(self, eos_result)</a>
 
       </div>
 
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#push_top_speed/2" translate="no">push_top_speed(self, speed)</a>
-
-      </div>
+        <div class="summary-synopsis"><p>Tracks session-wide best sector times, and creates events
+when a driver beats a session-wide record.</p></div>
 
     </div>
 
@@ -206,7 +204,7 @@ Types
     </a>
     <h1 class="signature" translate="no">fastest_sectors()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L7" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L14" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -238,7 +236,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L13" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L20" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -283,7 +281,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L21" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L28" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -296,16 +294,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_lap_time/2">
+<section class="detail" id="push_end_of_lap_result/2">
 
   <div class="detail-header">
-    <a href="#push_lap_time/2" class="detail-link" title="Link to this function">
+    <a href="#push_end_of_lap_result/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_lap_time(self, lap_time)</h1>
+    <h1 class="signature" translate="no">push_end_of_lap_result(self, eol_result)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L25" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L36" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -315,19 +313,20 @@ Functions
 
   <section class="docstring">
 
-
+<p>Tracks session-wide best lap and top speed stats, and creates events
+when a driver beats a session-wide or personal best record.</p>
   </section>
 </section>
-<section class="detail" id="push_sector_time/3">
+<section class="detail" id="push_end_of_sector_result/2">
 
   <div class="detail-header">
-    <a href="#push_sector_time/3" class="detail-link" title="Link to this function">
+    <a href="#push_end_of_sector_result/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_sector_time(self, sector, sector_time)</h1>
+    <h1 class="signature" translate="no">push_end_of_sector_result(self, eos_result)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L64" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L51" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -337,29 +336,8 @@ Functions
 
   <section class="docstring">
 
-
-  </section>
-</section>
-<section class="detail" id="push_top_speed/2">
-
-  <div class="detail-header">
-    <a href="#push_top_speed/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">push_top_speed(self, speed)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/best_stats.ex#L45" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
+<p>Tracks session-wide best sector times, and creates events
+when a driver beats a session-wide record.</p>
   </section>
 </section>
 

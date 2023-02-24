@@ -29,6 +29,8 @@ F1Bot.F1Session.Common.TimeSeriesStore.html
 F1Bot.F1Session.DriverCache.DriverInfo.html
 F1Bot.F1Session.DriverCache.html
 F1Bot.F1Session.DriverDataRepo.BestStats.html
+F1Bot.F1Session.DriverDataRepo.DriverData.EndOfLapResult.html
+F1Bot.F1Session.DriverDataRepo.DriverData.EndOfSectorResult.html
 F1Bot.F1Session.DriverDataRepo.DriverData.Summary.html
 F1Bot.F1Session.DriverDataRepo.DriverData.html
 F1Bot.F1Session.DriverDataRepo.Events.html
@@ -127,8 +129,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_items-B04B6205.js
-dist/sidebar_items-41B139A4.js
+dist/search_items-FA09EE97.js
+dist/sidebar_items-49DDE153.js
 index.html
 license.html
 readme.html
