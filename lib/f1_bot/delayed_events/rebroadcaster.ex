@@ -20,9 +20,13 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
   end
 
   def fetch_latest_event(delay_ms, event_scope) do
-    delay_ms
-    |> ets_table_name()
-    |> Ets.fetch(to_string(event_scope))
+    if delay_ms in DelayedEvents.available_delays() do
+      delay_ms
+      |> ets_table_name()
+      |> Ets.fetch(to_string(event_scope))
+    else
+      {:error, :invalid_delay}
+    end
   end
 
   @impl true

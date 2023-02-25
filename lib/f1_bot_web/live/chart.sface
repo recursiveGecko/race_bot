@@ -2,4 +2,4 @@
   <Component.DelayControl id="delay_control" {=@pubsub_delay_ms} />
 </div> -->
 
-<Component.VegaChart class="py-2 w-full h-screen" chart_id="lap_times" />
+<Component.ChartJS class="p-2 w-full h-screen" chart_id="lap_times" />

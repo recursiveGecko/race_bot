@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
+    "paths": {
+      "@assets/*": [
+        "./assets/js/*",
+      ],
+      "@deps/*": [
+        "./deps/*"
+      ],
+    }
+  },
+}

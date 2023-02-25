@@ -42,7 +42,7 @@ defmodule Integration.Monza2022RaceTest do
   end
 
   defp stints_for_driver(session, driver_number) do
-    driver_data = F1Session.driver_session_data(session, driver_number)
+    {:ok, driver_data} = F1Session.driver_session_data(session, driver_number)
     driver_data.stints.data |> order_stints()
   end
 

@@ -17,9 +17,7 @@ ADD config /app/config
 RUN mix deps.get && mix deps.compile
 
 ADD . /app 
-# mix compile first to ensure Surface UI _components.css and _hooks/index.js are created 
-# for Tailwind and esbuild to be able to process them
-RUN mix compile && mix assets.setup && mix assets.deploy && mix release && chown -R app:app /app
+RUN mix assets.setup && mix assets.deploy && mix release && chown -R app:app /app
 
 USER app
 

@@ -21,7 +21,7 @@ defmodule F1Bot.F1Session.DriverCache do
     driver_list =
       drivers
       |> Map.values()
-      |> Enum.sort_by(& (&1.last_name || &1.driver_abbr || &1.short_name || &1.full_name))
+      |> Enum.sort_by(&(&1.last_name || &1.driver_abbr || &1.short_name || &1.full_name))
 
     {:ok, driver_list}
   end
@@ -46,15 +46,9 @@ defmodule F1Bot.F1Session.DriverCache do
     end
   end
 
-  def put_driver(
-        driver_cache = %__MODULE__{drivers: drivers},
-        driver_info = %DriverInfo{driver_number: driver_number}
-      )
-      when driver_number != nil do
-    new_cache = Map.put(drivers, driver_number, driver_info)
-    driver_cache = %{driver_cache | drivers: new_cache}
-
-    driver_cache
+  def to_event(driver_cache = %__MODULE__{}) do
+    {:ok, driver_list} = driver_list(driver_cache)
+    Event.new("driver:list", driver_list)
   end
 
   def process_updates(driver_cache, partial_drivers) when is_list(partial_drivers) do
@@ -62,6 +56,7 @@ defmodule F1Bot.F1Session.DriverCache do
       Enum.reduce(partial_drivers, driver_cache, fn driver, driver_cache ->
         process_update(driver_cache, driver)
       end)
+      |> assign_team_slots()
 
     events =
       if new_driver_cache != driver_cache do
@@ -73,11 +68,11 @@ defmodule F1Bot.F1Session.DriverCache do
     {new_driver_cache, events}
   end
 
-  def process_update(
-        driver_cache = %__MODULE__{},
-        partial_driver = %DriverInfo{driver_number: driver_number}
-      )
-      when driver_number != nil do
+  defp process_update(
+         driver_cache = %__MODULE__{},
+         partial_driver = %DriverInfo{driver_number: driver_number}
+       )
+       when driver_number != nil do
     old_driver =
       case get_driver_by_number(driver_cache, driver_number) do
         {:ok, d} -> d
@@ -88,15 +83,46 @@ defmodule F1Bot.F1Session.DriverCache do
     put_driver(driver_cache, merged_driver)
   end
 
-  def process_update(
-        _driver_cache = %__MODULE__{},
-        _partial_driver
-      ) do
+  defp process_update(
+         _driver_cache = %__MODULE__{},
+         _partial_driver
+       ) do
     {:error, :invalid_driver}
   end
 
-  def to_event(driver_cache = %__MODULE__{}) do
-    {:ok, driver_list} = driver_list(driver_cache)
-    Event.new("driver:list", driver_list)
+  defp assign_team_slots(self = %__MODULE__{}) do
+    grouped =
+      self.drivers
+      |> Map.values()
+      |> Enum.group_by(fn driver -> "#{driver.team_name}##{driver.team_color}" end)
+
+    modified =
+      for {_team, drivers} <- grouped do
+        [primary | rest] = Enum.sort_by(drivers, & &1.driver_number, :asc)
+
+        primary = %{primary | use_primary_color: true}
+        rest = Enum.map(rest, fn d -> %{d | use_primary_color: false} end)
+
+        [primary | rest]
+      end
+
+    driver_map =
+      modified
+      |> List.flatten()
+      |> Enum.map(fn driver -> {driver.driver_number, driver} end)
+      |> Enum.into(%{})
+
+    %{self | drivers: driver_map}
+  end
+
+  def put_driver(
+        driver_cache = %__MODULE__{drivers: drivers},
+        driver_info = %DriverInfo{driver_number: driver_number}
+      )
+      when driver_number != nil do
+    new_cache = Map.put(drivers, driver_number, driver_info)
+    driver_cache = %{driver_cache | drivers: new_cache}
+
+    driver_cache
   end
 end

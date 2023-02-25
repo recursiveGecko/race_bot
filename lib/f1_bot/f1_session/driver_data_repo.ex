@@ -8,6 +8,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
 
   alias F1Bot.F1Session.DriverDataRepo
   alias F1Bot.F1Session.DriverDataRepo.{DriverData, BestStats, Events}
+
   alias F1Bot.F1Session.DriverDataRepo.DriverData.{
     EndOfLapResult,
     EndOfSectorResult
@@ -25,17 +26,20 @@ defmodule F1Bot.F1Session.DriverDataRepo do
   end
 
   def info(repo, driver_number) do
-    repo
-    |> fetch_or_create_driver_from_repo(driver_number)
+    data =
+      repo
+      |> fetch_or_create_driver_from_repo(driver_number)
+
+    {:ok, data}
   end
 
   def driver_summary(repo, driver_number, track_status_history) when is_integer(driver_number) do
-    data =
-      repo
-      |> info(driver_number)
-      |> DriverData.Summary.generate(track_status_history)
+    summary =
+      case info(repo, driver_number) do
+        {:ok, data} -> DriverData.Summary.generate(data, track_status_history)
+      end
 
-    {:ok, data}
+    {:ok, summary}
   end
 
   def session_best_stats(repo) do
@@ -70,8 +74,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
       |> fetch_or_create_driver_from_repo(driver_number)
       |> DriverData.push_sector_time(sector, sector_time, timestamp)
 
-    {best_stats, events} =
-      BestStats.push_end_of_sector_result(repo.best_stats, eos_result)
+    {best_stats, events} = BestStats.push_end_of_sector_result(repo.best_stats, eos_result)
 
     repo = %{repo | best_stats: best_stats}
     repo = update_driver(repo, driver_data)

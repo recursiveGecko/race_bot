@@ -79,7 +79,7 @@ defmodule F1Bot.F1Session do
       |> Event.attach_driver_info(session, [driver_number])
 
     driver_data_events =
-      F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)
+      F1Session.EventGenerator.make_events_on_any_new_driver_data(session, driver_number)
 
     events = events ++ driver_data_events
 
@@ -108,9 +108,12 @@ defmodule F1Bot.F1Session do
       |> Event.attach_driver_info(session, [driver_number])
 
     driver_data_events =
-      F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)
+      F1Session.EventGenerator.make_events_on_any_new_driver_data(session, driver_number)
 
-    events = events ++ driver_data_events
+    lap_time_chart_events =
+      F1Session.EventGenerator.make_lap_time_chart_events(session, driver_number, nil)
+
+    events = events ++ driver_data_events ++ lap_time_chart_events
 
     {session, events}
   end
@@ -124,6 +127,26 @@ defmodule F1Bot.F1Session do
     session = %{session | driver_data_repo: driver_data_repo}
 
     {session, []}
+  end
+
+  def push_stint_data(session, driver_number, stint_data) when is_integer(driver_number) do
+    {repo, events} =
+      session.driver_data_repo
+      |> F1Session.DriverDataRepo.push_stint_data(driver_number, stint_data)
+
+    session = %{session | driver_data_repo: repo}
+
+    events =
+      events
+      |> Event.attach_session_info(session)
+      |> Event.attach_driver_info(session, [driver_number])
+
+    driver_data_events =
+      F1Session.EventGenerator.make_events_on_any_new_driver_data(session, driver_number)
+
+    events = events ++ driver_data_events
+
+    {session, events}
   end
 
   def push_telemetry(session, driver_number, channels) when is_integer(driver_number) do
@@ -143,7 +166,9 @@ defmodule F1Bot.F1Session do
   end
 
   def push_lap_counter_update(session, current_lap, total_laps, timestamp) do
-    lap_counter = F1Session.LapCounter.update(session.lap_counter, current_lap, total_laps, timestamp)
+    lap_counter =
+      F1Session.LapCounter.update(session.lap_counter, current_lap, total_laps, timestamp)
+
     session = %{session | lap_counter: lap_counter}
 
     event = F1Session.LapCounter.to_event(lap_counter)
@@ -203,26 +228,6 @@ defmodule F1Bot.F1Session do
     events =
       events
       |> Event.attach_session_info(session)
-
-    {session, events}
-  end
-
-  def push_stint_data(session, driver_number, stint_data) when is_integer(driver_number) do
-    {repo, events} =
-      session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_stint_data(driver_number, stint_data)
-
-    session = %{session | driver_data_repo: repo}
-
-    events =
-      events
-      |> Event.attach_session_info(session)
-      |> Event.attach_driver_info(session, [driver_number])
-
-    driver_data_events =
-      F1Session.EventGenerator.make_events_on_new_driver_data(session, driver_number)
-
-    events = events ++ driver_data_events
 
     {session, events}
   end

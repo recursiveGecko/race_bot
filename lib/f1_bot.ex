@@ -45,6 +45,10 @@ defmodule F1Bot do
     F1Bot.F1Session.Server.state(light_copy)
   end
 
+  def resync_state_events() do
+    F1Bot.F1Session.Server.resync_state_events()
+  end
+
   def session_info() do
     F1Bot.F1Session.Server.session_info()
   end

@@ -84,9 +84,20 @@ defmodule F1Bot.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing", "cmd --cd assets npm install --ignore-scripts"],
-      "assets.build": ["tailwind default", "esbuild default"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+      "assets.setup": [
+        "tailwind.install --if-missing",
+        "esbuild.install --if-missing",
+        "cmd --cd assets npm install --ignore-scripts"
+      ],
+      "assets.build": ["hooks.build", "tailwind default", "esbuild default"],
+      "assets.deploy": [
+        "hooks.build",
+        "tailwind default --minify",
+        "esbuild default --minify",
+        "phx.digest"
+      ],
+      # Builds Surface UI hooks -> ./assets/js/_hooks
+      "hooks.build": ["compile"]
     ]
   end
 

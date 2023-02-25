@@ -16,6 +16,7 @@ defmodule F1Bot.F1Session.EventGenerator.StateSync do
       F1Session.LapCounter.to_event(session.lap_counter),
       F1Session.TrackStatusHistory.to_chart_events(session.track_status_history),
       Enum.map(driver_numbers, &Driver.summary_events(session, &1)),
+      Enum.map(driver_numbers, &Driver.lap_time_chart_events(session, &1)),
       F1Session.Clock.to_event(session.clock)
     ]
     |> List.flatten()

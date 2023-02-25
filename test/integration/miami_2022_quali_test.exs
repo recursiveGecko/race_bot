@@ -31,7 +31,7 @@ defmodule Integration.Miami2022QualiTest do
   end
 
   defp laps_for_driver(session, driver_number) do
-    driver_data = F1Session.driver_session_data(session, driver_number)
+    {:ok, driver_data} = F1Session.driver_session_data(session, driver_number)
     driver_data.laps.data |> order_laps()
   end
 

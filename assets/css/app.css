@@ -6,18 +6,6 @@
 /* Import scoped CSS rules for components */
 @import "./_components.css";
 
-.vega-embed.has-actions {
-  padding-right: 10px !important;
-}
-
-.vega-embed .vega-actions {
-  right: 0 !important;
-}
-
-.vega-embed summary {
-  right: 10px !important;
-}
-
 .data-update-highlight {
   animation: data-update-highlight 2s ease-in-out;
 }

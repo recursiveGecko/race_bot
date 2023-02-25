@@ -9,6 +9,7 @@ defmodule F1Bot.F1Session.TrackStatusHistory do
   @type status :: :all_clear | :yellow_flag | :safety_car | :red_flag | :virtual_safety_car
 
   @type interval :: %{
+          id: binary(),
           starts_at: DateTime.t(),
           ends_at: DateTime.t() | nil,
           start_lap: pos_integer(),
@@ -31,7 +32,10 @@ defmodule F1Bot.F1Session.TrackStatusHistory do
           pos_integer() | nil
         ) :: interval()
   def new_interval(track_status, starts_at, ends_at \\ nil, start_lap \\ nil, end_lap \\ nil) do
+    id = "#{track_status}_#{starts_at |> DateTime.to_unix()}"
+
     %{
+      id: id,
       starts_at: starts_at,
       ends_at: ends_at,
       start_lap: start_lap,
@@ -75,10 +79,11 @@ defmodule F1Bot.F1Session.TrackStatusHistory do
       |> Enum.reverse()
       |> Enum.map(fn interval ->
         %{
+          id: interval.id,
           ts_from: (if interval.starts_at, do: DateTime.to_unix(interval.starts_at)),
           ts_to: (if interval.ends_at, do: DateTime.to_unix(interval.ends_at)),
           # Add margin to the start and end of the interval to make it visually clearer which laps were affected
-          lap_from: (if interval.status == :red_flag and interval.start_lap, do: interval.start_lap - 0.25),
+          lap_from: (if interval.start_lap, do: interval.start_lap - 0.25),
           lap_to: (if interval.end_lap, do: interval.end_lap + 0.25),
           status: humanize_status(interval),
           type:

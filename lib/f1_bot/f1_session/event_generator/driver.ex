@@ -4,6 +4,13 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
   alias F1Bot.F1Session.Common.Event
   alias F1Bot.F1Session.DriverDataRepo.Lap
 
+  def on_any_new_driver_data(session, driver_number) do
+    [
+      summary_events(session, driver_number)
+    ]
+    |> List.flatten()
+  end
+
   def summary_events(session = %F1Session{}, driver_number)
       when is_integer(driver_number) do
     with {:ok, summary} <- F1Session.driver_summary(session, driver_number),
@@ -21,33 +28,43 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
     end
   end
 
-  def lap_time_chart_events(session = %F1Session{}, driver_number, lap = %Lap{})
-      when is_integer(driver_number) do
-    dataset_name = "driver_data"
+  def lap_time_chart_events(session, driver_number, lap_or_nil \\ nil)
+
+  def lap_time_chart_events(session = %F1Session{}, driver_number, lap)
+      when is_integer(driver_number) and (is_nil(lap) or is_struct(lap, Lap)) do
+    common_payload = %{
+      dataset: "driver_data"
+    }
 
     data_init_events =
-      case Analysis.LapTimes.generate_vegalite_dataset(session, [driver_number]) do
-        {:ok, dataset} ->
-          payload = %{dataset: dataset_name, data: dataset}
-          e = Event.new("lap_time_chart_data_init:#{driver_number}", payload)
-          [e]
+      with {:ok, data} <- Analysis.LapTimes.calculate(session, driver_number),
+           {:ok, driver_meta} <- fetch_driver_metadata(driver_number, session) do
+        payload =
+          common_payload
+          |> Map.put(:data, data)
+          |> Map.merge(driver_meta)
 
+        e = Event.new("lap_time_chart_data_init:#{driver_number}", payload)
+        [e]
+      else
         _ ->
           []
       end
 
-    data_delta_events =
-      case Analysis.LapTimes.lap_to_vegalite_datum(lap, driver_number, session) do
-        {:ok, datum} ->
-          payload = %{dataset: dataset_name, data: [datum]}
-          e = Event.new("lap_time_chart_data_delta:#{driver_number}", payload)
-          [e]
+    data_init_events
+  end
 
-        _ ->
-          []
-      end
+  defp fetch_driver_metadata(driver_number, session = %F1Session{}) do
+    with {:ok, info} <- F1Session.driver_info_by_number(session, driver_number) do
+      p = %{
+        driver_name: info.last_name,
+        driver_number: driver_number,
+        driver_abbr: info.driver_abbr,
+        team_color: info.team_color,
+        use_primary_color: info.use_primary_color
+      }
 
-    [data_init_events, data_delta_events]
-    |> List.flatten()
+      {:ok, p}
+    end
   end
 end

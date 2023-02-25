@@ -31,6 +31,11 @@ defmodule F1Bot.F1Session.Server do
     |> GenServer.call({:state, light_copy})
   end
 
+  def resync_state_events() do
+    server_via()
+    |> GenServer.call({:resync_state_events})
+  end
+
   def session_best_stats() do
     server_via()
     |> GenServer.call(:session_best_stats)
@@ -109,6 +114,14 @@ defmodule F1Bot.F1Session.Server do
   end
 
   @impl true
+  def handle_call({:resync_state_events}, _from, state = %{session: session}) do
+    events = F1Session.make_state_sync_events(session)
+    PubSub.broadcast_events(events)
+
+    {:reply, :ok, state}
+  end
+
+  @impl true
   def handle_call(:session_best_stats, _from, state = %{session: session}) do
     reply = F1Session.session_best_stats(session)
     {:reply, reply, state}
@@ -163,8 +176,7 @@ defmodule F1Bot.F1Session.Server do
 
   @impl true
   def handle_call({:driver_session_data, driver_number}, _from, state = %{session: session}) do
-    data = F1Session.driver_session_data(session, driver_number)
-    reply = {:ok, data}
+    reply = F1Session.driver_session_data(session, driver_number)
     {:reply, reply, state}
   end
 
