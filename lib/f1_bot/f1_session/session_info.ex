@@ -62,8 +62,7 @@ defmodule F1Bot.F1Session.SessionInfo do
     name_match = old.gp_name == new.gp_name
     session_match = old.type == new.type
 
-    had_info? = nil not in [old.gp_name, old.type, old.start_date, old.end_date]
-    session_changed? = had_info? and (not name_match or not session_match)
+    session_changed? = not (name_match and session_match)
 
     old = Map.from_struct(old)
     new = Map.from_struct(new)

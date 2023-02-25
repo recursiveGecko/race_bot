@@ -1,5 +1,6 @@
 defmodule F1Bot.PubSub do
   @moduledoc ""
+  require Logger
   alias Phoenix.PubSub
   alias F1Bot.F1Session.Common.Event
   alias F1Bot.DelayedEvents
@@ -27,6 +28,8 @@ defmodule F1Bot.PubSub do
     for e <- events do
       topic = topic_for_event(e.scope)
       broadcast(topic, e)
+
+      Logger.debug("Broadcasting event: #{topic}, payload: #{inspect(e.payload, limit: 3)}")
     end
 
     if rebroadcast_delayed do
