@@ -23,9 +23,9 @@ class FPQualiLapTimeChart extends RaceLapTimeChart {
         },
         tooltipFormat: 'H:mm:ss'
       },
-      ticks: {
-        stepSize: 5,
-      }
+      // ticks: {
+      //   stepSize: 5,
+      // }
     };
 
     Object.assign(scales.x, newXScaleOpts);
