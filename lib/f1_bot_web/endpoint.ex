@@ -18,14 +18,16 @@ defmodule F1BotWeb.Endpoint do
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
-  #
-  # You should set gzip to true if you are running phx.digest
-  # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
     from: :f1_bot,
     gzip: true,
-    only: F1BotWeb.static_paths()
+    only: F1BotWeb.static_paths(),
+    # Favicon with digest suffix is served from root and doesn't get
+    # matched by the above rule, ":only" only matches exact paths and files
+    # inside matching subdirectories, here we allow an arbitrary suffix
+    # for files in root
+    only_matching: ~w(favicon)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
