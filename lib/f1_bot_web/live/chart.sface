@@ -1,5 +1,15 @@
-<!-- <div class="order-3 sm:order-2 basis-2/6 sm:basis-auto">
-  <Component.DelayControl id="delay_control" {=@pubsub_delay_ms} />
-</div> -->
+<div class="w-full h-screen flex flex-col">
+  <!-- Header -->
+  <div class="w-full bg-slate-200 px-2 py-1 flex">
+    <div class="text-xl flex items-center mr-12">
+      <img class="h-14 mr-3" src="/favicon.png" alt="logo">
+      <span class="text-2xl">Race Bot for F1</span>
+    </div>
 
-<Component.ChartJS class="p-2 w-full h-screen" chart_id="lap_times" />
+    <div class="">
+      <Component.DelayControl id="delay_control" {=@pubsub_delay_ms} />
+    </div>
+  </div>
+
+  <Component.ChartJS class="p-1 w-full h-full" chart_id="lap_times" />
+</div>

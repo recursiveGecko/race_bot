@@ -1,9 +1,7 @@
 import Config
 
 config :f1_bot,
-  ecto_repos: [F1Bot.Repo]
-
-config :f1_bot,
+  ecto_repos: [F1Bot.Repo],
   signalr_topics: [
     "TrackStatus",
     "TeamRadio",

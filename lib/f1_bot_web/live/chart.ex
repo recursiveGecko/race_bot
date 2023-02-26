@@ -4,7 +4,7 @@ defmodule F1BotWeb.Live.Chart do
 
   alias F1Bot.DelayedEvents
 
-  data pubsub_delay_ms, :integer, default: 1_000
+  data pubsub_delay_ms, :integer, default: DelayedEvents.default_delay()
   data pubsub_delayed_topics, :list, default: []
 
   def mount(_params, session, socket) do

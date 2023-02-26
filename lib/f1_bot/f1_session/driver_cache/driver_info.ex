@@ -16,8 +16,8 @@ defmodule F1Bot.F1Session.DriverCache.DriverInfo do
     field(:team_color, String.t())
     field(:team_name, String.t())
     field(:picture_url, String.t())
-    # Used in charts to style drivers belonging to the same team differently
-    field(:use_primary_color, boolean())
+    field(:chart_order, pos_integer())
+    field(:chart_team_order, pos_integer())
   end
 
   def parse_from_json(json) do

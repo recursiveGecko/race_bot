@@ -1,13 +1,15 @@
 import {Chart} from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import zoomPlugin from 'chartjs-plugin-zoom';
+// import zoomPlugin from 'chartjs-plugin-zoom';
 
 import { RaceLapTimeChart } from "./RaceLapTimeChart"
+import { LapTimeScale } from './LapTimeScale';
 import { AnyChartData } from './DataPayloads';
 
 Chart.register(annotationPlugin);
-Chart.register(zoomPlugin);
+// Chart.register(zoomPlugin);
+Chart.register(LapTimeScale);
 
 interface ChartVisualization {
   updateData(data: AnyChartData): void;
@@ -18,7 +20,7 @@ interface ConstructableChart {
   new(canvas: HTMLCanvasElement): ChartVisualization;
 }
 
-const ChartJsCharts = {
+const ChartJsCharts: Record<string, ConstructableChart> = {
   RaceLapTimeChart,
 }
 
@@ -26,8 +28,7 @@ const createChart = (chartType: string, canvas: HTMLCanvasElement): ChartVisuali
   const chartClass: ConstructableChart | undefined = ChartJsCharts[chartType];
 
   if (!chartClass) {
-    console.error(`Chart type '${chartType}' not found`);
-    return;
+    throw new Error(`Chart type '${chartType}' not found`);
   }
 
   return new chartClass(canvas);

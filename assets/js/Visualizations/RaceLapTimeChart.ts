@@ -1,16 +1,16 @@
-import { Chart, ChartConfiguration, ChartDataset, LegendElement, LegendItem } from 'chart.js/auto';
-import { ChartEvent } from 'chart.js/dist/core/core.plugins';
+import { Chart, ChartConfiguration, ChartDataset, ChartEvent, Color, FontSpec, LegendItem } from 'chart.js/auto';
 import { AnnotationOptions } from 'chartjs-plugin-annotation';
 import { ChartVisualization } from '.';
 import { TrackStatusData, AnyChartData, LapTimeDataPoint, DriverLapTimeData, TrackStatusDataPoint } from './DataPayloads';
+import { DataSetUtils } from './DatasetUtils';
 
 class RaceLapTimeChart implements ChartVisualization {
   private chart: Chart;
   private driverData: { [key: number]: LapTimeDataPoint[] } = {};
-  private updateTimeout?: number = null;
+  private updateTimeout?: number;
+  private hideDatasetAfterLeave: Record<number, boolean> = {};
 
   constructor(private canvas: HTMLCanvasElement) {
-
     const schema = this.schema();
     this.chart = new Chart(canvas, schema);
   }
@@ -20,13 +20,13 @@ class RaceLapTimeChart implements ChartVisualization {
   }
 
   update() {
-    if (this.updateTimeout != null) {
+    if (this.updateTimeout != undefined) {
       return;
     }
 
     this.updateTimeout = setTimeout(() => {
       this.chart.update();
-      this.updateTimeout = null;
+      this.updateTimeout = undefined;
     }, 10);
   }
 
@@ -49,8 +49,7 @@ class RaceLapTimeChart implements ChartVisualization {
     const existingData = this.driverData[data.driver_number];
 
     if (existingData) {
-      existingData.splice(0, existingData.length);
-      existingData.push(...data.data);
+      DataSetUtils.mergeDataset(existingData, data.data, x => x.lap);
     } else {
       const newData = data.data;
       this.driverData[data.driver_number] = newData;
@@ -58,9 +57,10 @@ class RaceLapTimeChart implements ChartVisualization {
       const dataset: ChartDataset = {
         label: data.driver_abbr,
         data: newData as any,
+        order: data.chart_order,
         backgroundColor: `#${data.team_color}`,
         borderColor: `#${data.team_color}`,
-        borderDash: data.use_primary_color ? [] : [15, 2],
+        borderDash: data.chart_team_order == 0 ? [] : [15, 2],
       }
 
       this.chart.data.datasets.push(dataset);
@@ -70,7 +70,7 @@ class RaceLapTimeChart implements ChartVisualization {
   }
 
   private updateTrackStatusData(data: TrackStatusData) {
-    const trackStatusAnnotations = {};
+    const trackStatusAnnotations: Record<string, AnnotationOptions> = {};
 
     for (let point of data.data) {
       let annotation: AnnotationOptions;
@@ -84,7 +84,7 @@ class RaceLapTimeChart implements ChartVisualization {
       trackStatusAnnotations[point.id] = annotation;
     }
 
-    this.chart.options.plugins.annotation.annotations =
+    this.chart.options.plugins!.annotation!.annotations =
       trackStatusAnnotations;
 
     this.update();
@@ -130,46 +130,100 @@ class RaceLapTimeChart implements ChartVisualization {
     }
   }
 
-  private handleHover(e: ChartEvent, legendItem: LegendItem) {
+  private handleLegendHover(e: ChartEvent, legendItem: LegendItem) {
     const alpha = '20';
 
     this.chart.data.datasets.forEach((dataset, index) => {
+      this.hideDatasetAfterLeave[index] = !!dataset.hidden;
       const isHoveredDataset = index == legendItem.datasetIndex;
-      if (isHoveredDataset) return;
 
-      dataset.borderColor = this.maybeAddAlphaToHex(dataset.borderColor as string, alpha);
-      dataset.backgroundColor = this.maybeAddAlphaToHex(dataset.backgroundColor as string, alpha);
+      if (isHoveredDataset) {
+        dataset.hidden = false;
+        return;
+      }
+
+      dataset.borderColor = this.maybeAddAlphaToHex(dataset.borderColor as Color, alpha);
+      dataset.backgroundColor = this.maybeAddAlphaToHex(dataset.backgroundColor as Color, alpha);
     })
 
     this.update();
   }
 
-  private handleLeave(e: ChartEvent, legendItem: LegendItem) {
+  private handleLegendLeave(e: ChartEvent, legendItem: LegendItem) {
     this.chart.data.datasets.forEach((dataset, index) => {
-      dataset.borderColor = this.maybeRemoveAlphaFromHex(dataset.borderColor as string);
-      dataset.backgroundColor = this.maybeRemoveAlphaFromHex(dataset.backgroundColor as string);
+      if (this.hideDatasetAfterLeave[index]) {
+        dataset.hidden = true;
+        delete this.hideDatasetAfterLeave[index];
+      }
+
+      dataset.borderColor = this.maybeRemoveAlphaFromHex(dataset.borderColor as Color);
+      dataset.backgroundColor = this.maybeRemoveAlphaFromHex(dataset.backgroundColor as Color);
     })
 
+    this.showAllDatasetsIfAllAreHidden();
     this.update();
   }
 
-  private maybeAddAlphaToHex(hex: string, alpha: string) {
-    if (hex.length == 7) {
-      return hex + alpha;
+  private handleLegendClick(e: ChartEvent, legendItem: LegendItem) {
+    const clickedDatasetIndex = legendItem.datasetIndex;
+    if (clickedDatasetIndex == undefined) return;
+
+    let modifiedKeyPressed = false;
+
+    if (e.native != null) {
+      const mouseEvent: MouseEvent = e.native as MouseEvent;
+      modifiedKeyPressed = mouseEvent.ctrlKey || mouseEvent.shiftKey || mouseEvent.altKey;
+    }
+
+    if (modifiedKeyPressed) {
+      // Hide all other datasets
+      this.chart.data.datasets.forEach((dataset, index) => {
+        dataset.hidden = index !== clickedDatasetIndex;
+      });
+
+      this.hideDatasetAfterLeave = {};
+      this.update();
     } else {
-      return hex;
+      this.hideDatasetAfterLeave[clickedDatasetIndex] = !this.hideDatasetAfterLeave[clickedDatasetIndex];
     }
   }
 
-  private maybeRemoveAlphaFromHex(hex: string) {
-    if (hex.length == 9) {
-      return hex.slice(0, 7);
-    } else {
-      return hex;
-    }
+  private showAllDatasetsIfAllAreHidden() {
+    const datasets = this.chart.data.datasets;
+    const allHidden = datasets.every(dataset => dataset.hidden);
+    if (!allHidden) return;
+
+    datasets.forEach(dataset => dataset.hidden = false);
+    this.hideDatasetAfterLeave = {};
+  }
+
+  private maybeAddAlphaToHex(hex: Color, alpha: string): Color {
+    if (typeof hex !== 'string') return hex;
+    if (hex.length !== 7) return hex;
+
+    return hex + alpha;
+  }
+
+  private maybeRemoveAlphaFromHex(hex: Color): Color {
+    if (typeof hex !== 'string') return hex;
+    if (hex.length !== 9) return hex;
+
+    return hex.slice(0, 7);
   }
 
   private schema(): ChartConfiguration {
+    const monoFontFamily = 'Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace';
+    const scalesTitleFontConfig: Partial<FontSpec> = {
+      family: monoFontFamily,
+      size: 16,
+    };
+    const scalesTitleColor = 'black';
+    const ticksFontConfig: Partial<FontSpec> = {
+      family: monoFontFamily,
+      size: 14
+    };
+    const ticksColor = 'black';
+
     const schema: ChartConfiguration = {
       type: 'line',
       data: {
@@ -182,57 +236,97 @@ class RaceLapTimeChart implements ChartVisualization {
           xAxisKey: 'lap',
           yAxisKey: 't',
         },
+        layout: {},
         scales: {
-          x: { 
-            display: true, 
+          x: {
+            display: true,
             type: 'linear',
             title: {
               display: true,
-              text: "Lap"
+              text: "Lap",
+              font: scalesTitleFontConfig,
+              color: scalesTitleColor,
+            },
+            ticks: {
+              precision: 0,
+              stepSize: 5,
+              font: ticksFontConfig,
+              color: ticksColor
             }
           },
           y: {
             display: true,
-            type: 'time',
-            time: {
-              unit: 'millisecond',
-              displayFormats: {
-                millisecond: 'm:ss.SS'
-              },
-              tooltipFormat: 'm:ss.SS'
-            },
-            ticks: {
-              stepSize: 1000
-            },
+            type: 'laptime' as any,
             title: {
               display: true,
-              text: "Lap time"
+              text: "Lap Time",
+              font: scalesTitleFontConfig,
+              color: scalesTitleColor
+            },
+            ticks: {
+              font: ticksFontConfig,
+              color: ticksColor
             }
           }
         },
         plugins: {
           legend: {
-            onHover: this.handleHover.bind(this),
-            onLeave: this.handleLeave.bind(this),
+            onHover: this.handleLegendHover.bind(this),
+            onLeave: this.handleLegendLeave.bind(this),
+            onClick: this.handleLegendClick.bind(this),
+            labels: {
+              font: {
+                family: monoFontFamily,
+                size: 15,
+                style: 'normal',
+              },
+              color: 'rgba(0, 0, 0, 1)',
+              boxWidth: 20,
+              boxHeight: 15
+            },
+            maxWidth: 5,
+            fullSize: false,
+
           },
           annotation: {
-            annotations: {}
+            annotations: {},
+            common: {
+              font: {
+                family: monoFontFamily
+              }
+            }
           },
-          zoom: {
-            zoom: {
-              mode: 'y',
-              wheel: {
-                enabled: true
-              },
-              pinch: {
-                enabled: true
+          tooltip: {
+            enabled: true,
+            // mode: 'x', // shows all lap times for a given lap
+            itemSort(a, b, data) {
+              return a.parsed.y - b.parsed.y;
+            },
+            callbacks: {
+              title(tooltipItems) {
+                const lap = tooltipItems[0].label;
+                return `Lap ${lap}`
               }
             },
-            pan: {
-              enabled: true,
-              mode: 'xy',
-            },
+            bodyFont: {
+              family: monoFontFamily
+            }
           }
+          // zoom: {
+          //   zoom: {
+          //     mode: 'y',
+          //     wheel: {
+          //       enabled: true
+          //     },
+          //     pinch: {
+          //       enabled: true
+          //     }
+          //   },
+          //   pan: {
+          //     enabled: true,
+          //     mode: 'xy',
+          //   },
+          // }
         }
       },
 

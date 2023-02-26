@@ -6,7 +6,7 @@ import {LiveSocket} from "@deps/phoenix_live_view"
 import topbar from "../vendor/topbar"
 import Hooks from "./_hooks"
 
-let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+let csrfToken = document.querySelector("meta[name='csrf-token']")?.getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}, hooks: Hooks})
 
 // Show progress bar on live navigation and form submits

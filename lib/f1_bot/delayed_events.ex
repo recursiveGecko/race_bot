@@ -9,6 +9,7 @@ defmodule F1Bot.DelayedEvents do
   defdelegate fetch_latest_event(delay_ms, event_scope),
     to: F1Bot.DelayedEvents.Rebroadcaster
 
+  def default_delay(), do: F1Bot.get_env(:default_delay_ms, 20_000)
   def available_delays, do: @available_delays
   def min_delay_ms, do: @min_delay
   def max_delay_ms, do: @max_delay

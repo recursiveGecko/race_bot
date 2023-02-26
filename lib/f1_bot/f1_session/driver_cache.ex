@@ -56,7 +56,8 @@ defmodule F1Bot.F1Session.DriverCache do
       Enum.reduce(partial_drivers, driver_cache, fn driver, driver_cache ->
         process_update(driver_cache, driver)
       end)
-      |> assign_team_slots()
+      |> assign_chart_team_order()
+      |> assign_chart_order()
 
     events =
       if new_driver_cache != driver_cache do
@@ -90,7 +91,22 @@ defmodule F1Bot.F1Session.DriverCache do
     {:error, :invalid_driver}
   end
 
-  defp assign_team_slots(self = %__MODULE__{}) do
+  defp assign_chart_order(self = %__MODULE__{}) do
+    driver_map =
+      self.drivers
+      |> Map.values()
+      |> Enum.sort_by(&"#{&1.team_name}-#{&1.chart_team_order}", :asc)
+      |> Enum.with_index(0)
+      |> Enum.map(fn {driver, index} ->
+        driver = %{driver | chart_order: index}
+        {driver.driver_number, driver}
+      end)
+      |> Enum.into(%{})
+
+    %{self | drivers: driver_map}
+  end
+
+  defp assign_chart_team_order(self = %__MODULE__{}) do
     grouped =
       self.drivers
       |> Map.values()
@@ -98,18 +114,18 @@ defmodule F1Bot.F1Session.DriverCache do
 
     modified =
       for {_team, drivers} <- grouped do
-        [primary | rest] = Enum.sort_by(drivers, & &1.driver_number, :asc)
-
-        primary = %{primary | use_primary_color: true}
-        rest = Enum.map(rest, fn d -> %{d | use_primary_color: false} end)
-
-        [primary | rest]
+        drivers
+        |> Enum.sort_by(& &1.driver_number, :asc)
+        |> Enum.with_index(0)
+        |> Enum.map(fn {driver, index} ->
+          driver = %{driver | chart_team_order: index}
+          {driver.driver_number, driver}
+        end)
       end
 
     driver_map =
       modified
       |> List.flatten()
-      |> Enum.map(fn driver -> {driver.driver_number, driver} end)
       |> Enum.into(%{})
 
     %{self | drivers: driver_map}

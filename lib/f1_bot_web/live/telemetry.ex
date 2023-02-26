@@ -1,6 +1,8 @@
 defmodule F1BotWeb.Live.Telemetry do
   use F1BotWeb, :live_view
   alias F1BotWeb.Component
+  alias F1Bot.DelayedEvents
+  alias F1Bot.F1Session
 
   data session_clock, :any, default: nil
   data session_info, :any, default: nil
@@ -9,7 +11,7 @@ defmodule F1BotWeb.Live.Telemetry do
   data drivers_of_interest, :list, default: [1, 11, 16, 55, 44, 63]
 
   def mount(_params, session, socket) do
-    initial_delay = 1_000
+    initial_delay = DelayedEvents.default_delay()
 
     socket =
       socket
@@ -148,7 +150,7 @@ defmodule F1BotWeb.Live.Telemetry do
     topics_to_subscribe = global_topics ++ per_driver_topics
 
     {:ok, subscribed_topics} =
-      F1Bot.DelayedEvents.subscribe_with_delay(
+      DelayedEvents.subscribe_with_delay(
         topics_to_subscribe,
         delay_ms,
         true
@@ -160,5 +162,5 @@ defmodule F1BotWeb.Live.Telemetry do
   end
 
   defp is_race?(_session_info = nil), do: false
-  defp is_race?(session_info), do: F1Bot.F1Session.SessionInfo.is_race?(session_info)
+  defp is_race?(session_info), do: F1Session.SessionInfo.is_race?(session_info)
 end

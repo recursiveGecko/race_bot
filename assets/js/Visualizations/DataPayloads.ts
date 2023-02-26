@@ -23,7 +23,8 @@ interface DriverLapTimeData {
   driver_name: string;
   driver_abbr: string;
   team_color: string;
-  use_primary_color: boolean;
+  chart_order: number;
+  chart_team_order: number;
   data: LapTimeDataPoint[];
 }
 

@@ -61,7 +61,8 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
         driver_number: driver_number,
         driver_abbr: info.driver_abbr,
         team_color: info.team_color,
-        use_primary_color: info.use_primary_color
+        chart_team_order: info.chart_team_order,
+        chart_order: info.chart_order
       }
 
       {:ok, p}

@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "target": "ES2020",
+    "moduleResolution": "node",
     "lib": [
       "DOM",
       "ES2020"
@@ -12,6 +14,9 @@
       "@deps/*": [
         "./deps/*"
       ],
-    }
-  },
+    },
+    "strictNullChecks": true,
+    "noEmit": true,
+    "skipLibCheck": true
+  }
 }
