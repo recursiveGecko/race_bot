@@ -2,8 +2,6 @@ defmodule F1Bot.Replay.Server do
   use GenServer
   require Logger
 
-  @speed_modifier 1
-
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -39,6 +37,10 @@ defmodule F1Bot.Replay.Server do
     GenServer.call(__MODULE__, :stop_replay)
   end
 
+  def fast_forward(seconds) when is_integer(seconds) and seconds > 0 do
+    GenServer.call(__MODULE__, {:fast_forward_ms, seconds * 1000})
+  end
+
   @impl true
   def handle_call({:start_replay, url}, _from, state) do
     if state.in_progress do
@@ -58,6 +60,16 @@ defmodule F1Bot.Replay.Server do
     if state.in_progress do
       state = stop_ticks(state)
 
+      {:reply, :ok, state}
+    else
+      {:reply, {:error, :no_replay_in_progress}, state}
+    end
+  end
+
+  @impl true
+  def handle_call({:fast_forward_ms, offset_ms}, _from, state) do
+    if state.in_progress do
+      state = sync_time(state, offset_ms)
       {:reply, :ok, state}
     else
       {:reply, {:error, :no_replay_in_progress}, state}
@@ -130,21 +142,23 @@ defmodule F1Bot.Replay.Server do
     |> sync_time()
   end
 
-  defp sync_time(state) do
+  defp sync_time(state, offset_ms \\ 0) do
     %{dataset: [next_msg | _]} = state.replay_state
     {ts_ms, _file_name, _session_ts, _payload} = next_msg
 
     %{
       state
-      | start_system_time: System.monotonic_time(:millisecond),
+      | start_system_time: System.monotonic_time(:millisecond) - offset_ms,
         start_replay_time: ts_ms
     }
   end
 
   defp replay_chunk(state = %{replay_state: replay_state}) do
-    max_ms =
-      @speed_modifier * (System.monotonic_time(:millisecond) - state.start_system_time) +
-        state.start_replay_time
+    now_system_ms = System.monotonic_time(:millisecond)
+    start_system_ms = state.start_system_time
+    start_replay_ms = state.start_replay_time
+
+    max_replay_ms = now_system_ms - start_system_ms + start_replay_ms
 
     options = %{
       report_progress: true,
@@ -153,7 +167,7 @@ defmodule F1Bot.Replay.Server do
         replay_state
       end,
       replay_while_fn: fn _replay_state, _packet, ts_ms ->
-        ts_ms < max_ms
+        ts_ms < max_replay_ms
       end
     }
 
