@@ -24,7 +24,7 @@ defmodule F1BotWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :f1_bot,
-    gzip: false,
+    gzip: true,
     only: F1BotWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
