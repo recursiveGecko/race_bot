@@ -8,12 +8,12 @@ const DataSetUtils = {
    * @param newData New dataset to merge into existingData
    * @param keyFn Function that maps a point in the dataset to its unique identifier (e.g. X axis value)
    */
-  mergeDataset<T extends {}>(existingData: T[], newData: T[], keyFn: (point: T) => string | number) {
+  mergeDataset<T extends {}>(existingData: T[], newData: T[], keyFn: (point: T) => number) {
     const existingKeys = new Set(existingData.map(keyFn));
     const newKeys = new Set(newData.map(keyFn));
     const keysToRemove = new Set([...existingKeys].filter(x => !newKeys.has(x)));
     const keysToAdd = new Set([...newKeys].filter(x => !existingKeys.has(x)));
-    
+
     const keysToUpdate = new Set([...existingKeys].filter(x => newKeys.has(x)));
 
     for (let point of existingData) {
@@ -30,11 +30,19 @@ const DataSetUtils = {
     }
 
     for (let point of newData) {
-      if (keysToAdd.has(keyFn(point))) {
+      if (!keysToAdd.has(keyFn(point))) continue;
+
+      // Assumes existingData is sorted by keyFn in ascending order
+      const insertIndex = existingData.findIndex(x => keyFn(x) > keyFn(point));
+
+      if(insertIndex === -1) {
         existingData.push(point);
+      } else {
+        // Data must be inserted in the correct location for lines to be drawn correctly
+        existingData.splice(insertIndex, 0, point);
       }
     }
   }
 }
 
-export {DataSetUtils};
+export { DataSetUtils };

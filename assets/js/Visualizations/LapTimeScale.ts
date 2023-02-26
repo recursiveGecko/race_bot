@@ -66,7 +66,7 @@ class LapTimeScale extends Scale {
     if (msPrecision <= 0) {
       return `${minutes}:${fmtSec}`;
     } else {
-      const fmtMs = milliseconds.toString().padEnd(msPrecision, '0').slice(0, msPrecision);
+      const fmtMs = milliseconds.toString().padStart(msPrecision, '0').slice(0, msPrecision);
       return `${minutes}:${fmtSec}.${fmtMs}`;
     }
   }

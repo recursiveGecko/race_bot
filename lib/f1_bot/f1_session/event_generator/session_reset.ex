@@ -9,14 +9,17 @@ defmodule F1Bot.F1Session.EventGenerator.SessionReset do
     summary_events =
       1..99
       |> Enum.map(&Driver.summary_events(session, &1))
-      |> List.flatten()
 
     chart_init_events = Charts.chart_init_events(session)
+    lap_time_chart_data_events =
+      1..99
+      |> Enum.map(&Driver.lap_time_chart_events(session, &1))
 
     [
       reset_event,
       summary_events,
-      chart_init_events
+      chart_init_events,
+      lap_time_chart_data_events
     ]
     |> List.flatten()
   end

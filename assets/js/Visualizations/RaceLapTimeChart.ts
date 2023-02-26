@@ -7,7 +7,7 @@ import {Storage} from "@assets/Storage";
 
 class RaceLapTimeChart implements ChartVisualization {
   protected chart: Chart;
-  protected driverData: { [key: number]: LapTimeDataPoint[] } = {};
+  protected driverData: { [key: number]: ChartDataset } = {};
   protected updateTimeout?: number;
   protected hideDatasetAfterLeave: Record<number, boolean> = {};
 
@@ -46,14 +46,26 @@ class RaceLapTimeChart implements ChartVisualization {
     }
   }
 
-  protected updateDriverData(data: DriverLapTimeData) {
-    const existingData = this.driverData[data.driver_number];
+  /**
+   * Sorts the data by lap number, ascending so that the lines 
+   * are drawn in the correct order.
+   */
+  protected sortDataAsc(data: DriverLapTimeData) {
+    data.data.sort((a, b) => a.lap - b.lap);
+  }
 
-    if (existingData) {
+  protected updateDriverData(data: DriverLapTimeData) {
+    this.sortDataAsc(data);
+
+    const existingDataset = this.driverData[data.driver_number];
+
+    if (existingDataset) {
+      const existingData = existingDataset.data as unknown as LapTimeDataPoint[];
+      
       DataSetUtils.mergeDataset(existingData, data.data, x => x.lap);
+      existingDataset.order = data.chart_order;
     } else {
       const newData = data.data;
-      this.driverData[data.driver_number] = newData;
 
       const dataset: ChartDataset = {
         label: data.driver_abbr,
@@ -65,6 +77,7 @@ class RaceLapTimeChart implements ChartVisualization {
         borderDash: data.chart_team_order == 0 ? [] : [15, 2],
       }
 
+      this.driverData[data.driver_number] = dataset;
       this.chart.data.datasets.push(dataset);
     }
 
@@ -199,6 +212,8 @@ class RaceLapTimeChart implements ChartVisualization {
 
     datasets.forEach(dataset => dataset.hidden = false);
     this.hideDatasetAfterLeave = {};
+
+    this.saveSelectedDrivers();
   }
 
   protected maybeAddAlphaToHex(hex: Color, alpha: string): Color {
