@@ -26,10 +26,6 @@ defmodule F1Bot.F1Session.EventGenerator do
     to: EventGenerator.Periodic,
     as: :periodic_events
 
-  defdelegate make_session_reset_events(session),
-    to: EventGenerator.SessionReset,
-    as: :session_reset_events
-
   defdelegate make_state_sync_events(session),
     to: EventGenerator.StateSync,
     as: :state_sync_events

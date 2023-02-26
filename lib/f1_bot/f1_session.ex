@@ -273,7 +273,7 @@ defmodule F1Bot.F1Session do
   def reset_session(session) do
     # We reset the session then generate the summary events which contain an empty
     # summary because the DriverDataRepo had been reset.
-    session = %__MODULE__{
+    session = %{
       session
       | driver_data_repo: F1Session.DriverDataRepo.new(),
         track_status_history: F1Session.TrackStatusHistory.new(),
@@ -282,7 +282,7 @@ defmodule F1Bot.F1Session do
         clock: nil
     }
 
-    reset_events = F1Session.EventGenerator.make_session_reset_events(session)
+    reset_events = F1Session.EventGenerator.make_state_sync_events(session)
 
     {session, reset_events}
   end
