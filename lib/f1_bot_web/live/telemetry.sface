@@ -1,47 +1,43 @@
-<div class="p-2 w-full flex bg-slate-200">
-  <div class="text-xl flex items-center mr-12">
-    <img class="h-14 mr-3" src="/favicon.png" alt="logo">
-    <span class="text-2xl">Race Bot for F1</span>
-  </div>
-</div>
-
-<div class="flex flex-col sm:flex-row mt-4 mx-2 gap-4">
-  <!-- Left sidebar -->
-  <div class="flex flex-wrap sm:flex-col justify-between gap-2 sm:mr-0">
-    <div class="order-2 sm:order-1 basis-2/6 self-end sm:self-auto sm:basis-auto">
-      <Component.LapAndClock is_race={is_race?(@session_info)} {=@lap_counter} {=@session_clock} />
-    </div>
-
-    <div class="order-3 sm:order-2 basis-2/6 sm:basis-auto">
-      <Component.DelayControl
-        id="delay_control"
-        {=@pubsub_delay_ms}
-      />
-    </div>
-
-    <div class="order-1 sm:order-3 basis-6/6 mt-2 grow">
-      <Component.DriverSelector {=@driver_list} {=@drivers_of_interest} toggle_driver="toggle-driver" />
-    </div>
+<div id="telemetry-live" :hook={"SaveParams", from: Component.Utility}>
+  <div class="p-2 w-full flex bg-slate-200">
+    <.brand />
   </div>
 
-  <!-- Main content -->
-  <div class="grow flex flex-col">
-    <div class="">
-      <span class="text-2xl" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}</span>
-      <Component.PopupLink id="chart_link" class="ml-3" href={~p"/chart"}>
-        Open charts
-      </Component.PopupLink>
+  <div class="flex flex-col sm:flex-row mt-4 mx-2 gap-4">
+    <!-- Left sidebar -->
+    <div class="flex flex-wrap sm:flex-col justify-between gap-2 sm:mr-0">
+      <div class="order-2 sm:order-1 basis-2/6 self-end sm:self-auto sm:basis-auto">
+        <Component.LapAndClock is_race={is_race?(@session_info)} {=@lap_counter} {=@session_clock} />
+      </div>
+
+      <div class="order-3 sm:order-2 basis-2/6 sm:basis-auto">
+        <Component.DelayControl id="delay_control" {=@pubsub_delay_ms} />
+      </div>
+
+      <div class="order-1 sm:order-3 basis-6/6 mt-2 grow">
+        <Component.DriverSelector {=@driver_list} {=@drivers_of_interest} toggle_driver="toggle-driver" />
+      </div>
     </div>
 
-    <div class="mt-4 grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,25rem)] auto-rows-min">
-      {#for driver_info <- @driver_list}
-        <Component.DriverSummary
-          :if={driver_info.driver_number in @drivers_of_interest}
-          id={driver_info.driver_number}
-          driver_info={driver_info}
-          delay_ms={@pubsub_delay_ms}
-        />
-      {/for}
+    <!-- Main content -->
+    <div class="grow flex flex-col">
+      <div class="">
+        <span class="text-2xl" :if={@session_info != nil}>{@session_info.gp_name} - {@session_info.type}</span>
+        <Component.PopupLink id="chart_link" class="ml-3" href={~p"/chart"}>
+          Open charts
+        </Component.PopupLink>
+      </div>
+
+      <div class="mt-4 grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,25rem)] auto-rows-min">
+        {#for driver_info <- @driver_list}
+          <Component.DriverSummary
+            :if={driver_info.driver_number in @drivers_of_interest}
+            id={driver_info.driver_number}
+            driver_info={driver_info}
+            delay_ms={@pubsub_delay_ms}
+          />
+        {/for}
+      </div>
     </div>
   </div>
 </div>

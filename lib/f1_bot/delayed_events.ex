@@ -14,6 +14,7 @@ defmodule F1Bot.DelayedEvents do
   def min_delay_ms, do: @min_delay
   def max_delay_ms, do: @max_delay
   def delay_step, do: @delay_step
+  def is_valid_delay?(delay_ms), do: delay_ms in @available_delays
 
   def subscribe_with_delay(scopes, delay_ms, send_init_events) do
     if delay_ms in @available_delays do

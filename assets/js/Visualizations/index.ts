@@ -3,16 +3,18 @@ import 'chartjs-adapter-date-fns';
 import annotationPlugin from 'chartjs-plugin-annotation';
 // import zoomPlugin from 'chartjs-plugin-zoom';
 
-import { RaceLapTimeChart } from "./RaceLapTimeChart"
-import { LapTimeScale } from './LapTimeScale';
-import { AnyChartData } from './DataPayloads';
+import {RaceLapTimeChart} from "./RaceLapTimeChart"
+import {LapTimeScale} from './LapTimeScale';
+import {AnyChartData} from './DataPayloads';
+import {FPQualiLapTimeChart} from "@assets/Visualizations/FPQualiLapTimeChart";
 
-Chart.register(annotationPlugin);
 // Chart.register(zoomPlugin);
+Chart.register(annotationPlugin);
 Chart.register(LapTimeScale);
 
 interface ChartVisualization {
   updateData(data: AnyChartData): void;
+
   destroy(): void;
 }
 
@@ -22,6 +24,7 @@ interface ConstructableChart {
 
 const ChartJsCharts: Record<string, ConstructableChart> = {
   RaceLapTimeChart,
+  FPQualiLapTimeChart,
 }
 
 const createChart = (chartType: string, canvas: HTMLCanvasElement): ChartVisualization => {

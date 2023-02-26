@@ -1,10 +1,6 @@
-<div class="w-full h-screen flex flex-col">
-  <!-- Header -->
+<div id="charts-live" class="w-full h-screen flex flex-col" :hook={"SaveParams", from: Component.Utility}>
   <div class="w-full bg-slate-200 px-2 py-1 flex">
-    <div class="text-xl flex items-center mr-12">
-      <img class="h-14 mr-3" src="/favicon.png" alt="logo">
-      <span class="text-2xl">Race Bot for F1</span>
-    </div>
+    <.brand class="mr-3" />
 
     <div class="">
       <Component.DelayControl id="delay_control" {=@pubsub_delay_ms} />

@@ -9,14 +9,31 @@ defmodule F1BotWeb.Live.Telemetry do
   data driver_list, :list, default: []
   data lap_counter, :map, default: nil
   data drivers_of_interest, :list, default: [1, 11, 16, 55, 44, 63]
+  data pubsub_delay_ms, :integer, default: DelayedEvents.default_delay()
+  data pubsub_delayed_topics, :list, default: []
 
   def mount(_params, session, socket) do
-    initial_delay = DelayedEvents.default_delay()
+    delay_ms =
+      get_check_param(
+        socket,
+        "delay_ms",
+        socket.assigns.pubsub_delay_ms,
+        &DelayedEvents.is_valid_delay?/1
+      )
+
+    drivers_of_interest =
+      get_check_param(
+        socket,
+        "drivers_of_interest",
+        socket.assigns.drivers_of_interest,
+        fn val -> Enum.each(val, &is_integer/1) end
+      )
 
     socket =
       socket
+      |> assign(:drivers_of_interest, drivers_of_interest)
       |> subscribe_to_own_events(session)
-      |> subscribe_with_delay(initial_delay)
+      |> subscribe_with_delay(delay_ms)
 
     {:ok, socket}
   end
@@ -54,6 +71,7 @@ defmodule F1BotWeb.Live.Telemetry do
     socket =
       socket
       |> assign(:drivers_of_interest, drivers_of_interest)
+      |> Component.Utility.save_params(%{drivers_of_interest: drivers_of_interest})
       |> subscribe_with_delay()
 
     {:noreply, socket}

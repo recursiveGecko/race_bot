@@ -94,7 +94,7 @@ defmodule F1BotWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      # import SampleAppWeb.CoreComponents
+      import F1BotWeb.Component.CoreComponents
       # import SampleAppWeb.Gettext
 
       # Shortcut for generating JS commands

@@ -13,7 +13,7 @@ defmodule F1Bot.F1Session.EventGenerator.Charts do
       if is_race do
         "RaceLapTimeChart"
       else
-        "x"
+        "FPQualiLapTimeChart"
       end
 
     [

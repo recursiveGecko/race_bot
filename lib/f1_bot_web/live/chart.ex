@@ -1,18 +1,25 @@
 defmodule F1BotWeb.Live.Chart do
   use F1BotWeb, :live_view
   alias F1BotWeb.Component
-
   alias F1Bot.DelayedEvents
 
   data pubsub_delay_ms, :integer, default: DelayedEvents.default_delay()
   data pubsub_delayed_topics, :list, default: []
 
   def mount(_params, session, socket) do
+    delay_ms =
+      get_check_param(
+        socket,
+        "delay_ms",
+        socket.assigns.pubsub_delay_ms,
+        &DelayedEvents.is_valid_delay?/1
+      )
+
     socket =
       socket
       |> assign(:drivers_of_interest, 1..99)
       |> subscribe_to_own_events(session)
-      |> subscribe_with_delay()
+      |> subscribe_with_delay(delay_ms)
 
     {:ok, socket}
   end
@@ -64,14 +71,7 @@ defmodule F1BotWeb.Live.Chart do
     {:noreply, socket}
   end
 
-  defp subscribe_with_delay(socket, delay_ms \\ nil) do
-    delay_ms =
-      if delay_ms == nil do
-        socket.assigns.pubsub_delay_ms
-      else
-        delay_ms
-      end
-
+  defp subscribe_with_delay(socket, delay_ms) do
     existing_topics = socket.assigns[:pubsub_delayed_topics]
 
     if existing_topics do

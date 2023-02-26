@@ -1,3 +1,5 @@
+import { Storage } from "@assets/Storage";
+
 const HighlightOnChange = {
   mounted() {
     this.lastVal = this.el.innerText;
@@ -10,7 +12,7 @@ const HighlightOnChange = {
     const remove = () => this.el.classList.remove(animationClass);
 
     // Sometimes an update is triggered even though the content hasn't changed.
-    if(this.el.innerText === this.lastVal) return;
+    if (this.el.innerText === this.lastVal) return;
     this.lastVal = this.el.innerText;
 
     if (this.timeout) {
@@ -24,6 +26,24 @@ const HighlightOnChange = {
 
     add();
   }
+};
+
+const SaveParams = {
+  mounted() {
+    this.handleEvent('save-params', (newParams) => {
+      let params;
+
+      try {
+        params = Storage.load('params', {}, JSON.parse)
+      } catch (e) {
+        params = {};
+        console.error('Failed to load params from localStorage', e);
+      }
+
+      Object.assign(params, newParams);
+      Storage.save('params', params);
+    })
+  }
 }
 
-export { HighlightOnChange };
+export { HighlightOnChange, SaveParams };

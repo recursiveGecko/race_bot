@@ -66,6 +66,7 @@ defmodule F1BotWeb.Component.DelayControl do
     delay_ms = socket.assigns.pubsub_delay_ms + socket.assigns.delay_step_ms
 
     send(self(), {:delay_control_set, delay_ms})
+    socket = Component.Utility.save_params(socket, %{delay_ms: delay_ms})
 
     {:noreply, socket}
   end
@@ -75,6 +76,7 @@ defmodule F1BotWeb.Component.DelayControl do
     delay_ms = socket.assigns.pubsub_delay_ms - socket.assigns.delay_step_ms
 
     send(self(), {:delay_control_set, delay_ms})
+    socket = Component.Utility.save_params(socket, %{delay_ms: delay_ms})
 
     {:noreply, socket}
   end

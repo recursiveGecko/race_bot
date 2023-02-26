@@ -27,6 +27,13 @@ defmodule F1Bot do
   end
 
   @doc """
+  Returns true if demo mode is enabled.
+  """
+  def demo_mode?() do
+    F1Bot.demo_mode_url() != nil
+  end
+
+  @doc """
   Returns the list of drivers in the current session.
   """
   def driver_list() do

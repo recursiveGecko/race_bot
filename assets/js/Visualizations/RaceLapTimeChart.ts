@@ -1,16 +1,17 @@
-import { Chart, ChartConfiguration, ChartDataset, ChartEvent, Color, FontSpec, LegendItem } from 'chart.js/auto';
-import { AnnotationOptions } from 'chartjs-plugin-annotation';
-import { ChartVisualization } from '.';
-import { TrackStatusData, AnyChartData, LapTimeDataPoint, DriverLapTimeData, TrackStatusDataPoint } from './DataPayloads';
-import { DataSetUtils } from './DatasetUtils';
+import {Chart, ChartConfiguration, ChartDataset, ChartEvent, Color, FontSpec, LegendItem} from 'chart.js/auto';
+import {AnnotationOptions} from 'chartjs-plugin-annotation';
+import {ChartVisualization} from '.';
+import {TrackStatusData, AnyChartData, LapTimeDataPoint, DriverLapTimeData, TrackStatusDataPoint} from './DataPayloads';
+import {DataSetUtils} from './DatasetUtils';
+import {Storage} from "@assets/Storage";
 
 class RaceLapTimeChart implements ChartVisualization {
-  private chart: Chart;
-  private driverData: { [key: number]: LapTimeDataPoint[] } = {};
-  private updateTimeout?: number;
-  private hideDatasetAfterLeave: Record<number, boolean> = {};
+  protected chart: Chart;
+  protected driverData: { [key: number]: LapTimeDataPoint[] } = {};
+  protected updateTimeout?: number;
+  protected hideDatasetAfterLeave: Record<number, boolean> = {};
 
-  constructor(private canvas: HTMLCanvasElement) {
+  constructor(protected canvas: HTMLCanvasElement) {
     const schema = this.schema();
     this.chart = new Chart(canvas, schema);
   }
@@ -45,7 +46,7 @@ class RaceLapTimeChart implements ChartVisualization {
     }
   }
 
-  private updateDriverData(data: DriverLapTimeData) {
+  protected updateDriverData(data: DriverLapTimeData) {
     const existingData = this.driverData[data.driver_number];
 
     if (existingData) {
@@ -58,6 +59,7 @@ class RaceLapTimeChart implements ChartVisualization {
         label: data.driver_abbr,
         data: newData as any,
         order: data.chart_order,
+        hidden: !this.loadDriverVisibility(data.driver_abbr),
         backgroundColor: `#${data.team_color}`,
         borderColor: `#${data.team_color}`,
         borderDash: data.chart_team_order == 0 ? [] : [15, 2],
@@ -69,7 +71,7 @@ class RaceLapTimeChart implements ChartVisualization {
     this.update();
   }
 
-  private updateTrackStatusData(data: TrackStatusData) {
+  protected updateTrackStatusData(data: TrackStatusData) {
     const trackStatusAnnotations: Record<string, AnnotationOptions> = {};
 
     for (let point of data.data) {
@@ -90,7 +92,7 @@ class RaceLapTimeChart implements ChartVisualization {
     this.update();
   }
 
-  private makeIntervalAnnotation(point: TrackStatusDataPoint): AnnotationOptions {
+  protected makeIntervalAnnotation(point: TrackStatusDataPoint): AnnotationOptions {
     return {
       type: 'box',
       xMin: point.lap_from,
@@ -113,7 +115,7 @@ class RaceLapTimeChart implements ChartVisualization {
     }
   }
 
-  private makeInstantAnnotation(point: TrackStatusDataPoint): AnnotationOptions {
+  protected makeInstantAnnotation(point: TrackStatusDataPoint): AnnotationOptions {
     return {
       type: 'line',
       xMin: point.lap_from,
@@ -130,7 +132,7 @@ class RaceLapTimeChart implements ChartVisualization {
     }
   }
 
-  private handleLegendHover(e: ChartEvent, legendItem: LegendItem) {
+  protected handleLegendHover(e: ChartEvent, legendItem: LegendItem) {
     const alpha = '20';
 
     this.chart.data.datasets.forEach((dataset, index) => {
@@ -149,7 +151,7 @@ class RaceLapTimeChart implements ChartVisualization {
     this.update();
   }
 
-  private handleLegendLeave(e: ChartEvent, legendItem: LegendItem) {
+  protected handleLegendLeave(e: ChartEvent, legendItem: LegendItem) {
     this.chart.data.datasets.forEach((dataset, index) => {
       if (this.hideDatasetAfterLeave[index]) {
         dataset.hidden = true;
@@ -164,7 +166,7 @@ class RaceLapTimeChart implements ChartVisualization {
     this.update();
   }
 
-  private handleLegendClick(e: ChartEvent, legendItem: LegendItem) {
+  protected handleLegendClick(e: ChartEvent, legendItem: LegendItem) {
     const clickedDatasetIndex = legendItem.datasetIndex;
     if (clickedDatasetIndex == undefined) return;
 
@@ -186,9 +188,11 @@ class RaceLapTimeChart implements ChartVisualization {
     } else {
       this.hideDatasetAfterLeave[clickedDatasetIndex] = !this.hideDatasetAfterLeave[clickedDatasetIndex];
     }
+
+    this.saveSelectedDrivers();
   }
 
-  private showAllDatasetsIfAllAreHidden() {
+  protected showAllDatasetsIfAllAreHidden() {
     const datasets = this.chart.data.datasets;
     const allHidden = datasets.every(dataset => dataset.hidden);
     if (!allHidden) return;
@@ -197,21 +201,41 @@ class RaceLapTimeChart implements ChartVisualization {
     this.hideDatasetAfterLeave = {};
   }
 
-  private maybeAddAlphaToHex(hex: Color, alpha: string): Color {
+  protected maybeAddAlphaToHex(hex: Color, alpha: string): Color {
     if (typeof hex !== 'string') return hex;
     if (hex.length !== 7) return hex;
 
     return hex + alpha;
   }
 
-  private maybeRemoveAlphaFromHex(hex: Color): Color {
+  protected maybeRemoveAlphaFromHex(hex: Color): Color {
     if (typeof hex !== 'string') return hex;
     if (hex.length !== 9) return hex;
 
     return hex.slice(0, 7);
   }
 
-  private schema(): ChartConfiguration {
+  protected saveSelectedDrivers() {
+    this.chart.data.datasets.forEach((dataset, index) => {
+      const isHidden = dataset.hidden;
+      const hideAfterLeave = this.hideDatasetAfterLeave[index];
+
+      const prefersVisibility = !isHidden && !hideAfterLeave;
+      this.saveDriverVisibility(dataset.label!, prefersVisibility)
+    })
+  }
+
+  private saveDriverVisibility(driverAbbr: string, state: boolean) {
+    const value = state ? 1 : 0;
+    Storage.save(`chart:display-driver:${driverAbbr}`, value)
+  }
+
+  private loadDriverVisibility(driverAbbr: string) {
+    const state = Storage.load(`chart:display-driver:${driverAbbr}`, 1, parseInt);
+    return state !== 0;
+  }
+
+  protected schema() {
     const monoFontFamily = 'Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace';
     const scalesTitleFontConfig: Partial<FontSpec> = {
       family: monoFontFamily,
@@ -234,7 +258,7 @@ class RaceLapTimeChart implements ChartVisualization {
         maintainAspectRatio: false,
         parsing: {
           xAxisKey: 'lap',
-          yAxisKey: 't',
+          yAxisKey: 't'
         },
         layout: {},
         scales: {
@@ -271,6 +295,7 @@ class RaceLapTimeChart implements ChartVisualization {
         },
         plugins: {
           legend: {
+            display: true,
             onHover: this.handleLegendHover.bind(this),
             onLeave: this.handleLegendLeave.bind(this),
             onClick: this.handleLegendClick.bind(this),
@@ -284,9 +309,6 @@ class RaceLapTimeChart implements ChartVisualization {
               boxWidth: 20,
               boxHeight: 15
             },
-            maxWidth: 5,
-            fullSize: false,
-
           },
           annotation: {
             annotations: {},
@@ -329,11 +351,10 @@ class RaceLapTimeChart implements ChartVisualization {
           // }
         }
       },
-
     };
 
     return schema;
   }
 }
 
-export { RaceLapTimeChart, DriverLapTimeData };
+export {RaceLapTimeChart};
