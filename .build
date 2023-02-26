@@ -1,7 +1,6 @@
 404.html
 F1Bot.Analysis.Common.html
 F1Bot.Analysis.GapToLeader.html
-F1Bot.Analysis.GraphSpec.html
 F1Bot.Analysis.LapTimes.html
 F1Bot.DelayedEvents.Rebroadcaster.html
 F1Bot.DelayedEvents.Supervisor.html
@@ -78,6 +77,8 @@ F1Bot.Replay.html
 F1Bot.Repo.html
 F1Bot.Time.html
 F1Bot.html
+F1BotWeb.Component.ChartJS.html
+F1BotWeb.Component.CoreComponents.html
 F1BotWeb.Component.DelayControl.html
 F1BotWeb.Component.DriverSelector.html
 F1BotWeb.Component.DriverSummary.html
@@ -86,7 +87,6 @@ F1BotWeb.Component.LapTimeField.html
 F1BotWeb.Component.PopupLink.html
 F1BotWeb.Component.TyreSymbol.html
 F1BotWeb.Component.Utility.html
-F1BotWeb.Component.VegaChart.html
 F1BotWeb.Endpoint.html
 F1BotWeb.ErrorHTML.html
 F1BotWeb.ErrorJSON.html
@@ -129,8 +129,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_items-FA09EE97.js
-dist/sidebar_items-49DDE153.js
+dist/search_items-E8689196.js
+dist/sidebar_items-507B8F0C.js
 index.html
 license.html
 readme.html

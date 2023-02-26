@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-49DDE153.js"></script>
+    <script src="dist/sidebar_items-507B8F0C.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -149,9 +149,21 @@ f1_bot
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#make_events_on_new_driver_data/2" translate="no">make_events_on_new_driver_data(session, driver_number)</a>
+        <a href="#make_events_on_any_new_driver_data/2" translate="no">make_events_on_any_new_driver_data(session, driver_number)</a>
 
       </div>
+
+        <div class="summary-synopsis"><p>See <a href="F1Bot.F1Session.EventGenerator.Driver.html#on_any_new_driver_data/2"><code class="inline">F1Bot.F1Session.EventGenerator.Driver.on_any_new_driver_data/2</code></a>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#make_lap_time_chart_events/3" translate="no">make_lap_time_chart_events(session, driver_number, lap \\ nil)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>See <a href="F1Bot.F1Session.EventGenerator.Driver.html#lap_time_chart_events/3"><code class="inline">F1Bot.F1Session.EventGenerator.Driver.lap_time_chart_events/3</code></a>.</p></div>
 
     </div>
 
@@ -270,16 +282,16 @@ Functions
 <p>See <a href="F1Bot.F1Session.EventGenerator.Driver.html#summary_events/2"><code class="inline">F1Bot.F1Session.EventGenerator.Driver.summary_events/2</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="make_events_on_new_driver_data/2">
+<section class="detail" id="make_events_on_any_new_driver_data/2">
 
   <div class="detail-header">
-    <a href="#make_events_on_new_driver_data/2" class="detail-link" title="Link to this function">
+    <a href="#make_events_on_any_new_driver_data/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">make_events_on_new_driver_data(session, driver_number)</h1>
+    <h1 class="signature" translate="no">make_events_on_any_new_driver_data(session, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L29" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L17" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -289,7 +301,31 @@ Functions
 
   <section class="docstring">
 
+<p>See <a href="F1Bot.F1Session.EventGenerator.Driver.html#on_any_new_driver_data/2"><code class="inline">F1Bot.F1Session.EventGenerator.Driver.on_any_new_driver_data/2</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="make_lap_time_chart_events/3">
 
+    <span id="make_lap_time_chart_events/2"></span>
+
+  <div class="detail-header">
+    <a href="#make_lap_time_chart_events/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">make_lap_time_chart_events(session, driver_number, lap \\ nil)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L21" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="F1Bot.F1Session.EventGenerator.Driver.html#lap_time_chart_events/3"><code class="inline">F1Bot.F1Session.EventGenerator.Driver.lap_time_chart_events/3</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="make_periodic_events/2">
@@ -301,7 +337,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">make_periodic_events(session, event_generator)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L17" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L25" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -323,7 +359,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">make_session_reset_events(session)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L21" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L29" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -345,7 +381,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">make_state_sync_events(session)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L25" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/event_generator.ex#L33" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

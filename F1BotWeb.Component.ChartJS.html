@@ -7,13 +7,13 @@
     <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.3.1">
 
-    <title>F1Bot.Analysis.GraphSpec — f1_bot v0.3.1</title>
+    <title>F1BotWeb.Component.ChartJS — f1_bot v0.3.1</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-49DDE153.js"></script>
+    <script src="dist/sidebar_items-507B8F0C.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -98,16 +98,26 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/graph_spec.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/chart_js.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.Analysis.GraphSpec</span> 
+  <span translate="no">F1BotWeb.Component.ChartJS</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.3.1)</small>
 
 </h1>
 
+
+  <section id="moduledoc">
+<h2 id="module-properties" class="section-heading">
+  <a href="#module-properties" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">properties</p>
+  </a>
+  Properties
+</h2>
+<ul><li><strong>chart_id</strong> <em>:string, required: true</em></li><li><strong>class</strong> <em>:css_class, default: &quot;&quot;</em></li></ul>
+  </section>
 
 
   <section id="summary" class="details-list">
@@ -125,7 +135,7 @@ f1_bot
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#load/1" translate="no">load(t1)</a>
+        <a href="#initialize/3" translate="no">initialize(socket, id, chart_class)</a>
 
       </div>
 
@@ -133,7 +143,15 @@ f1_bot
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#load!/1" translate="no">load!(file_name)</a>
+        <a href="#insert_data/3" translate="no">insert_data(socket, id, payload)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#replace_data/3" translate="no">replace_data(socket, id, payload)</a>
 
       </div>
 
@@ -153,16 +171,16 @@ f1_bot
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="load/1">
+<section class="detail" id="initialize/3">
 
   <div class="detail-header">
-    <a href="#load/1" class="detail-link" title="Link to this function">
+    <a href="#initialize/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">load(t1)</h1>
+    <h1 class="signature" translate="no">initialize(socket, id, chart_class)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/graph_spec.ex#L17" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/chart_js.ex#L19" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -175,16 +193,38 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="load!/1">
+<section class="detail" id="insert_data/3">
 
   <div class="detail-header">
-    <a href="#load!/1" class="detail-link" title="Link to this function">
+    <a href="#insert_data/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">load!(file_name)</h1>
+    <h1 class="signature" translate="no">insert_data(socket, id, payload)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/graph_spec.ex#L10" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/chart_js.ex#L24" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="replace_data/3">
+
+  <div class="detail-header">
+    <a href="#replace_data/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">replace_data(socket, id, payload)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/chart_js.ex#L32" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
