@@ -137,6 +137,13 @@ defmodule F1Bot do
   end
 
   @doc """
+  Resets the session state and clears all caches
+  """
+  def reset_session() do
+    F1Bot.F1Session.Server.reset_session()
+  end
+
+  @doc """
   Fetches session archives from a given URL, silently replays them, and
   replaces the current session with the replayed session.
   Useful for testing and restoring data from the last session on server

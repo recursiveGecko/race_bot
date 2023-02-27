@@ -40,6 +40,7 @@ defmodule F1Bot.Replay do
   alias F1Bot.F1Session.LiveTimingHandlers
   alias F1Bot.F1Session
   alias F1Bot.Replay.Options
+  alias F1Bot.ExternalApi.F1LiveTiming
 
   @doc """
   Given a URL to a live timing dataset, download the `.jsonStream` datasets and process
@@ -223,19 +224,17 @@ defmodule F1Bot.Replay do
     full_url = base_url <> "/" <> file_name
 
     if !!options.report_progress do
-      Logger.info("Replay downloading: #{full_url}")
+      Logger.info("Replay fetching: #{full_url}")
     end
 
-    res =
-      Finch.build(:get, full_url)
-      |> Finch.request(F1Bot.Finch)
+    res = F1LiveTiming.fetch_archive_cached(full_url)
 
     case res do
-      {:ok, %{status: 200, body: body}} ->
-        {:ok, body}
+      {:ok, contents} ->
+        {:ok, contents}
 
-      _ ->
-        Logger.warn("Replay download failed: #{full_url}")
+      e ->
+        Logger.warn("Replay fetching failed: #{full_url} (#{inspect(e)})")
         :error
     end
   end
