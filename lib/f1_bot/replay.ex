@@ -39,6 +39,7 @@ defmodule F1Bot.Replay do
   alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult, ProcessingOptions}
   alias F1Bot.F1Session.LiveTimingHandlers
   alias F1Bot.F1Session
+  alias F1Bot.Replay.Options
 
   @doc """
   Given a URL to a live timing dataset, download the `.jsonStream` datasets and process
@@ -47,37 +48,9 @@ defmodule F1Bot.Replay do
 
   ## Options
 
-  All options are optional unless otherwise noted.
-
-    * `:report_progress` - If true, logs processing progress to the console.
-
-    * `:exclude_files_regex` - A regex that excludes matching `.jsonStream`
-    files from the download and replay, e.g. to exclude bulky `*.z.jsonStream` files
-    when they are not needed.
-
-    * `:replay_while_fn` - a 3-arity function that receives the current replay state,
-    current packet and its timestamp in milliseconds.
-    This function is called *before* the packet is processed. If the function
-    returns false, the packet is left unprocessed (kept), replay is paused and `start_replay/2`
-    will return the current replay state.
-    Replay can by resumed by calling `replay_dataset/2` with the returned state and new
-    options (e.g. different `replay_while_fn/3`).
-
-    * `:packets_fn` - a 3-arity function that receives the current replay state,
-    current packet and its timestamp in milliseconds.
-    This function is called for every packet and can be used to implement custom packet
-    processing logic (e.g. to simply print all received packets to console).
-    By default this function will process the packet using
-    `LiveTimingHandlers.process_live_timing_packet/3` and store the resulting `F1Session`
-    state in the replay state.
-
-    * `:events_fn` - a 1-arity function that will receive a list of events produced by **default**
-    `:packets_fn` implementation. This option has no effect when `:packets_fn` is overriden.
-    By default `:events_fn` is unspecified, but `Mix.Tasks.Backtest` for example overrides
-    it to broadcast events on the PubSub bus. See module docs for more details.
-
+  See `F1Bot.Replay.Options` for a list of available options.
   """
-  def start_replay(url, options \\ %{}) do
+  def start_replay(url, options = %Options{}) do
     if String.match?(url, ~r"^https?://livetiming.formula1.com/static/") do
       url = String.replace_trailing(url, "/", "")
 
@@ -88,7 +61,7 @@ defmodule F1Bot.Replay do
 
       base_ts = fetch_base_time(url, options)
 
-      if !!options[:report_progress] do
+      if !!options.report_progress do
         Logger.info("Replaying dataset.")
       end
 
@@ -117,11 +90,11 @@ defmodule F1Bot.Replay do
   """
   def replay_dataset(
         state = %{dataset: [_ | _]},
-        options
+        options = %Options{}
       ) do
     [{ts_ms, file_name, session_ts, payload} | rest_dataset] = state.dataset
 
-    if rem(state.processed_packets, 5000) == 0 and !!options[:report_progress] do
+    if rem(state.processed_packets, 5000) == 0 and !!options.report_progress do
       percent = round(state.processed_packets / state.total_packets * 100)
 
       Logger.info(
@@ -153,7 +126,7 @@ defmodule F1Bot.Replay do
     # Pause the replay if provided `replay_while_fn/3` returns false, this allows
     # us to process events in small chunks to provide a live-like experience.
     # This only makes sense in conjunction with a custom packets_fn as described below.
-    if options[:replay_while_fn] != nil and !options[:replay_while_fn].(state, packet, ts_ms) do
+    if options.replay_while_fn != nil and !options.replay_while_fn.(state, packet, ts_ms) do
       state
     else
       # Determine the handler function for this packet
@@ -164,7 +137,7 @@ defmodule F1Bot.Replay do
       # Alternatively we might want to provide a custom function that
       # sends packets to the F1Session.Server instance to get
       # a live replay that behaves like a live race and can be observed on the website.
-      packets_fn = Map.get(options, :packets_fn, &default_packets_fn/3)
+      packets_fn = options.packets_fn || (&default_packets_fn/3)
       state = packets_fn.(state, options, packet)
 
       state = %{
@@ -178,19 +151,21 @@ defmodule F1Bot.Replay do
     end
   end
 
-  def replay_dataset(state = %{dataset: []}, options) do
-    if options[:report_progress] do
+  def replay_dataset(state = %{dataset: []}, options = %Options{}) do
+    if options.report_progress do
       Logger.info("Replay completed.")
     end
 
     state
   end
 
-  defp default_packets_fn(state, options, packet) do
-    processing_options = %ProcessingOptions{
-      log_stray_packets: false,
-      ignore_reset: true
-    }
+  defp default_packets_fn(state, options = %Options{}, packet) do
+    processing_options =
+      %ProcessingOptions{
+        log_stray_packets: false,
+        ignore_reset: true
+      }
+      |> Map.merge(options.processing_options)
 
     reply =
       LiveTimingHandlers.process_live_timing_packet(state.session, packet, processing_options)
@@ -205,15 +180,15 @@ defmodule F1Bot.Replay do
           {state.session, []}
       end
 
-    if length(events) > 0 and options[:events_fn] != nil do
-      options[:events_fn].(events)
+    if length(events) > 0 and options.events_fn != nil do
+      options.events_fn.(events)
     end
 
     %{state | session: session}
   end
 
-  defp download_dataset(base_url, options) do
-    files(options[:exclude_files_regex])
+  defp download_dataset(base_url, options = %Options{}) do
+    files(options.exclude_files_regex)
     |> Enum.map(fn f -> {f, download_file(base_url, f, options)} end)
     # Ignore failed downloads
     |> Enum.filter(fn
@@ -224,7 +199,7 @@ defmodule F1Bot.Replay do
     |> Enum.map(fn {f, {:ok, contents}} -> parse_file(f, contents) end)
   end
 
-  defp fetch_base_time(base_url, options) do
+  defp fetch_base_time(base_url, options = %Options{}) do
     {session_ts, json} =
       base_url
       |> download_file("Heartbeat.jsonStream", options)
@@ -244,10 +219,10 @@ defmodule F1Bot.Replay do
     Timex.subtract(wall_ts, session_ts)
   end
 
-  defp download_file(base_url, file_name, options) do
+  defp download_file(base_url, file_name, options = %Options{}) do
     full_url = base_url <> "/" <> file_name
 
-    if !!options[:report_progress] do
+    if !!options.report_progress do
       Logger.info("Replay downloading: #{full_url}")
     end
 

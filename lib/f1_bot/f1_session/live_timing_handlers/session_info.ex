@@ -7,11 +7,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.SessionInfo do
   See `F1Bot.F1Session.SessionInfo` for more information.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult, ProcessingOptions}
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "SessionInfo"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
@@ -21,7 +22,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.SessionInfo do
           topic: @scope,
           data: data
         },
-        options = %ProcessingOptions{}
+        options
       ) do
     session_info = F1Bot.F1Session.SessionInfo.parse_from_json(data)
     {session, events, reset_session} = F1Session.push_session_info(session, session_info, options.ignore_reset)

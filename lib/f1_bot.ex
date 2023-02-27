@@ -4,6 +4,8 @@ defmodule F1Bot do
   """
 
   require Logger
+  alias F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions
+  alias F1Bot.Replay
 
   @doc """
   Gets a configuration value for `F1Bot` application.
@@ -140,7 +142,21 @@ defmodule F1Bot do
   Useful for testing and restoring data from the last session on server
   restart.
   """
-  def reload_session(url \\ nil, light_data) when is_boolean(light_data) do
+  def reload_session(light_data) when is_boolean(light_data) do
+    reload_session(nil, ProcessingOptions.new(), light_data)
+  end
+
+  def reload_session(url, light_data) when is_binary(url) and is_boolean(light_data) do
+    reload_session(url, ProcessingOptions.new(), light_data)
+  end
+
+  def reload_session(processing_opts, light_data)
+      when is_struct(processing_opts, ProcessingOptions) and is_boolean(light_data) do
+    reload_session(nil, processing_opts, light_data)
+  end
+
+  def reload_session(url, processing_opts, light_data)
+      when is_struct(processing_opts, ProcessingOptions) and is_boolean(light_data) do
     url_result =
       if url == nil do
         F1Bot.ExternalApi.F1LiveTiming.current_archive_url_if_completed()
@@ -155,14 +171,15 @@ defmodule F1Bot do
         nil
       end
 
-    replay_options = %{
+    replay_options = %Replay.Options{
       exclude_files_regex: exclude_files_regex,
-      report_progress: true
+      report_progress: true,
+      processing_options: processing_opts
     }
 
     with {_, status} when status in [:ends, :finalised, :not_available] <- session_status(),
          {:ok, url} <- url_result,
-         {:ok, %{session: session}} <- F1Bot.Replay.start_replay(url, replay_options) do
+         {:ok, %{session: session}} <- Replay.start_replay(url, replay_options) do
       F1Bot.F1Session.Server.replace_session(session)
     else
       {:ok, session_status} ->
@@ -181,14 +198,14 @@ defmodule F1Bot do
   Useful for development.
   """
   def replay_session_realtime(url) do
-    F1Bot.Replay.Server.start_replay(url)
+    Replay.Server.start_replay(url)
   end
 
   @doc """
   Stops the session replay started with `replay_session_realtime/1`.
   """
   def stop_session_replay() do
-    F1Bot.Replay.Server.stop_replay()
+    Replay.Server.stop_replay()
   end
 
   @doc """
@@ -196,7 +213,7 @@ defmodule F1Bot do
   by a given number of seconds.
   """
   def fast_forward_replay(seconds) do
-    F1Bot.Replay.Server.fast_forward(seconds)
+    Replay.Server.fast_forward(seconds)
   end
 
   @doc """

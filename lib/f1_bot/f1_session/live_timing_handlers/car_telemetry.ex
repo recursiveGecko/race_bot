@@ -5,11 +5,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.CarTelemetry do
   The handler decompresses and parses car telemetry channels and passes it on to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "CarData"
 
   # {'0': 'RPM', '2': 'Speed', '3': 'nGear', '4': 'Throttle', '5': 'Brake', '45': 'DRS'}

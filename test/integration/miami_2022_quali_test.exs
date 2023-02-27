@@ -2,15 +2,16 @@ defmodule Integration.Miami2022QualiTest do
   use ExUnit.Case, async: true
 
   alias F1Bot.F1Session
+  alias F1Bot.Replay
 
   setup_all context do
-    replay_options = %{
+    replay_options = %Replay.Options{
       exclude_files_regex: ~r/\.z\./
     }
 
     {:ok, %{session: session}} =
       "http://livetiming.formula1.com/static/2022/2022-05-08_Miami_Grand_Prix/2022-05-07_Qualifying"
-      |> F1Bot.Replay.start_replay(replay_options)
+      |> Replay.start_replay(replay_options)
 
     Map.put(context, :session, session)
   end

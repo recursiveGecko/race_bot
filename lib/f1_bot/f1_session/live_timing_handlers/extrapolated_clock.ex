@@ -4,12 +4,13 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.ExtrapolatedClock do
   useful for qualifying.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
 
-  alias F1Bot.DataTransform.Parse
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+  alias F1Bot.DataTransform.Parse
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "ExtrapolatedClock"
 
   @impl F1Bot.F1Session.LiveTimingHandlers

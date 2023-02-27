@@ -197,7 +197,7 @@ defmodule F1Bot.F1Session do
     session = %{session | session_info: session_info}
 
     {session, events, do_reset_session} =
-      if should_reset and not ignore_reset do
+      if should_reset and !ignore_reset do
         {session, reset_events} = reset_session(session)
         {session, events ++ reset_events, true}
       else

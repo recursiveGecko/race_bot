@@ -5,11 +5,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.PositionData do
   The handler decompresses and parses car position data and passes it on to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "Position"
 
   @impl F1Bot.F1Session.LiveTimingHandlers

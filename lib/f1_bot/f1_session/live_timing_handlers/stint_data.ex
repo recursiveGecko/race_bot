@@ -5,11 +5,13 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
   The handler parses the stint data and passes it on to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
+  import LiveTimingHandlers.Helpers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "TimingAppData"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
@@ -20,7 +22,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
           data: %{"Lines" => drivers = %{}},
           timestamp: timestamp
         },
-        _options
+        options
       ) do
     {session, events} =
       drivers
@@ -45,7 +47,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
         data = Map.put(data, "Stints", stints)
         {driver_no, data}
       end)
-      |> Enum.reduce({session, []}, &reduce_stints_per_driver(&1, &2, timestamp))
+      |> Enum.reduce({session, []}, &reduce_stints_per_driver(&1, &2, timestamp, options))
 
     result = %ProcessingResult{
       session: session,
@@ -55,8 +57,14 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
     {:ok, result}
   end
 
-  defp reduce_stints_per_driver({driver_number, data}, {session, events}, timestamp) do
+  defp reduce_stints_per_driver(
+         {driver_number, data},
+         {session, events},
+         timestamp,
+         options
+       ) do
     %{"Stints" => stints} = data
+
     driver_number = String.trim(driver_number) |> String.to_integer()
 
     stints
@@ -67,6 +75,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
       raw_tyres_not_changed = raw_stint_data["TyresNotChanged"]
       raw_new = raw_stint_data["New"]
       raw_compound = raw_stint_data["Compound"]
+      # lap_number = raw_stint_data["LapNumber"]
 
       valid_compounds = ["WET", "INTERMEDIATE", "HARD", "MEDIUM", "SOFT"]
 
@@ -100,8 +109,11 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
           case raw_tyres_not_changed do
             nil -> nil
             val -> val == "0"
-          end
+          end,
+        # lap_number: lap_number
       }
+
+      maybe_log_driver_data("Stint data", driver_number, {timestamp, data}, options)
 
       {session, new_events} = F1Session.push_stint_data(session, driver_number, stint_data)
       {session, events ++ new_events}

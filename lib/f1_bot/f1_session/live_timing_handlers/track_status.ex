@@ -5,11 +5,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.TrackStatus do
   The handler parses the status as an atom and passes it on to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "TrackStatus"
 
   @status_map %{

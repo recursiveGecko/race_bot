@@ -14,6 +14,8 @@ defmodule Mix.Tasks.Backtest do
   require Config
   require Logger
 
+  alias F1Bot.Replay
+
   @impl Mix.Task
   def run(argv) do
     configure()
@@ -23,7 +25,7 @@ defmodule Mix.Tasks.Backtest do
 
     Logger.info("Downloading & parsing dataset.")
 
-    replay_options = %{
+    replay_options = %Replay.Options{
       exclude_files_regex: ~r/\.z\./,
       # Broadcast events on the PubSub bus, this allows us to quickly review
       # the sanity of F1 packet processing logic by inspecting the console output
@@ -33,7 +35,7 @@ defmodule Mix.Tasks.Backtest do
     }
 
     # profile_start()
-    {:ok, %{session: session}} = F1Bot.Replay.start_replay(url, replay_options)
+    {:ok, %{session: session}} = Replay.start_replay(url, replay_options)
     # profile_end()
 
     F1Bot.F1Session.Server.replace_session(session)

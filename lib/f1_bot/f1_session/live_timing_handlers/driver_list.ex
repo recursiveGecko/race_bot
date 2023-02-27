@@ -5,12 +5,14 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.DriverList do
   The handler parses driver information and passes it on to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
+  import LiveTimingHandlers.Helpers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.DriverCache.DriverInfo
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+  alias F1Session.DriverCache.DriverInfo
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "DriverList"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
@@ -20,16 +22,15 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.DriverList do
           topic: @scope,
           data: data
         },
-        _options
+        options
       ) do
     parsed_drivers =
       for {driver_no, driver_json} <- data, is_map(driver_json) do
-        driver_json =
-          driver_json
-          |> Map.put_new("RacingNumber", driver_no)
-          |> Map.update("RacingNumber", nil, fn x -> x |> String.trim() |> String.to_integer() end)
+        driver_number = driver_json["RacingNumber"] || driver_no
+        driver_number = driver_number |> String.trim() |> String.to_integer()
+        driver_json = Map.put(driver_json, "RacingNumber", driver_number)
 
-        # |> Map.update("HeadshotUrl", nil, &String.replace(&1, ~r|\.transform\/.*|, ""))
+        maybe_log_driver_data("Driver info", driver_number, driver_json, options)
 
         DriverInfo.parse_from_json(driver_json)
       end

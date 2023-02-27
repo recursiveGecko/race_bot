@@ -5,12 +5,14 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
   The handler parses driver information and passes it on to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
+  import LiveTimingHandlers.Helpers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
   alias F1Bot.DataTransform.Parse
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "TimingData"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
@@ -21,7 +23,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
           data: %{"Lines" => drivers = %{}},
           timestamp: timestamp
         },
-        _options
+        options
       ) do
     # Lap information is delayed. -2.5 second offset was chosen because it seems about right, most of the time.
     # Exact timestamps aren't critical at the time of writing this code
@@ -30,9 +32,9 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
       |> Timex.Duration.from_milliseconds()
       |> (&Timex.add(timestamp, &1)).()
 
-    {session, lap_num_events} = handle_lap_numbers(session, drivers, timestamp)
-    {session, lap_time_events} = handle_lap_times(session, drivers, timestamp)
-    {session, sector_time_events} = handle_sector_times(session, drivers, timestamp)
+    {session, lap_num_events} = handle_lap_numbers(session, drivers, timestamp, options)
+    {session, lap_time_events} = handle_lap_times(session, drivers, timestamp, options)
+    {session, sector_time_events} = handle_sector_times(session, drivers, timestamp, options)
 
     all_events = sector_time_events ++ lap_num_events ++ lap_time_events
 
@@ -49,12 +51,14 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
     {:error, :invalid_packet}
   end
 
-  defp handle_lap_times(session, drivers, timestamp) do
+  defp handle_lap_times(session, drivers, timestamp, options) do
     drivers
     |> Enum.filter(fn {_, data} -> data["LastLapTime"]["Value"] not in [nil, ""] end)
     |> Enum.reduce({session, []}, fn {driver_number, data}, {session, events} ->
       driver_number = String.trim(driver_number) |> String.to_integer()
       lap_time_str = data["LastLapTime"]["Value"]
+
+      maybe_log_driver_data("Lap time", driver_number, {timestamp, data}, options)
 
       case Parse.parse_lap_time(lap_time_str) do
         {:ok, lap_time} ->
@@ -70,13 +74,15 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
     end)
   end
 
-  defp handle_lap_numbers(session, drivers, timestamp) do
+  defp handle_lap_numbers(session, drivers, timestamp, options) do
     {session, events} =
       drivers
       |> Enum.filter(fn {_, data} -> is_integer(data["NumberOfLaps"]) end)
       |> Enum.reduce({session, []}, fn {driver_number, data}, {session, events} ->
         driver_number = String.trim(driver_number) |> String.to_integer()
         lap_number = data["NumberOfLaps"]
+
+        maybe_log_driver_data("Lap number", driver_number, {timestamp, data}, options)
 
         {new_session, new_events} =
           F1Session.push_lap_number(session, driver_number, lap_number, timestamp)
@@ -87,19 +93,26 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
     {session, events}
   end
 
-  defp handle_sector_times(session, drivers, timestamp) do
+  defp handle_sector_times(session, drivers, timestamp, options) do
     {session, nested_events} =
       drivers
       |> Stream.filter(fn {_, data} -> is_map(data["Sectors"]) end)
-      |> Enum.reduce({session, []}, &reduce_sector_times_per_driver(&1, &2, timestamp))
+      |> Enum.reduce({session, []}, &reduce_sector_times_per_driver(&1, &2, timestamp, options))
 
     events = List.flatten(nested_events)
     {session, events}
   end
 
-  defp reduce_sector_times_per_driver({driver_number, data}, {session, events}, timestamp) do
+  defp reduce_sector_times_per_driver(
+         {driver_number, data},
+         {session, events},
+         timestamp,
+         options
+       ) do
     %{"Sectors" => sectors = %{}} = data
     driver_number = String.trim(driver_number) |> String.to_integer()
+
+    maybe_log_driver_data("Sector times", driver_number, {timestamp, data}, options)
 
     ["0", "1", "2"]
     |> Enum.reduce({session, events}, fn sector_str, {session, events} ->

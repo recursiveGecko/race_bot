@@ -2,6 +2,7 @@ defmodule F1Bot.Replay.Server do
   use GenServer
   require Logger
   alias F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions
+  alias F1Bot.Replay
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -99,7 +100,7 @@ defmodule F1Bot.Replay.Server do
   end
 
   defp initialize_replay(state, url) do
-    options = %{
+    options = %Replay.Options{
       report_progress: true,
       packets_fn: fn _replay_state, _options, _packet ->
         raise "We will never reach this point because the replay will be paused immediately"
@@ -109,7 +110,7 @@ defmodule F1Bot.Replay.Server do
       end
     }
 
-    {:ok, replay_state} = F1Bot.Replay.start_replay(url, options)
+    {:ok, replay_state} = Replay.start_replay(url, options)
 
     %{state | url: url, initial_replay_state: replay_state, replay_state: replay_state}
     |> sync_time()
@@ -126,7 +127,7 @@ defmodule F1Bot.Replay.Server do
   end
 
   defp fast_forward_to_session_start(state) do
-    options = %{
+    options = %Replay.Options{
       report_progress: true,
       packets_fn: fn replay_state, _options, packet ->
         processing_options = %ProcessingOptions{
@@ -142,7 +143,7 @@ defmodule F1Bot.Replay.Server do
       end
     }
 
-    replay_state = F1Bot.Replay.replay_dataset(state.replay_state, options)
+    replay_state = Replay.replay_dataset(state.replay_state, options)
 
     %{state | replay_state: replay_state}
     |> sync_time()
@@ -166,7 +167,7 @@ defmodule F1Bot.Replay.Server do
 
     max_replay_ms = now_system_ms - start_system_ms + start_replay_ms
 
-    options = %{
+    options = %Replay.Options{
       report_progress: true,
       packets_fn: fn replay_state, _options, packet ->
         processing_options = %ProcessingOptions{
@@ -185,7 +186,7 @@ defmodule F1Bot.Replay.Server do
     # Prevent server crashes in development when code is recompiled and module is temporarily unloaded
     replay_state =
       try do
-        F1Bot.Replay.replay_dataset(replay_state, options)
+        Replay.replay_dataset(replay_state, options)
       rescue
         e ->
           Logger.error("Error replaying chunk: #{inspect(e)}")

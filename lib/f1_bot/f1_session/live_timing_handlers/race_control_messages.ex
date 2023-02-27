@@ -5,12 +5,13 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages do
   The handler parses, filters and passes the messages to the F1 session instance.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
   alias F1Bot.F1Session.RaceControl
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "RaceControlMessages"
 
   @impl F1Bot.F1Session.LiveTimingHandlers

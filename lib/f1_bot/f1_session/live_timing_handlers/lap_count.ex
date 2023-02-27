@@ -3,11 +3,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapCount do
   Handler for lap count updates received from live timing API.
   """
   require Logger
-  @behaviour F1Bot.F1Session.LiveTimingHandlers
+  alias F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingResult}
 
+  @behaviour LiveTimingHandlers
   @scope "LapCount"
 
   @impl F1Bot.F1Session.LiveTimingHandlers

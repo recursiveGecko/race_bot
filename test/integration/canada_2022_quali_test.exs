@@ -6,15 +6,16 @@ defmodule Integration.Canada2022QualiTest do
   The lap is missing a lap number and sector times.
   """
   use ExUnit.Case, async: true
+  alias F1Bot.Replay
 
   setup_all context do
-    replay_options = %{
+    replay_options = %Replay.Options{
       exclude_files_regex: ~r/\.z\./
     }
 
     {:ok, %{session: session}} =
       "http://livetiming.formula1.com/static/2022/2022-06-19_Canadian_Grand_Prix/2022-06-18_Qualifying/"
-      |> F1Bot.Replay.start_replay(replay_options)
+      |> Replay.start_replay(replay_options)
 
     {:ok, fastest_lap} = "1:21.299" |> F1Bot.DataTransform.Parse.parse_lap_time()
 
