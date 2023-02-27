@@ -21,7 +21,7 @@ defmodule F1Bot.F1Session.DriverCache do
     driver_list =
       drivers
       |> Map.values()
-      |> Enum.sort_by(&(&1.last_name || &1.driver_abbr || &1.short_name || &1.full_name))
+      |> Enum.sort_by(&(&1.chart_order), :asc)
 
     {:ok, driver_list}
   end

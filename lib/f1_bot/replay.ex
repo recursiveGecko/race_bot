@@ -36,7 +36,7 @@ defmodule F1Bot.Replay do
   """
   require Logger
 
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult, ProcessingOptions}
   alias F1Bot.F1Session.LiveTimingHandlers
   alias F1Bot.F1Session
 
@@ -187,14 +187,18 @@ defmodule F1Bot.Replay do
   end
 
   defp default_packets_fn(state, options, packet) do
-    ingest_options = %{
-      log_stray_packets: false
+    processing_options = %ProcessingOptions{
+      log_stray_packets: false,
+      ignore_reset: true
     }
 
+    reply =
+      LiveTimingHandlers.process_live_timing_packet(state.session, packet, processing_options)
+
     {session, events} =
-      case LiveTimingHandlers.process_live_timing_packet(state.session, packet, ingest_options) do
-        {:ok, session, events} ->
-          {session, events}
+      case reply do
+        {:ok, result = %ProcessingResult{}} ->
+          {result.session, result.events}
 
         {:error, err} ->
           Logger.error(inspect(err))
@@ -212,7 +216,10 @@ defmodule F1Bot.Replay do
     files(options[:exclude_files_regex])
     |> Enum.map(fn f -> {f, download_file(base_url, f, options)} end)
     # Ignore failed downloads
-    |> Enum.filter(fn {_f, {:ok, _}} -> true; _ -> false end)
+    |> Enum.filter(fn
+      {_f, {:ok, _}} -> true
+      _ -> false
+    end)
     # Parse contents
     |> Enum.map(fn {f, {:ok, contents}} -> parse_file(f, contents) end)
   end

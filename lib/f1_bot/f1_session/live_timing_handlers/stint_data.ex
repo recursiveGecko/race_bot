@@ -8,15 +8,20 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
   @behaviour F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+
   @scope "TimingAppData"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
-  def process_packet(session, %Packet{
-        topic: @scope,
-        data: %{"Lines" => drivers = %{}},
-        timestamp: timestamp
-      }) do
+  def process_packet(
+        session,
+        %Packet{
+          topic: @scope,
+          data: %{"Lines" => drivers = %{}},
+          timestamp: timestamp
+        },
+        _options
+      ) do
     {session, events} =
       drivers
       |> Enum.filter(fn {_, data} ->
@@ -42,7 +47,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
       end)
       |> Enum.reduce({session, []}, &reduce_stints_per_driver(&1, &2, timestamp))
 
-    {:ok, session, events}
+    result = %ProcessingResult{
+      session: session,
+      events: events
+    }
+
+    {:ok, result}
   end
 
   defp reduce_stints_per_driver({driver_number, data}, {session, events}, timestamp) do

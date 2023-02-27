@@ -8,16 +8,21 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
   @behaviour F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
   alias F1Bot.DataTransform.Parse
+
   @scope "TimingData"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
-  def process_packet(session, %Packet{
-        topic: @scope,
-        data: %{"Lines" => drivers = %{}},
-        timestamp: timestamp
-      }) do
+  def process_packet(
+        session,
+        %Packet{
+          topic: @scope,
+          data: %{"Lines" => drivers = %{}},
+          timestamp: timestamp
+        },
+        _options
+      ) do
     # Lap information is delayed. -2.5 second offset was chosen because it seems about right, most of the time.
     # Exact timestamps aren't critical at the time of writing this code
     timestamp =
@@ -30,10 +35,17 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapData do
     {session, sector_time_events} = handle_sector_times(session, drivers, timestamp)
 
     all_events = sector_time_events ++ lap_num_events ++ lap_time_events
-    {:ok, session, all_events}
+
+    result = %ProcessingResult{
+      session: session,
+      events: all_events
+    }
+
+    {:ok, result}
   end
 
-  def process_packet(_session, _invalid_packet) do
+  @impl F1Bot.F1Session.LiveTimingHandlers
+  def process_packet(_session, _invalid_packet, _options) do
     {:error, :invalid_packet}
   end
 

@@ -9,8 +9,9 @@ defmodule F1Bot.F1Session.Server do
 
   alias F1Bot.F1Session
   alias F1Bot.F1Session.LiveTimingHandlers
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingOptions, ProcessingResult}
   alias F1Bot.PubSub
+  alias F1Bot.DelayedEvents
 
   def start_link(init_arg) do
     GenServer.start_link(__MODULE__, init_arg, name: server_via())
@@ -81,9 +82,12 @@ defmodule F1Bot.F1Session.Server do
     |> GenServer.call({:track_status_history})
   end
 
-  def push_live_timing_packet(packet = %LiveTimingHandlers.Packet{}) do
+  def process_live_timing_packet(
+        packet = %LiveTimingHandlers.Packet{},
+        processing_options = %ProcessingOptions{}
+      ) do
     server_via()
-    |> GenServer.call({:push_live_timing_packet, packet})
+    |> GenServer.call({:process_live_timing_packet, packet, processing_options})
   end
 
   def replace_session(session = %F1Session{}) do
@@ -187,26 +191,29 @@ defmodule F1Bot.F1Session.Server do
   end
 
   @impl true
-  def handle_call({:push_live_timing_packet, packet}, _from, state = %{session: session}) do
-    options = %{
-      log_stray_packets: true
-    }
+  def handle_call(
+        {:process_live_timing_packet, packet, processing_options},
+        _from,
+        state = %{session: session}
+      ) do
+    options =
+      %ProcessingOptions{
+        log_stray_packets: true
+      }
+      |> ProcessingOptions.merge(processing_options)
 
-    {session, events} =
+    {session, events, do_reset_session} =
       try do
-        result = LiveTimingHandlers.process_live_timing_packet(session, packet, options)
+        reply = LiveTimingHandlers.process_live_timing_packet(session, packet, options)
 
-        case result do
-          {:ok, session, events} ->
-            after_live_timing_packet(packet, session)
-            {session, events}
+        case reply do
+          {:ok, result = %ProcessingResult{}} ->
+            after_live_timing_packet(packet, result.session)
+            {result.session, result.events, result.reset_session}
 
           e ->
-            Logger.warn(
-              "Unable to process live timing packet: #{inspect(e)}"
-            )
-
-            {session, []}
+            Logger.warn("Unable to process live timing packet: #{inspect(e)}")
+            {session, [], false}
         end
       rescue
         e ->
@@ -214,10 +221,14 @@ defmodule F1Bot.F1Session.Server do
           Logger.error("Rescued an error while processing live timing packet: #{err_text}")
           Logger.error("Stacktrace: \n#{Exception.format_stacktrace(__STACKTRACE__)}")
 
-          {session, []}
+          {session, [], false}
       end
 
-    PubSub.broadcast_events(events)
+    if do_reset_session do
+      DelayedEvents.clear_all_caches()
+    else
+      PubSub.broadcast_events(events)
+    end
 
     state = %{state | session: session}
     {:reply, :ok, state}
@@ -227,7 +238,8 @@ defmodule F1Bot.F1Session.Server do
   def handle_call({:replace_session, session}, _from, state) do
     state = %{state | session: session}
     events = F1Session.make_state_sync_events(session)
-    F1Bot.DelayedEvents.push_to_all(events)
+    DelayedEvents.clear_all_caches()
+    PubSub.broadcast_events(events)
 
     Logger.info("Session replaced!")
 
@@ -237,11 +249,11 @@ defmodule F1Bot.F1Session.Server do
   @impl true
   def handle_call({:reset_session}, _from, state) do
     # Ensure all session reset events are sent
-    {_session, events} = F1Session.reset_session(state.session)
-
+    {session, events} = F1Session.reset_session(state.session)
+    DelayedEvents.clear_all_caches()
     PubSub.broadcast_events(events)
 
-    state = %{state | session: F1Session.new()}
+    state = %{state | session: session}
     Logger.info("Session reset!")
 
     {:reply, :ok, state}
@@ -266,7 +278,6 @@ defmodule F1Bot.F1Session.Server do
 
       state = %{state | session: session}
       {:noreply, state}
-
     rescue
       _e ->
         Logger.error("Rescued an error in periodic tick")

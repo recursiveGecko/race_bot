@@ -8,14 +8,19 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.SessionStatus do
   @behaviour F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+
   @scope "SessionStatus"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
-  def process_packet(session, %Packet{
-        topic: @scope,
-        data: %{"Status" => status}
-      }) do
+  def process_packet(
+        session,
+        %Packet{
+          topic: @scope,
+          data: %{"Status" => status}
+        },
+        _options
+      ) do
     status =
       status
       |> String.trim()
@@ -23,6 +28,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.SessionStatus do
       |> String.to_atom()
 
     {session, events} = F1Session.push_session_status(session, status)
-    {:ok, session, events}
+
+    result = %ProcessingResult{
+      session: session,
+      events: events
+    }
+
+    {:ok, result}
   end
 end

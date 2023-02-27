@@ -8,7 +8,8 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.CarTelemetry do
   @behaviour F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+
   @scope "CarData"
 
   # {'0': 'RPM', '2': 'Speed', '3': 'nGear', '4': 'Throttle', '5': 'Brake', '45': 'DRS'}
@@ -30,14 +31,24 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.CarTelemetry do
   }
 
   @impl F1Bot.F1Session.LiveTimingHandlers
-  def process_packet(session, %Packet{
-        topic: @scope,
-        data: encoded
-      }) do
+  def process_packet(
+        session,
+        %Packet{
+          topic: @scope,
+          data: encoded
+        },
+        _options
+      ) do
     case F1Bot.ExternalApi.SignalR.Encoding.decode_live_timing_data(encoded) do
       {:ok, %{"Entries" => batches}} ->
         session = process_decoded_data(session, batches)
-        {:ok, session, []}
+
+        result = %ProcessingResult{
+          session: session,
+          events: []
+        }
+
+        {:ok, result}
 
       {:error, error} ->
         {:error, "Error decoding telemetry data: #{error}"}

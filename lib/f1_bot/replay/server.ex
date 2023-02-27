@@ -1,6 +1,7 @@
 defmodule F1Bot.Replay.Server do
   use GenServer
   require Logger
+  alias F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -128,7 +129,12 @@ defmodule F1Bot.Replay.Server do
     options = %{
       report_progress: true,
       packets_fn: fn replay_state, _options, packet ->
-        F1Bot.F1Session.Server.push_live_timing_packet(packet)
+        processing_options = %ProcessingOptions{
+          ignore_reset: true,
+          log_stray_packets: true
+        }
+
+        F1Bot.F1Session.Server.process_live_timing_packet(packet, processing_options)
         replay_state
       end,
       replay_while_fn: fn _replay_state, packet, _ts_ms ->
@@ -163,7 +169,12 @@ defmodule F1Bot.Replay.Server do
     options = %{
       report_progress: true,
       packets_fn: fn replay_state, _options, packet ->
-        F1Bot.F1Session.Server.push_live_timing_packet(packet)
+        processing_options = %ProcessingOptions{
+          ignore_reset: true,
+          log_stray_packets: true
+        }
+
+        F1Bot.F1Session.Server.process_live_timing_packet(packet, processing_options)
         replay_state
       end,
       replay_while_fn: fn _replay_state, _packet, ts_ms ->

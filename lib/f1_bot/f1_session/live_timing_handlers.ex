@@ -4,92 +4,108 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
   """
   require Logger
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.Common.Event
   alias F1Bot.F1Session.LiveTimingHandlers
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult, ProcessingOptions}
 
-  @callback process_packet(F1Session.t(), Packet.t()) ::
-              {:ok, F1Session.t(), [Event.t()]} | {:error, any()}
+  @callback process_packet(F1Session.t(), Packet.t(), ProcessingOptions.t()) ::
+              {:ok, ProcessingResult.t()} | {:error, any()}
 
   @session_inactive_statuses [nil, :finalised, :ends]
 
   @doc """
-  Called by SignalR client for each received packet.
+  Ingestion point for processing received packets. Called by `F1Bot.F1Session.Server` for packets
+  received from SignalR and by `F1Bot.Replay` when processing session replays.
   """
-  def process_live_timing_packet(session = %F1Session{}, packet = %Packet{}, options) do
+  def process_live_timing_packet(session = %F1Session{}, packet = %Packet{}, options = %ProcessingOptions{}) do
     process_for_topic(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "DriverList"}, _options) do
-    LiveTimingHandlers.DriverList.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "DriverList"}, options) do
+    LiveTimingHandlers.DriverList.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "SessionInfo"}, _options) do
-    LiveTimingHandlers.SessionInfo.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "SessionInfo"}, options) do
+    LiveTimingHandlers.SessionInfo.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "SessionStatus"}, _options) do
-    LiveTimingHandlers.SessionStatus.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "SessionStatus"}, options) do
+    LiveTimingHandlers.SessionStatus.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "ExtrapolatedClock"}, _options) do
-    LiveTimingHandlers.ExtrapolatedClock.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "ExtrapolatedClock"}, options) do
+    LiveTimingHandlers.ExtrapolatedClock.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "LapCount"}, _options) do
-    LiveTimingHandlers.LapCount.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "LapCount"}, options) do
+    LiveTimingHandlers.LapCount.process_packet(session, packet, options)
   end
 
   # Ignore initialization messages sent on other topics
   defp process_for_topic(session, _packet = %Packet{init: true}, _options) do
-    {:ok, session, []}
+    result = %ProcessingResult{
+      session: session,
+      events: []
+    }
+    {:ok, result}
   end
 
   # TODO: Implement time-synchronization
   defp process_for_topic(session, _packet = %Packet{topic: "Heartbeat"}, _options) do
-    {:ok, session, []}
+    result = %ProcessingResult{
+      session: session,
+      events: []
+    }
+    {:ok, result}
   end
 
   # Ignore all other packets when session is inactive
-  defp process_for_topic(session, packet = %Packet{}, options)
+  defp process_for_topic(session, packet = %Packet{}, options = %ProcessingOptions{})
        when session.session_status in @session_inactive_statuses do
-    log = Map.get(options, :log_stray_packets, true)
-
-    if log do
+    if options.log_stray_packets do
       Logger.info(
         "Ignored received packet on #{packet.topic} while session is inactive (#{inspect(session.session_status)})"
       )
     end
 
-    {:ok, session, []}
+    result = %ProcessingResult{
+      session: session,
+      events: []
+    }
+
+    {:ok, result}
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "CarData"}, _options) do
-    LiveTimingHandlers.CarTelemetry.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "CarData"}, options) do
+    LiveTimingHandlers.CarTelemetry.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "Position"}, _options) do
-    LiveTimingHandlers.PositionData.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "Position"}, options) do
+    LiveTimingHandlers.PositionData.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "TimingData"}, _options) do
-    LiveTimingHandlers.LapData.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "TimingData"}, options) do
+    LiveTimingHandlers.LapData.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "RaceControlMessages"}, _options) do
-    LiveTimingHandlers.RaceControlMessages.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "RaceControlMessages"}, options) do
+    LiveTimingHandlers.RaceControlMessages.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "TimingAppData"}, _options) do
-    LiveTimingHandlers.StintData.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "TimingAppData"}, options) do
+    LiveTimingHandlers.StintData.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, packet = %Packet{topic: "TrackStatus"}, _options) do
-    LiveTimingHandlers.TrackStatus.process_packet(session, packet)
+  defp process_for_topic(session, packet = %Packet{topic: "TrackStatus"}, options) do
+    LiveTimingHandlers.TrackStatus.process_packet(session, packet, options)
   end
 
-  defp process_for_topic(session, _packet = %Packet{topic: _topic}, __options) do
+  defp process_for_topic(session, _packet = %Packet{topic: _topic}, _options) do
     # Logger.warn("Received a message for unknown topic: #{topic}")
-    {:ok, session, []}
+    result = %ProcessingResult{
+      session: session,
+      events: []
+    }
+
+    {:ok, result}
   end
 end

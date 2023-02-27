@@ -8,7 +8,8 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.TrackStatus do
   @behaviour F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+
   @scope "TrackStatus"
 
   @status_map %{
@@ -20,19 +21,30 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.TrackStatus do
   }
 
   @impl F1Bot.F1Session.LiveTimingHandlers
-  def process_packet(session, %Packet{
-        topic: @scope,
-        data: %{"Status" => status_str},
-        timestamp: timestamp
-      }) do
+  def process_packet(
+        session,
+        %Packet{
+          topic: @scope,
+          data: %{"Status" => status_str},
+          timestamp: timestamp
+        },
+        _options
+      ) do
     status_int = String.to_integer(status_str)
     status = Map.get(@status_map, status_int)
 
-    if status == nil do
-      {:ok, session, []}
-    else
-      {session, events} = F1Session.push_track_status(session, status, timestamp)
-      {:ok, session, events}
-    end
+    {session, events} =
+      if status == nil do
+        {session, []}
+      else
+        F1Session.push_track_status(session, status, timestamp)
+      end
+
+    result = %ProcessingResult{
+      session: session,
+      events: events
+    }
+
+    {:ok, result}
   end
 end

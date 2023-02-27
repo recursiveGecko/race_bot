@@ -189,22 +189,22 @@ defmodule F1Bot.F1Session do
     {session, events}
   end
 
-  def push_session_info(session, session_info) do
+  def push_session_info(session, session_info, ignore_reset) do
     {session_info, events, should_reset} =
       session.session_info
       |> F1Session.SessionInfo.update(session_info)
 
     session = %{session | session_info: session_info}
 
-    {session, events} =
-      if should_reset do
+    {session, events, do_reset_session} =
+      if should_reset and not ignore_reset do
         {session, reset_events} = reset_session(session)
-        {session, events ++ reset_events}
+        {session, events ++ reset_events, true}
       else
-        {session, events}
+        {session, events, false}
       end
 
-    {session, events}
+    {session, events, do_reset_session}
   end
 
   def push_session_status(session, session_status) do
@@ -282,9 +282,8 @@ defmodule F1Bot.F1Session do
         clock: nil
     }
 
-    reset_events = F1Session.EventGenerator.make_state_sync_events(session)
-
-    {session, reset_events}
+    state_sync_events = F1Session.EventGenerator.make_state_sync_events(session)
+    {session, state_sync_events}
   end
 
   defdelegate make_state_sync_events(session), to: F1Session.EventGenerator

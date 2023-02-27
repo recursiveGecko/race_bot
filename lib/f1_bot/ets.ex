@@ -16,4 +16,12 @@ defmodule F1Bot.Ets do
   def insert(table_name, key, value) do
     :ets.insert(table_name, {key, value})
   end
+
+  def clear(table_name) do
+    try do
+      :ets.delete_all_objects(table_name)
+    rescue
+      e in ArgumentError -> {:error, e}
+    end
+  end
 end

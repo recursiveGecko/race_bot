@@ -9,14 +9,19 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages do
 
   alias F1Bot.F1Session
   alias F1Bot.F1Session.RaceControl
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+
   @scope "RaceControlMessages"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
-  def process_packet(session, %Packet{
-        topic: @scope,
-        data: data
-      }) do
+  def process_packet(
+        session,
+        %Packet{
+          topic: @scope,
+          data: data
+        },
+        _options
+      ) do
     messages =
       data
       |> extract_messages()
@@ -24,7 +29,13 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages do
       |> filter_messages()
 
     {session, events} = F1Session.push_race_control_messages(session, messages)
-    {:ok, session, events}
+
+    result = %ProcessingResult{
+      session: session,
+      events: events
+    }
+
+    {:ok, result}
   end
 
   defp extract_messages(_data = %{"Messages" => msgs = [_ | _]}), do: msgs

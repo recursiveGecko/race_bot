@@ -6,15 +6,20 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapCount do
   @behaviour F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+
   @scope "LapCount"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
-  def process_packet(session, %Packet{
-        topic: @scope,
-        data: data,
-        timestamp: timestamp
-      }) do
+  def process_packet(
+        session,
+        %Packet{
+          topic: @scope,
+          data: data,
+          timestamp: timestamp
+        },
+        _options
+      ) do
     current = data["CurrentLap"]
     total = data["TotalLaps"]
 
@@ -22,6 +27,12 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.LapCount do
     total = if is_integer(total), do: total, else: nil
 
     {session, events} = F1Session.push_lap_counter_update(session, current, total, timestamp)
-    {:ok, session, events}
+
+    result = %ProcessingResult{
+      session: session,
+      events: events
+    }
+
+    {:ok, result}
   end
 end

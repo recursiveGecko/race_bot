@@ -54,6 +54,12 @@ defmodule F1Bot.DelayedEvents do
     "delayed:#{delay_ms}::#{base_topic}"
   end
 
+  def clear_all_caches() do
+    for delay_ms <- @available_delays do
+      Rebroadcaster.clear_cache(delay_ms)
+    end
+  end
+
   def push_to_all(events) do
     for delay_ms <- @available_delays do
       via = Rebroadcaster.server_via(delay_ms)

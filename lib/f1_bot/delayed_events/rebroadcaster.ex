@@ -3,7 +3,7 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
   alias F1Bot.DelayedEvents
   alias F1Bot.Ets
 
-  @ets_table_prefix :delayed_events
+  @ets_table_prefix "delayed_events"
 
   def start_link(options) do
     delay_ms = Keyword.fetch!(options, :delay_ms)
@@ -29,6 +29,12 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
     end
   end
 
+  def clear_cache(delay_ms) do
+    delay_ms
+    |> server_via()
+    |> GenServer.call(:clear_cache)
+  end
+
   @impl true
   def init(options) do
     {:ok, timer_ref} = :timer.send_interval(100, :rebroadcast)
@@ -43,6 +49,19 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
       |> Map.put(:timer_ref, timer_ref)
 
     {:ok, state}
+  end
+
+  @impl true
+  def handle_call(:clear_cache, _from, state) do
+    state = %{state | events: []}
+
+    state.delay_ms
+    |> ets_table_name()
+    |> Ets.clear()
+
+    flush_mailbox()
+
+    {:reply, :ok, state}
   end
 
   @impl true
@@ -90,6 +109,14 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
     state.delay_ms
     |> ets_table_name()
     |> Ets.insert(to_string(event.scope), event)
+  end
+
+  defp flush_mailbox() do
+    receive do
+      _ -> flush_mailbox()
+    after
+      0 -> :ok
+    end
   end
 
   defp ets_table_name(delay_ms), do: :"#{@ets_table_prefix}_#{delay_ms}"

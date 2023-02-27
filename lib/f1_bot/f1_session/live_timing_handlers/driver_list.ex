@@ -9,26 +9,38 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.DriverList do
 
   alias F1Bot.F1Session
   alias F1Bot.F1Session.DriverCache.DriverInfo
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingResult}
+
   @scope "DriverList"
 
   @impl F1Bot.F1Session.LiveTimingHandlers
-  def process_packet(session, %Packet{
-        topic: @scope,
-        data: data
-      }) do
+  def process_packet(
+        session,
+        %Packet{
+          topic: @scope,
+          data: data
+        },
+        _options
+      ) do
     parsed_drivers =
       for {driver_no, driver_json} <- data, is_map(driver_json) do
         driver_json =
           driver_json
           |> Map.put_new("RacingNumber", driver_no)
           |> Map.update("RacingNumber", nil, fn x -> x |> String.trim() |> String.to_integer() end)
-          # |> Map.update("HeadshotUrl", nil, &String.replace(&1, ~r|\.transform\/.*|, ""))
+
+        # |> Map.update("HeadshotUrl", nil, &String.replace(&1, ~r|\.transform\/.*|, ""))
 
         DriverInfo.parse_from_json(driver_json)
       end
 
     {session, events} = F1Session.push_driver_list_update(session, parsed_drivers)
-    {:ok, session, events}
+
+    result = %ProcessingResult{
+      session: session,
+      events: events
+    }
+
+    {:ok, result}
   end
 end

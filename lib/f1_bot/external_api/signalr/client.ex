@@ -14,7 +14,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
   use GenServer
   require Logger
   alias F1Bot.ExternalApi.SignalR
-  alias F1Bot.F1Session.LiveTimingHandlers.Packet
+  alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingOptions}
 
   # Must be a string, otherwise pattern matching won't work - server responds with a string
   @subscribe_command_id "0"
@@ -295,6 +295,10 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
   end
 
   defp process_packet(payload = %Packet{}) do
-    F1Bot.F1Session.Server.push_live_timing_packet(payload)
+    options = %ProcessingOptions{
+      ignore_reset: false,
+      log_stray_packets: true,
+    }
+    F1Bot.F1Session.Server.process_live_timing_packet(payload, options)
   end
 end
