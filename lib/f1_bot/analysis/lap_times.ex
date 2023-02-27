@@ -30,6 +30,7 @@ defmodule F1Bot.Analysis.LapTimes do
       data =
         for lap = %Lap{} <- laps,
             lap.number != nil and lap.number <= to_lap and lap.number >= from_lap,
+            lap.time != nil,
             not Lap.is_inlap?(lap, stints),
             not Lap.is_outlap?(lap, stints),
             not Lap.is_outlap_after_red_flag?(lap),

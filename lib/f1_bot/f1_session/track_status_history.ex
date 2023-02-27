@@ -80,8 +80,8 @@ defmodule F1Bot.F1Session.TrackStatusHistory do
       |> Enum.map(fn interval ->
         %{
           id: interval.id,
-          ts_from: (if interval.starts_at, do: DateTime.to_unix(interval.starts_at)),
-          ts_to: (if interval.ends_at, do: DateTime.to_unix(interval.ends_at)),
+          ts_from: (if interval.starts_at, do: DateTime.to_unix(interval.starts_at, :millisecond)),
+          ts_to: (if interval.ends_at, do: DateTime.to_unix(interval.ends_at, :millisecond)),
           # Add margin to the start and end of the interval to make it visually clearer which laps were affected
           lap_from: (if interval.start_lap, do: interval.start_lap - 0.25),
           lap_to: (if interval.end_lap, do: interval.end_lap + 0.25),
