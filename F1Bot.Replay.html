@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-507B8F0C.js"></script>
+    <script src="dist/sidebar_items-B4C0F971.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -151,7 +151,7 @@ timestamp of each packet in the dataset</p></li></ul>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#start_replay/2" translate="no">start_replay(url, options \\ %{})</a>
+        <a href="#start_replay/2" translate="no">start_replay(url, options)</a>
 
       </div>
 
@@ -184,7 +184,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">replay_dataset(state, options)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L118" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L92" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -199,16 +199,14 @@ Functions
 </section>
 <section class="detail" id="start_replay/2">
 
-    <span id="start_replay/1"></span>
-
   <div class="detail-header">
     <a href="#start_replay/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">start_replay(url, options \\ %{})</h1>
+    <h1 class="signature" translate="no">start_replay(url, options)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L80" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay.ex#L54" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -226,24 +224,7 @@ arbitrary point in time.</p><h2 id="start_replay/2-options" class="section-headi
   </a>
   Options
 </h2>
-<p>All options are optional unless otherwise noted.</p><ul><li><p><code class="inline">:report_progress</code> - If true, logs processing progress to the console.</p></li><li><p><code class="inline">:exclude_files_regex</code> - A regex that excludes matching <code class="inline">.jsonStream</code>
-files from the download and replay, e.g. to exclude bulky <code class="inline">*.z.jsonStream</code> files
-when they are not needed.</p></li><li><p><code class="inline">:replay_while_fn</code> - a 3-arity function that receives the current replay state,
-current packet and its timestamp in milliseconds.
-This function is called <em>before</em> the packet is processed. If the function
-returns false, the packet is left unprocessed (kept), replay is paused and <a href="#start_replay/2"><code class="inline">start_replay/2</code></a>
-will return the current replay state.
-Replay can by resumed by calling <a href="#replay_dataset/2"><code class="inline">replay_dataset/2</code></a> with the returned state and new
-options (e.g. different <code class="inline">replay_while_fn/3</code>).</p></li><li><p><code class="inline">:packets_fn</code> - a 3-arity function that receives the current replay state,
-current packet and its timestamp in milliseconds.
-This function is called for every packet and can be used to implement custom packet
-processing logic (e.g. to simply print all received packets to console).
-By default this function will process the packet using
-<code class="inline">LiveTimingHandlers.process_live_timing_packet/3</code> and store the resulting <code class="inline">F1Session</code>
-state in the replay state.</p></li><li><p><code class="inline">:events_fn</code> - a 1-arity function that will receive a list of events produced by <strong>default</strong>
-<code class="inline">:packets_fn</code> implementation. This option has no effect when <code class="inline">:packets_fn</code> is overriden.
-By default <code class="inline">:events_fn</code> is unspecified, but <a href="Mix.Tasks.Backtest.html"><code class="inline">Mix.Tasks.Backtest</code></a> for example overrides
-it to broadcast events on the PubSub bus. See module docs for more details.</p></li></ul>
+<p>See <a href="F1Bot.Replay.Options.html"><code class="inline">F1Bot.Replay.Options</code></a> for a list of available options.</p>
   </section>
 </section>
 

@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.4.0">
 
-    <title>F1BotWeb.Component.CoreComponents — f1_bot v0.4.0</title>
+    <title>F1Bot.Replay.Options — f1_bot v0.4.0</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
@@ -98,16 +98,37 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/core_components.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay/options.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1BotWeb.Component.CoreComponents</span> 
+  <span translate="no">F1Bot.Replay.Options</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.4.0)</small>
 
 </h1>
 
+
+  <section id="moduledoc">
+<p>  All options are optional unless otherwise noted.</p><ul><li><p><code class="inline">:report_progress</code> - If true, logs processing progress to the console.</p></li><li><p><code class="inline">:exclude_files_regex</code> - A regex that excludes matching <code class="inline">.jsonStream</code>
+files from the download and replay, e.g. to exclude bulky <code class="inline">*.z.jsonStream</code> files
+when they are not needed.</p></li><li><p><code class="inline">:replay_while_fn</code> - a 3-arity function that receives the current replay state,
+current packet and its timestamp in milliseconds.
+This function is called <em>before</em> the packet is processed. If the function
+returns false, the packet is left unprocessed (kept), replay is paused and <code class="inline">start_replay/2</code>
+will return the current replay state.
+Replay can by resumed by calling <code class="inline">replay_dataset/2</code> with the returned state and new
+options (e.g. different <code class="inline">replay_while_fn/3</code>).</p></li><li><p><code class="inline">:packets_fn</code> - a 3-arity function that receives the current replay state,
+current packet and its timestamp in milliseconds.
+This function is called for every packet and can be used to implement custom packet
+processing logic (e.g. to simply print all received packets to console).
+By default this function will process the packet using
+<code class="inline">LiveTimingHandlers.process_live_timing_packet/3</code> and store the resulting <code class="inline">F1Session</code>
+state in the replay state.</p></li><li><p><code class="inline">:events_fn</code> - a 1-arity function that will receive a list of events produced by <strong>default</strong>
+<code class="inline">:packets_fn</code> implementation. This option has no effect when <code class="inline">:packets_fn</code> is overriden.
+By default <code class="inline">:events_fn</code> is unspecified, but <a href="Mix.Tasks.Backtest.html"><code class="inline">Mix.Tasks.Backtest</code></a> for example overrides
+it to broadcast events on the PubSub bus. See module docs for more details.</p></li></ul>
+  </section>
 
 
   <section id="summary" class="details-list">
@@ -118,28 +139,16 @@ f1_bot
       </a>
       Summary
     </h1>
-<div class="summary-functions summary">
+<div class="summary-types summary">
   <h2>
-    <a href="#functions">Functions</a>
+    <a href="#types">Types</a>
   </h2>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#brand/1" translate="no">brand(assigns)</a>
+        <a href="#t:t/0" translate="no">t()</a>
 
       </div>
-
-        <div class="summary-synopsis"><h2>Attributes</h2><ul><li><code class="inline">class</code> (<code class="inline">:string</code>) - Defaults to <code class="inline">&quot;&quot;</code>.</li></ul></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#other_site_link/1" translate="no">other_site_link(assigns)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><h2>Attributes</h2><ul><li><code class="inline">class</code> (<code class="inline">:string</code>) - Defaults to <code class="inline">&quot;&quot;</code>.</li></ul></div>
 
     </div>
 
@@ -148,25 +157,25 @@ f1_bot
   </section>
 
 
-  <section id="functions" class="details-list">
+  <section id="types" class="details-list">
     <h1 class="section-heading">
-      <a class="hover-link" href="#functions">
+      <a class="hover-link" href="#types">
         <i class="ri-link-m" aria-hidden="true"></i>
         <span class="sr-only">Link to this section</span>
       </a>
-Functions
+Types
     </h1>
-    <div class="functions-list">
-<section class="detail" id="brand/1">
+    <div class="types-list">
+<section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#brand/1" class="detail-link" title="Link to this function">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">brand(assigns)</h1>
+    <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/core_components.ex#L1" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay/options.ex#L35" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -176,41 +185,20 @@ Functions
 
   <section class="docstring">
 
-<h2 id="brand/1-attributes" class="section-heading">
-  <a href="#brand/1-attributes" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
-  <p class="sr-only">attributes</p>
-  </a>
-  Attributes
-</h2>
-<ul><li><code class="inline">class</code> (<code class="inline">:string</code>) - Defaults to <code class="inline">&quot;&quot;</code>.</li></ul>
-  </section>
-</section>
-<section class="detail" id="other_site_link/1">
+      <div class="specs">
 
-  <div class="detail-header">
-    <a href="#other_site_link/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">other_site_link(assigns)</h1>
+          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.Replay.Options{
+  events_fn: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">function</a>() | nil,
+  exclude_files_regex: <a href="https://hexdocs.pm/elixir/Regex.html#t:t/0">Regex.t</a>() | nil,
+  packets_fn: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">function</a>() | nil,
+  processing_options: <a href="F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions.html#t:t/0">F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions.t</a>(),
+  replay_while_fn: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">function</a>() | nil,
+  report_progress: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>() | nil
+}</pre>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/core_components.ex#L1" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+      </div>
 
 
-  </div>
-
-  <section class="docstring">
-
-<h2 id="other_site_link/1-attributes" class="section-heading">
-  <a href="#other_site_link/1-attributes" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
-  <p class="sr-only">attributes</p>
-  </a>
-  Attributes
-</h2>
-<ul><li><code class="inline">class</code> (<code class="inline">:string</code>) - Defaults to <code class="inline">&quot;&quot;</code>.</li></ul>
   </section>
 </section>
 

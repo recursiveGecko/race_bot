@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-507B8F0C.js"></script>
+    <script src="dist/sidebar_items-B4C0F971.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -176,6 +176,16 @@ e.g. lap number, lap time and timestamp.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#find_around_or_before/3" translate="no">find_around_or_before(laps, timestamp, padding_ms)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Starting with the last completed lap (by timestamp), finds the first lap that meets the following criteria</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#fix_laps_data/1" translate="no">fix_laps_data(self)</a>
 
       </div>
@@ -273,7 +283,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">fastest(laps)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L36" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L60" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -317,7 +327,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">fill_by_close_timestamp(self, args, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L50" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L74" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -346,7 +356,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">fill_sector_times(self, sector, sector_time, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L65" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L92" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -365,6 +375,28 @@ Functions
 
   </section>
 </section>
+<section class="detail" id="find_around_or_before/3">
+
+  <div class="detail-header">
+    <a href="#find_around_or_before/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">find_around_or_before(laps, timestamp, padding_ms)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L33" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Starting with the last completed lap (by timestamp), finds the first lap that meets the following criteria:</p><ul><li>lap was completed no more than <code class="inline">padding_ms</code> after the given timestamp</li><li>first lap completed before the given timestamp</li></ul>
+  </section>
+</section>
 <section class="detail" id="fix_laps_data/1">
 
   <div class="detail-header">
@@ -374,7 +406,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">fix_laps_data(self)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L87" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L114" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -420,7 +452,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sort_by_number(laps, direction \\ :asc)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L28" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -444,7 +476,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">sort_by_timestamp(laps, direction \\ :asc)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L32" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L56" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
