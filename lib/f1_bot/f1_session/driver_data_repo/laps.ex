@@ -25,6 +25,30 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     end
   end
 
+  @doc """
+  Starting with the last completed lap (by timestamp), finds the first lap that meets the following criteria:
+  - lap was completed no more than `padding_ms` after the given timestamp
+  - first lap completed before the given timestamp
+  """
+  def find_around_or_before(laps = %__MODULE__{}, timestamp = %DateTime{}, padding_ms) do
+    search_ts_ms = DateTime.to_unix(timestamp, :millisecond) + padding_ms
+
+    lap =
+      laps.data
+      |> sort_by_timestamp(:desc)
+      |> Enum.find(fn l ->
+        if l.timestamp != nil do
+          ts_ms = DateTime.to_unix(l.timestamp, :millisecond)
+          ts_ms <= search_ts_ms
+        end
+      end)
+
+    case lap do
+      nil -> {:error, :not_found}
+      _ -> {:ok, lap}
+    end
+  end
+
   def sort_by_number(laps, direction \\ :asc) do
     Enum.sort_by(laps, fn l -> l.number end, direction)
   end
@@ -53,7 +77,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
         timestamp
       ) do
     if accept_lap_information?(self, args, timestamp) do
-      self = do_fill_by_close_timestamp(self, args, timestamp)
+      self =
+        do_fill_by_close_timestamp(self, args, timestamp)
+        |> fix_laps_data()
+
       {:ok, self}
     else
       {:error, :missing_prerequisites}
@@ -119,13 +146,11 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
 
     if found do
       %{self | data: Enum.reverse(data_reversed)}
-      |> fix_laps_data()
     else
       args = Keyword.put_new(args, :timestamp, timestamp)
       lap = Lap.new(args)
 
       %{self | data: [lap | data]}
-      |> fix_laps_data()
     end
   end
 

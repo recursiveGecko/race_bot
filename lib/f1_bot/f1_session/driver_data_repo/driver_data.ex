@@ -7,10 +7,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
 
   alias F1Bot.LightCopy
   alias F1Bot.F1Session.DriverDataRepo.{Laps, Stints}
+
   alias F1Bot.F1Session.DriverDataRepo.DriverData.{
     EndOfLapResult,
     EndOfSectorResult
   }
+
   alias F1Bot.F1Session.Common.TimeSeriesStore
 
   typedstruct do
@@ -136,6 +138,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     {change_type, new_stints} =
       stints
       |> Stints.push_stint_data(stint_data, self.current_lap_number)
+
+    # Update: This has now been disabled as it was causing more issues than it was solving
+    # new_stints = Stints.fix_stint_data(new_stints, self.laps)
+    new_stints = Stints.normalize(new_stints)
 
     self = %{self | stints: new_stints}
 

@@ -5,7 +5,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
   """
   use TypedStruct
 
-  alias F1Bot.F1Session.DriverDataRepo.Stint
+  alias F1Bot.F1Session.DriverDataRepo.{Stint, Laps}
 
   typedstruct do
     field(:data, [Stint.t()], default: [])
@@ -39,9 +39,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
             false -> :updated_old_compound
           end
 
-        self =
-          %{self | data: new_data}
-          |> normalize_internal_data()
+        self = %{self | data: new_data}
 
         {change_type, self}
 
@@ -52,16 +50,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
             false -> :updated_old_compound
           end
 
-        self =
-          %{self | data: new_data}
-          |> normalize_internal_data()
+        self = %{self | data: new_data}
 
         {change_type, self}
 
       update_type in [:other_fields, :no_changes] ->
-        self =
-          %{self | data: new_data}
-          |> normalize_internal_data()
+        self = %{self | data: new_data}
 
         {update_type, self}
 
@@ -69,14 +63,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
         stint_data = Map.put(stint_data, :lap_number, current_lap_number)
         stint = Stint.new(stint_data)
 
-        new_data =
-          [stint | self.data]
-          |> fix_lap_numbers()
-          |> sort_by_number(:desc)
+        new_data = [stint | self.data]
 
-        self =
-          %{self | data: new_data}
-          |> normalize_internal_data()
+        self = %{self | data: new_data}
 
         change_type =
           if stint.compound == nil do
@@ -110,24 +99,35 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
     Enum.sort_by(stints, fn s -> s.number end, direction)
   end
 
-  # See Monaco 2022 integration tests to see why this is necessary
-  def fix_lap_numbers(stints) do
-    stints
-    |> sort_by_number(:asc)
-    |> fix_lap_numbers([])
+  def normalize(self = %__MODULE__{data: data}) do
+    new_data = sort_by_number(data, :desc)
+    %{self | data: new_data}
   end
 
-  defp normalize_internal_data(self = %__MODULE__{data: data}) do
+  # See Monaco 2022 integration tests to see why this is necessary
+  # Update: This has now been disabled as it was causing more issues than it was solving
+  def fix_stint_data(self = %__MODULE__{data: data}, laps = %Laps{}) do
+    # TODO: If this issuer re-appears, find lap number of the lap following this stint by timestamp
+    # and assign it as the start lap of the stint
     new_data =
       data
-      |> fix_lap_numbers()
+      |> fix_lap_numbers(laps)
       |> sort_by_number(:desc)
 
     %{self | data: new_data}
   end
 
-  defp fix_lap_numbers(_stints = [first, second | rest], acc) do
+  defp fix_lap_numbers(stints, laps) do
+    stints
+    |> sort_by_number(:asc)
+    |> do_fix_lap_numbers([], laps)
+  end
+
+  defp do_fix_lap_numbers(_stints = [first, second | rest], acc, laps = %Laps{}) do
     first_laps = Stint.count_laps(first)
+
+    # TODO: Find lap number of the lap following this stint by timestamp
+    # and assign it as the start lap of the stint
 
     second_lap_number =
       cond do
@@ -143,14 +143,14 @@ defmodule F1Bot.F1Session.DriverDataRepo.Stints do
 
     second = %{second | lap_number: second_lap_number}
 
-    fix_lap_numbers([second | rest], [first | acc])
+    do_fix_lap_numbers([second | rest], [first | acc], laps)
   end
 
-  defp fix_lap_numbers(_stints = [first | rest], acc) do
-    fix_lap_numbers(rest, [first | acc])
+  defp do_fix_lap_numbers(_stints = [first | rest], acc, laps) do
+    do_fix_lap_numbers(rest, [first | acc], laps)
   end
 
-  defp fix_lap_numbers(_stints = [], acc) do
+  defp do_fix_lap_numbers(_stints = [], acc, _laps) do
     Enum.reverse(acc)
   end
 end

@@ -121,8 +121,11 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
          meetings when meetings != nil <- data["Meetings"] do
       for meeting <- data["Meetings"],
           session <- meeting["Sessions"] do
-        if session["Path"] == nil do
-          Logger.error("Missing session path for #{inspect(session)}")
+        session_path = session["Path"]
+
+        # Some paths point to seemingly unrelated ../uat/ directories
+        if session_path == nil or String.contains?(session_path, "..") do
+          Logger.error("Missing/Broken session path for #{inspect(session)}")
           {:error, :missing_session_path}
         else
           session_url = Path.join(base_url, session["Path"])

@@ -1,5 +1,10 @@
 defmodule Integration.Monaco2022RaceTest do
+  @moduledoc """
+  The code changes to resolve issues tested here created more issues than they
+  solved. If the issue being tested here re-appears, a better solution should be found.
+  """
   use ExUnit.Case, async: true
+  @moduletag :skip_inconclusive
 
   alias F1Bot.F1Session
   alias F1Bot.Replay
