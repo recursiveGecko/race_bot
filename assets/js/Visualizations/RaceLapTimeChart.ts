@@ -1,9 +1,9 @@
-import {Chart, ChartConfiguration, ChartDataset, ChartEvent, Color, FontSpec, LegendItem} from 'chart.js/auto';
-import {AnnotationOptions} from 'chartjs-plugin-annotation';
-import {ChartVisualization} from '.';
-import {TrackStatusData, AnyChartData, LapTimeDataPoint, DriverLapTimeData, TrackStatusDataPoint} from './DataPayloads';
-import {DataSetUtils} from './DatasetUtils';
-import {Storage} from "@assets/Storage";
+import { Chart, ChartConfiguration, ChartDataset, ChartEvent, Color, FontSpec, LegendItem } from 'chart.js/auto';
+import { AnnotationOptions } from 'chartjs-plugin-annotation';
+import { ChartVisualization } from '.';
+import { TrackStatusData, AnyChartData, LapTimeDataPoint, DriverLapTimeData, TrackStatusDataPoint } from './DataPayloads';
+import { DataSetUtils } from './DatasetUtils';
+import { Storage } from "@assets/Storage";
 
 class RaceLapTimeChart implements ChartVisualization {
   protected chart: Chart;
@@ -61,7 +61,7 @@ class RaceLapTimeChart implements ChartVisualization {
 
     if (existingDataset) {
       const existingData = existingDataset.data as unknown as LapTimeDataPoint[];
-      
+
       DataSetUtils.mergeDataset(existingData, data.data, x => x.lap);
       existingDataset.order = data.chart_order;
     } else {
@@ -180,6 +180,7 @@ class RaceLapTimeChart implements ChartVisualization {
   }
 
   protected handleLegendClick(e: ChartEvent, legendItem: LegendItem) {
+    const datasets = this.chart.data.datasets;
     const clickedDatasetIndex = legendItem.datasetIndex;
     if (clickedDatasetIndex == undefined) return;
 
@@ -187,14 +188,23 @@ class RaceLapTimeChart implements ChartVisualization {
 
     if (e.native != null) {
       const mouseEvent: MouseEvent = e.native as MouseEvent;
-      modifiedKeyPressed = mouseEvent.ctrlKey || mouseEvent.shiftKey || mouseEvent.altKey;
+      modifiedKeyPressed = mouseEvent.shiftKey;
     }
 
     if (modifiedKeyPressed) {
-      // Hide all other datasets
-      this.chart.data.datasets.forEach((dataset, index) => {
-        dataset.hidden = index !== clickedDatasetIndex;
-      });
+      const numShown = datasets.filter(x => !x.hidden).length
+
+      if (numShown == 1) {
+        // Show all other datasets
+        datasets.forEach((dataset) => {
+          dataset.hidden = false;
+        });
+      } else {
+        // Hide all other datasets
+        datasets.forEach((dataset, index) => {
+          dataset.hidden = index !== clickedDatasetIndex;
+        });
+      }
 
       this.hideDatasetAfterLeave = {};
       this.update();
@@ -275,6 +285,7 @@ class RaceLapTimeChart implements ChartVisualization {
           xAxisKey: 'lap',
           yAxisKey: 't'
         },
+        animation: false,
         layout: {},
         scales: {
           x: {
@@ -322,7 +333,7 @@ class RaceLapTimeChart implements ChartVisualization {
               },
               color: 'rgba(0, 0, 0, 1)',
               boxWidth: 20,
-              boxHeight: 15
+              boxHeight: 15,
             },
           },
           annotation: {
@@ -372,4 +383,4 @@ class RaceLapTimeChart implements ChartVisualization {
   }
 }
 
-export {RaceLapTimeChart};
+export { RaceLapTimeChart };

@@ -9,7 +9,7 @@ defmodule F1BotWeb.Component.ChartJS do
   def render(assigns) do
     ~F"""
     <div class={@class} phx-update="ignore">
-      <canvas id={@chart_id} class="w-full h-full" :hook>
+      <canvas id={@chart_id} class="w-full h-full absolute" :hook>
         Your browser does not support HTML5 canvas to render this chart.
       </canvas>
     </div>

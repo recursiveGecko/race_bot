@@ -1,10 +1,18 @@
 <div id="charts-live" class="w-full h-screen flex flex-col" :hook={"SaveParams", from: Component.Utility}>
-  <div class="w-full bg-slate-200 px-2 py-1 flex">
-    <.brand class="mr-3" />
+  <div class="w-full bg-slate-200 px-2 py-1 flex items-center">
+    <.brand class="shrink-0 hidden lg:flex mr-8" />
 
-    <div class="">
+    <div class="mr-4 lg:mr-8">
       <Component.DelayControl id="delay_control" {=@pubsub_delay_ms} />
     </div>
+
+    <div class="grow"></div>
+
+    <p class="hidden md:inline-flex text-gray-700 text-sm font-light items-center">
+      <Heroicons.light_bulb class="shrink-0 w-6 h-6 mr-1" />
+      Tip: Click on legend entries to toggle visibility, hover over them to glance at the data, shift-click to hide all other entries.
+      Hover over the data points to see exact values.
+    </p>
   </div>
 
   <Component.ChartJS class="p-1 w-full h-full" chart_id="lap_times" />
