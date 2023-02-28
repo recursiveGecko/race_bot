@@ -10,7 +10,7 @@ defmodule F1BotWeb.Component.CoreComponents do
       <span class="text-2xl">
         Race Bot for F1
         <%= if F1Bot.demo_mode?() do %>
-          (Demo)
+          | Demo
         <% end %>
       </span>
     </a>
