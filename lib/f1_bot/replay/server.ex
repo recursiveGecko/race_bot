@@ -144,6 +144,9 @@ defmodule F1Bot.Replay.Server do
     }
 
     replay_state = Replay.replay_dataset(state.replay_state, options)
+    # Force session sync events because the session change detection
+    # logic is unreliable in demo mode with the same session repeating.
+    F1Bot.resync_state_events()
 
     %{state | replay_state: replay_state}
     |> sync_time()
