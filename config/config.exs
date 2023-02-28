@@ -45,7 +45,7 @@ config :esbuild,
   version: "0.14.29",
   default: [
     args:
-      ~w(assets/js/app.ts --bundle --target=es2017 --outdir=priv/static/assets --tsconfig=tsconfig.json --external:/fonts/* --external:/images/*)
+      ~w(assets/js/app.ts --bundle --sourcemap --target=es2017 --outdir=priv/static/assets --tsconfig=tsconfig.json --external:/fonts/* --external:/images/*)
   ]
 
 config :tailwind,
