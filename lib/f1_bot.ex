@@ -254,4 +254,13 @@ defmodule F1Bot do
         {:error, err}
     end
   end
+
+  @doc """
+  Downloads all available session archives and caches them locally.
+  You shouldn't need to call this function directly, as the archives are cached
+  automatically when they are first accessed.
+  """
+  def sync_archive_cache(recheck_index \\ false) do
+    F1Bot.ExternalApi.F1LiveTiming.download_all_archives([], recheck_index)
+  end
 end

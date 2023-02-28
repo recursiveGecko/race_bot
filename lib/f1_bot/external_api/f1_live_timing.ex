@@ -7,7 +7,7 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
 
   @cache_root Path.join(["tmp", "live-timing-cache"])
   @missing_file_suffix ".404"
-  @req_sleep_time 500
+  @req_sleep_time 1000
 
   def request(method, full_url) do
     Finch.build(method, full_url)
@@ -62,7 +62,7 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
           File.read(cached_path)
 
         File.exists?(missing_path) ->
-          Logger.info("404 from cache: #{url}")
+          Logger.warn("404 from cache: #{url}")
           {:error, :cached_404}
 
         true ->
@@ -75,63 +75,67 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
   end
 
   @doc false
-  def download_all_archives(base_url \\ @api_base, recheck_index \\ false)
-      when is_binary(base_url) and is_boolean(recheck_index) do
-    fetch_process_base_index(base_url, recheck_index)
+  def download_all_archives(
+        additional_years \\ [],
+        recheck_index \\ false
+      )
+      when is_list(additional_years) and is_boolean(recheck_index) do
+    dl_fetch_process_base(@api_base, additional_years, recheck_index)
   end
 
   @doc false
-  defp fetch_process_base_index(base_url, recheck_index) do
+  def download_all_archives(base_url, additional_years, recheck_index)
+      when is_binary(base_url) and
+             is_list(additional_years) and
+             is_boolean(recheck_index) do
+    dl_fetch_process_base(base_url, additional_years, recheck_index)
+  end
+
+  @doc false
+  defp dl_fetch_process_base(base_url, additional_years, recheck_index) do
     url = Path.join(base_url, "Index.json")
 
-    fetch_fun =
-      if recheck_index do
-        &download_save_archive/1
-      else
-        &fetch_archive_cached/1
-      end
+    additional_years = for year <- additional_years, do: %{"Path" => "#{year}/"}
 
-    with {:ok, json} <- fetch_fun.(url),
-         {:ok, data} <- parse_json(json) do
-      if data["Years"] != nil do
-        for year <- data["Years"] do
-          year_url = Path.join(base_url, year["Path"])
-          fetch_process_year(year_url, base_url, recheck_index)
-        end
-        |> List.flatten()
-      else
-        {:error, :missing_years}
+    with {:ok, json} <- download_save_archive(url),
+         {:ok, data} <- parse_json(json),
+         years when years != nil <- data["Years"] do
+      years = data["Years"] ++ additional_years
+
+      for year <- years do
+        year_url = Path.join(base_url, year["Path"])
+        dl_fetch_process_year(year_url, base_url, recheck_index)
       end
+      |> List.flatten()
+    else
+      nil -> {:error, :missing_years}
     end
   end
 
   @doc false
-  defp fetch_process_year(year_url, base_url, recheck_index) do
+  defp dl_fetch_process_year(year_url, base_url, recheck_index) do
     url = Path.join(year_url, "Index.json")
 
-    fetch_fun =
-      if recheck_index do
-        &download_save_archive/1
-      else
-        &fetch_archive_cached/1
-      end
-
-    with {:ok, json} <- fetch_fun.(url),
-         {:ok, data} <- parse_json(json) do
-      if data["Meetings"] != nil do
-        for meeting <- data["Meetings"],
-            session <- meeting["Sessions"] do
+    with {:ok, json} <- download_save_archive(url),
+         {:ok, data} <- parse_json(json),
+         meetings when meetings != nil <- data["Meetings"] do
+      for meeting <- data["Meetings"],
+          session <- meeting["Sessions"] do
+        if session["Path"] == nil do
+          Logger.error("Missing session path for #{inspect(session)}")
+          {:error, :missing_session_path}
+        else
           session_url = Path.join(base_url, session["Path"])
-          fetch_process_session(session_url, base_url, recheck_index)
+          dl_fetch_process_session(session_url, base_url, recheck_index)
         end
-      else
-        {:error, :missing_meetings}
       end
+    else
+      nil -> {:error, :missing_meetings}
     end
   end
 
   @doc false
-  defp fetch_process_session(session_url, _base_url, recheck_index) do
+  defp dl_fetch_process_session(session_url, _base_url, recheck_index) do
     url = Path.join(session_url, "Index.json")
 
     fetch_fun =
@@ -142,19 +146,19 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
       end
 
     with {:ok, json} <- fetch_fun.(url),
-         {:ok, data} <- parse_json(json) do
-      if data["Feeds"] != nil do
-        for {_name, feed} <- data["Feeds"] do
-          feed_file = feed["StreamPath"] || feed["KeyFramePath"]
-          feed_url = Path.join(session_url, feed_file)
+         {:ok, data} <- parse_json(json),
+         feeds when feeds != nil <- data["Feeds"] do
+      for {_name, feed} <- data["Feeds"] do
+        feed_file = feed["StreamPath"] || feed["KeyFramePath"]
+        feed_url = Path.join(session_url, feed_file)
 
-          feed_url
-          |> fetch_archive_cached()
-          |> elem(0)
+        case fetch_archive_cached(feed_url) do
+          {:ok, _} -> {:ok, :stored}
+          {:error, e} -> {:error, e}
         end
-      else
-        {:error, :missing_feeds}
       end
+    else
+      nil -> {:error, :missing_feeds}
     end
   end
 

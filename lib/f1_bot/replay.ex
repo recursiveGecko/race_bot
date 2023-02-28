@@ -220,23 +220,9 @@ defmodule F1Bot.Replay do
     Timex.subtract(wall_ts, session_ts)
   end
 
-  defp download_file(base_url, file_name, options = %Options{}) do
-    full_url = base_url <> "/" <> file_name
-
-    if !!options.report_progress do
-      Logger.info("Replay fetching: #{full_url}")
-    end
-
-    res = F1LiveTiming.fetch_archive_cached(full_url)
-
-    case res do
-      {:ok, contents} ->
-        {:ok, contents}
-
-      e ->
-        Logger.warn("Replay fetching failed: #{full_url} (#{inspect(e)})")
-        :error
-    end
+  defp download_file(base_url, file_name, _options = %Options{}) do
+    full_url = Path.join(base_url, file_name)
+    F1LiveTiming.fetch_archive_cached(full_url)
   end
 
   defp parse_file(file_name, contents) do
