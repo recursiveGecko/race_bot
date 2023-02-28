@@ -16,20 +16,25 @@ jobs:
     env:
       MIX_ENV: test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "25"
           elixir-version: "1.14"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             deps
             _build
           key: ${{ runner.os }}-mix-${{ hashFiles('mix.lock') }}
           restore-keys: ${{ runner.os }}-mix-
+          
+      - uses: actions/cache@v3
+        with:
+          path: tmp/live-timing-cache
+          key: live-timing-data-cache
 
       - run: mix deps.get
       - run: mix compile --warnings-as-errors
@@ -45,7 +50,7 @@ jobs:
           # Lowercases GITHUB_REGISTRY, docker build breaks with tags that contain uppercase letters
           echo "IMAGE_ID=${IMAGE_REGISTRY}/${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       -
         name: Set up Docker Buildx
@@ -88,7 +93,7 @@ jobs:
           # Lowercases GITHUB_REGISTRY, docker build breaks with tags that contain uppercase letters
           echo "IMAGE_ID=${IMAGE_REGISTRY}/${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up WireGuard
         uses: egor-tensin/setup-wireguard@v1
@@ -161,14 +166,14 @@ jobs:
       - build
     if: github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "25"
           elixir-version: "1.14"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             deps

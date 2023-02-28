@@ -172,7 +172,7 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
   end
 
   defp download_save_archive(url, file_path, missing_path) do
-    Logger.info("Fetching from origin: #{url}")
+    Logger.warn("Fetching from origin: #{url}")
     # This is slow on purpose to promote caching
     Process.sleep(@req_sleep_time)
 
