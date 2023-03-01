@@ -93,6 +93,7 @@ F1BotWeb.Component.Utility.html
 F1BotWeb.Endpoint.html
 F1BotWeb.ErrorHTML.html
 F1BotWeb.ErrorJSON.html
+F1BotWeb.HealthCheck.html
 F1BotWeb.InternalEndpoint.html
 F1BotWeb.InternalRouter.html
 F1BotWeb.Layouts.html
@@ -132,8 +133,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_items-708DAE22.js
-dist/sidebar_items-B4C0F971.js
+dist/search_items-69E4832A.js
+dist/sidebar_items-07BFBF03.js
 index.html
 license.html
 readme.html
