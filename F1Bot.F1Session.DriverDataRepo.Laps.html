@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-3B11DA6F.js"></script>
+    <script src="dist/sidebar_items-5DBBBF41.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -160,7 +160,7 @@ e.g. lap number, lap time and timestamp.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#fill_by_close_timestamp/3" translate="no">fill_by_close_timestamp(self, args, timestamp)</a>
+        <a href="#fill_by_close_timestamp/4" translate="no">fill_by_close_timestamp(self, args, timestamp, all_lap_times \\ [])</a>
 
       </div>
 
@@ -194,23 +194,20 @@ e.g. lap number, lap time and timestamp.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#mark_outliers/2" translate="no">mark_outliers(laps, all_lap_times)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Determine outliers in the given laps based on lap time compared to
+all other laps that occurred around a similar time (+/- <code class="inline">outlier_window_ms</code>).
+Lap is marked as an outlier if it's greater than <code class="inline">factor</code> * minimum lap time
+in the window.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#new/0" translate="no">new()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#sort_by_number/2" translate="no">sort_by_number(laps, direction \\ :asc)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#sort_by_timestamp/2" translate="no">sort_by_timestamp(laps, direction \\ :asc)</a>
 
       </div>
 
@@ -283,7 +280,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">fastest(laps)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L60" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -318,16 +315,18 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="fill_by_close_timestamp/3">
+<section class="detail" id="fill_by_close_timestamp/4">
+
+    <span id="fill_by_close_timestamp/3"></span>
 
   <div class="detail-header">
-    <a href="#fill_by_close_timestamp/3" class="detail-link" title="Link to this function">
+    <a href="#fill_by_close_timestamp/4" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">fill_by_close_timestamp(self, args, timestamp)</h1>
+    <h1 class="signature" translate="no">fill_by_close_timestamp(self, args, timestamp, all_lap_times \\ [])</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L74" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L66" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -339,7 +338,9 @@ Functions
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> fill_by_close_timestamp(<a href="#t:t/0">t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>(), <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+          <pre translate="no"><span class="attribute">@spec</span> fill_by_close_timestamp(<a href="#t:t/0">t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>(), <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>(), [
+  {<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()}
+]) ::
   {:ok, <a href="#t:t/0">t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()}</pre>
 
       </div>
@@ -356,7 +357,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">fill_sector_times(self, sector, sector_time, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L92" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L93" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -406,7 +407,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">fix_laps_data(self)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L114" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L115" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -417,6 +418,31 @@ Functions
   <section class="docstring">
 
 
+  </section>
+</section>
+<section class="detail" id="mark_outliers/2">
+
+  <div class="detail-header">
+    <a href="#mark_outliers/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">mark_outliers(laps, all_lap_times)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L206" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Determine outliers in the given laps based on lap time compared to
+all other laps that occurred around a similar time (+/- <code class="inline">outlier_window_ms</code>).
+Lap is marked as an outlier if it's greater than <code class="inline">factor</code> * minimum lap time
+in the window.</p>
   </section>
 </section>
 <section class="detail" id="new/0">
@@ -429,54 +455,6 @@ Functions
     <h1 class="signature" translate="no">new()</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L17" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="sort_by_number/2">
-
-    <span id="sort_by_number/1"></span>
-
-  <div class="detail-header">
-    <a href="#sort_by_number/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">sort_by_number(laps, direction \\ :asc)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L52" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="sort_by_timestamp/2">
-
-    <span id="sort_by_timestamp/1"></span>
-
-  <div class="detail-header">
-    <a href="#sort_by_timestamp/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">sort_by_timestamp(laps, direction \\ :asc)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/laps.ex#L56" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
