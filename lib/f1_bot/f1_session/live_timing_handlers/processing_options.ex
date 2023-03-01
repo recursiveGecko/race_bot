@@ -7,6 +7,10 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions do
       processing session replays
     - `:log_stray_packets` - If true, packets received while session is inactive will be logged.
     - `:log_drivers` - Packets related to specified drivers will be logged to console and log file.
+    - `:local_time_fn` - 0-arity function to get the current local time for the purposes of packet processing.
+      This can be overriden so that server time ("Utc" field in many Packets) is used in place of local system time,
+      useful when replaying sessions where current local time is irrelevant and leads to inconsistencies such
+      as the session clock not being reported correctly due to nearly instant passage of time.
   """
   use TypedStruct
 
@@ -14,9 +18,10 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions do
     field(:ignore_reset, boolean())
     field(:log_stray_packets, boolean())
     field(:log_drivers, [integer()])
+    field(:local_time_fn, function())
   end
 
-  def new, do: %__MODULE__{}
+  def new(), do: %__MODULE__{}
 
   def merge(a = %__MODULE__{}, b = %__MODULE__{}) do
     MapUtils.patch_ignore_nil(a, b)

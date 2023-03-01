@@ -200,23 +200,23 @@ defmodule F1Bot do
   end
 
   @doc """
-  Same as `reload_session/2`, but it replays the archives in real time,
+  Similar to `reload_session/2`, but replays the session in live,
   as if the session was currently in progress (equivalent to demo mode).
-  Useful for development.
+  Useful for development and debugging.
   """
-  def replay_session_realtime(url) do
-    Replay.Server.start_replay(url)
+  def replay_session_live(url, playback_rate \\ 1) do
+    Replay.Server.start_replay(url, playback_rate)
   end
 
   @doc """
-  Stops the session replay started with `replay_session_realtime/1`.
+  Stops the session replay started with `replay_session_live/2`.
   """
   def stop_session_replay() do
     Replay.Server.stop_replay()
   end
 
   @doc """
-  Fast-forwards the session replay started with `replay_session_realtime/1`
+  Fast-forwards the session replay started with `replay_session_live/2`
   by a given number of seconds.
   """
   def fast_forward_replay(seconds) do

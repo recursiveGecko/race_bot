@@ -189,7 +189,7 @@ defmodule F1Bot.F1Session do
     {session, events}
   end
 
-  def push_session_info(session, session_info, ignore_reset) do
+  def push_session_info(session, session_info, local_time, ignore_reset) do
     {session_info, events, should_reset} =
       session.session_info
       |> F1Session.SessionInfo.update(session_info)
@@ -198,7 +198,7 @@ defmodule F1Bot.F1Session do
 
     {session, events, do_reset_session} =
       if should_reset and !ignore_reset do
-        {session, reset_events} = reset_session(session)
+        {session, reset_events} = reset_session(session, local_time)
         {session, events ++ reset_events, true}
       else
         {session, events, false}
@@ -257,20 +257,20 @@ defmodule F1Bot.F1Session do
   def update_clock(session, server_time, local_time, remaining, is_running) do
     clock = F1Session.Clock.new(server_time, local_time, remaining, is_running)
     session = %{session | clock: clock}
-    events = [F1Session.Clock.to_event(clock)]
+    events = [F1Session.Clock.to_event(clock, local_time)]
 
     {session, events}
   end
 
-  def periodic_tick(session) do
+  def periodic_tick(session, local_time) do
     {event_generator, events} =
-      F1Session.EventGenerator.make_periodic_events(session, session.event_generator)
+      F1Session.EventGenerator.make_periodic_events(session, session.event_generator, local_time)
 
     session = %{session | event_generator: event_generator}
     {session, events}
   end
 
-  def reset_session(session) do
+  def reset_session(session, local_time) do
     # We reset the session then generate the summary events which contain an empty
     # summary because the DriverDataRepo had been reset.
     session = %{
@@ -282,9 +282,9 @@ defmodule F1Bot.F1Session do
         clock: nil
     }
 
-    state_sync_events = F1Session.EventGenerator.make_state_sync_events(session)
+    state_sync_events = F1Session.EventGenerator.make_state_sync_events(session, local_time)
     {session, state_sync_events}
   end
 
-  defdelegate make_state_sync_events(session), to: F1Session.EventGenerator
+  defdelegate make_state_sync_events(session, local_time), to: F1Session.EventGenerator
 end

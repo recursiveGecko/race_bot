@@ -160,13 +160,14 @@ defmodule F1Bot.Replay do
     state
   end
 
-  defp default_packets_fn(state, options = %Options{}, packet) do
+  defp default_packets_fn(state, options = %Options{}, packet = %Packet{}) do
     processing_options =
       %ProcessingOptions{
         log_stray_packets: false,
-        ignore_reset: true
+        ignore_reset: true,
+        local_time_fn: fn -> packet.timestamp end
       }
-      |> Map.merge(options.processing_options)
+      |> ProcessingOptions.merge(options.processing_options)
 
     reply =
       LiveTimingHandlers.process_live_timing_packet(state.session, packet, processing_options)

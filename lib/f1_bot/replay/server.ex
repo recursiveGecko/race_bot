@@ -18,7 +18,8 @@ defmodule F1Bot.Replay.Server do
       replay_state: nil,
       start_system_time: nil,
       start_replay_time: nil,
-      tick_timer_ref: nil
+      tick_timer_ref: nil,
+      playback_rate: 1
     }
 
     state =
@@ -31,8 +32,8 @@ defmodule F1Bot.Replay.Server do
     {:ok, state}
   end
 
-  def start_replay(url) do
-    GenServer.call(__MODULE__, {:start_replay, url}, 60_000)
+  def start_replay(url, playback_rate \\ 1) do
+    GenServer.call(__MODULE__, {:start_replay, url, playback_rate}, 60_000)
   end
 
   def stop_replay() do
@@ -44,12 +45,13 @@ defmodule F1Bot.Replay.Server do
   end
 
   @impl true
-  def handle_call({:start_replay, url}, _from, state) do
+  def handle_call({:start_replay, url, playback_rate}, _from, state) do
     if state.in_progress do
       {:reply, {:error, :replay_in_progress}, state}
     else
       state =
         state
+        |> put_in([:playback_rate], playback_rate)
         |> initialize_replay(url)
         |> skip_to_start_and_start_playing()
 
@@ -121,6 +123,10 @@ defmodule F1Bot.Replay.Server do
     # work for replays as the session name and type don't change.
     F1Bot.F1Session.Server.reset_session()
 
+    if state.playback_rate != 1 do
+      F1Bot.F1Session.Server.set_local_time_mode(:last_packet, state.playback_rate)
+    end
+
     state
     |> fast_forward_to_session_start()
     |> schedule_ticks()
@@ -132,7 +138,8 @@ defmodule F1Bot.Replay.Server do
       packets_fn: fn replay_state, _options, packet ->
         processing_options = %ProcessingOptions{
           ignore_reset: true,
-          log_stray_packets: true
+          log_stray_packets: true,
+          local_time_fn: fn -> packet.timestamp end
         }
 
         F1Bot.F1Session.Server.process_live_timing_packet(packet, processing_options)
@@ -167,15 +174,17 @@ defmodule F1Bot.Replay.Server do
     now_system_ms = System.monotonic_time(:millisecond)
     start_system_ms = state.start_system_time
     start_replay_ms = state.start_replay_time
+    rate = state.playback_rate
 
-    max_replay_ms = now_system_ms - start_system_ms + start_replay_ms
+    max_replay_ms = rate * (now_system_ms - start_system_ms) + start_replay_ms
 
     options = %Replay.Options{
       report_progress: true,
       packets_fn: fn replay_state, _options, packet ->
         processing_options = %ProcessingOptions{
           ignore_reset: true,
-          log_stray_packets: true
+          log_stray_packets: true,
+          local_time_fn: fn -> packet.timestamp end
         }
 
         F1Bot.F1Session.Server.process_live_timing_packet(packet, processing_options)
@@ -202,6 +211,7 @@ defmodule F1Bot.Replay.Server do
   defp maybe_handle_replay_end(state) do
     if state.replay_state.dataset == [] do
       Logger.info("[Replay Server] Replay completed.")
+      F1Bot.F1Session.Server.set_local_time_mode(:real)
       state = stop_ticks(state)
 
       if state.demo_mode do

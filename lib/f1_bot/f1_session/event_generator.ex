@@ -22,11 +22,11 @@ defmodule F1Bot.F1Session.EventGenerator do
     to: EventGenerator.Driver,
     as: :lap_time_chart_events
 
-  defdelegate make_periodic_events(session, event_generator),
+  defdelegate make_periodic_events(session, event_generator, local_time),
     to: EventGenerator.Periodic,
     as: :periodic_events
 
-  defdelegate make_state_sync_events(session),
+  defdelegate make_state_sync_events(session, local_time),
     to: EventGenerator.StateSync,
     as: :state_sync_events
 end

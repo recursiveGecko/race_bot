@@ -44,7 +44,7 @@ defmodule F1Bot.F1Session.Clock do
     session_clock_from_server_time(clock, server_time)
   end
 
-  def to_event(clock = %__MODULE__{}, local_time \\ Timex.now()) do
+  def to_event(clock = %__MODULE__{}, local_time) do
     session_clock = session_clock_from_local_time(clock, local_time)
     Event.new("session_clock:changed", session_clock)
   end

@@ -10,7 +10,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.SessionInfo do
   alias F1Bot.F1Session.LiveTimingHandlers
 
   alias F1Bot.F1Session
-  alias LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingResult, ProcessingOptions}
 
   @behaviour LiveTimingHandlers
   @scope "SessionInfo"
@@ -22,10 +22,13 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.SessionInfo do
           topic: @scope,
           data: data
         },
-        options
+        options = %ProcessingOptions{}
       ) do
+    local_time = options.local_time_fn.()
     session_info = F1Bot.F1Session.SessionInfo.parse_from_json(data)
-    {session, events, reset_session} = F1Session.push_session_info(session, session_info, options.ignore_reset)
+
+    {session, events, reset_session} =
+      F1Session.push_session_info(session, session_info, local_time, options.ignore_reset)
 
     result = %ProcessingResult{
       session: session,

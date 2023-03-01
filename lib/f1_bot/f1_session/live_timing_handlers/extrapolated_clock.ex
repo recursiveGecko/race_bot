@@ -8,7 +8,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.ExtrapolatedClock do
 
   alias F1Bot.F1Session
   alias F1Bot.DataTransform.Parse
-  alias LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingResult, ProcessingOptions}
 
   @behaviour LiveTimingHandlers
   @scope "ExtrapolatedClock"
@@ -20,11 +20,11 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.ExtrapolatedClock do
           topic: @scope,
           data: data = %{"Remaining" => remaining, "Utc" => utc}
         },
-        _options
+        options = %ProcessingOptions{}
       ) do
     with {:ok, remaining} <- Parse.parse_session_clock(remaining),
          {:ok, server_time} <- Timex.parse(utc, "{ISO:Extended}") do
-      local_time = Timex.now()
+      local_time = options.local_time_fn.()
       is_running = !!data["Extrapolating"]
 
       {session, events} =

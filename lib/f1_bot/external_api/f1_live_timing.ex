@@ -109,6 +109,7 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
       |> List.flatten()
     else
       nil -> {:error, :missing_years}
+      {:error, e} -> {:error, e}
     end
   end
 
@@ -134,6 +135,7 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
       end
     else
       nil -> {:error, :missing_meetings}
+      {:error, e} -> {:error, e}
     end
   end
 
@@ -162,6 +164,7 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
       end
     else
       nil -> {:error, :missing_feeds}
+      {:error, e} -> {:error, e}
     end
   end
 

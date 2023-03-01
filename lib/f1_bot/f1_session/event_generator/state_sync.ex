@@ -2,12 +2,12 @@ defmodule F1Bot.F1Session.EventGenerator.StateSync do
   alias F1Bot.F1Session
   alias F1Bot.F1Session.EventGenerator.{Driver, Charts}
 
-  def state_sync_events(session = %F1Session{}) do
+  def state_sync_events(session = %F1Session{}, local_time) do
     driver_numbers = 1..99
 
     clock_events =
       if session.clock do
-        [F1Session.Clock.to_event(session.clock)]
+        [F1Session.Clock.to_event(session.clock, local_time)]
       else
         []
       end

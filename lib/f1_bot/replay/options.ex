@@ -28,6 +28,9 @@ defmodule F1Bot.Replay.Options do
     `:packets_fn` implementation. This option has no effect when `:packets_fn` is overriden.
     By default `:events_fn` is unspecified, but `Mix.Tasks.Backtest` for example overrides
     it to broadcast events on the PubSub bus. See module docs for more details.
+
+    * `:processing_options` - a map of options that will be passed to default `:packets_fn`,
+    this option has no effect when `:packets_fn` is overriden.
   """
   use TypedStruct
   alias F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions

@@ -17,6 +17,10 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
   received from SignalR and by `F1Bot.Replay` when processing session replays.
   """
   def process_live_timing_packet(session = %F1Session{}, packet = %Packet{}, options = %ProcessingOptions{}) do
+    if not is_function(options.local_time_fn, 0) do
+      raise ArgumentError, "local_time_fn/0 must be provided in Processing options"
+    end
+
     process_for_topic(session, packet, options)
   end
 

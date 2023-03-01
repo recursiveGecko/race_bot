@@ -21,10 +21,23 @@ defmodule F1Bot.F1Session.Server do
   def init(_init_arg) do
     state = %{
       session: F1Session.new(),
-      tick_interval_ref: :timer.send_interval(50, :periodic_tick)
+      tick_interval_ref: :timer.send_interval(50, :periodic_tick),
+      local_time_from_last_packet: false,
+      last_packet_timestamp: nil,
+      last_packet_local_time: nil,
+      time_extrapolation_rate: 1
     }
 
     {:ok, state}
+  end
+
+  def set_local_time_mode(mode, extrapolation_rate \\ nil) when mode in [:real, :last_packet] do
+    if mode == :last_packet and not is_integer(extrapolation_rate) do
+      raise ArgumentError, "extrapolation_rate must be an integer >= 1 when mode is :last_packet"
+    end
+
+    server_via()
+    |> GenServer.call({:set_local_time_mode, mode, extrapolation_rate})
   end
 
   def state(light_copy) when is_boolean(light_copy) do
@@ -106,6 +119,25 @@ defmodule F1Bot.F1Session.Server do
   end
 
   @impl true
+  def handle_call({:set_local_time_mode, mode, extrapolation_rate}, _from, state = %{}) do
+    use_last_packet = mode == :last_packet
+
+    Logger.warn(
+      "Setting local time mode to :#{mode} (extrapolation at rate: #{inspect(extrapolation_rate)})"
+    )
+
+    state = %{
+      state
+      | local_time_from_last_packet: use_last_packet,
+        time_extrapolation_rate: extrapolation_rate
+    }
+
+    reply = :ok
+
+    {:reply, reply, state}
+  end
+
+  @impl true
   def handle_call({:state, light_copy}, _from, state = %{session: session}) do
     reply =
       if light_copy do
@@ -119,7 +151,8 @@ defmodule F1Bot.F1Session.Server do
 
   @impl true
   def handle_call({:resync_state_events}, _from, state = %{session: session}) do
-    events = F1Session.make_state_sync_events(session)
+    ts = maybe_fake_local_time(state)
+    events = F1Session.make_state_sync_events(session, ts)
     PubSub.broadcast_events(events)
 
     {:reply, :ok, state}
@@ -192,13 +225,14 @@ defmodule F1Bot.F1Session.Server do
 
   @impl true
   def handle_call(
-        {:process_live_timing_packet, packet, processing_options},
+        {:process_live_timing_packet, packet = %Packet{}, processing_options},
         _from,
         state = %{session: session}
       ) do
     options =
       %ProcessingOptions{
-        log_stray_packets: true
+        log_stray_packets: true,
+        local_time_fn: &Timex.now/0
       }
       |> ProcessingOptions.merge(processing_options)
 
@@ -230,14 +264,21 @@ defmodule F1Bot.F1Session.Server do
       PubSub.broadcast_events(events)
     end
 
-    state = %{state | session: session}
+    state = %{
+      state
+      | session: session,
+        last_packet_timestamp: packet.timestamp,
+        last_packet_local_time: System.monotonic_time(:millisecond)
+    }
+
     {:reply, :ok, state}
   end
 
   @impl true
   def handle_call({:replace_session, session}, _from, state) do
+    ts = maybe_fake_local_time(state)
     state = %{state | session: session}
-    events = F1Session.make_state_sync_events(session)
+    events = F1Session.make_state_sync_events(session, ts)
     DelayedEvents.clear_all_caches()
     PubSub.broadcast_events(events)
 
@@ -248,8 +289,9 @@ defmodule F1Bot.F1Session.Server do
 
   @impl true
   def handle_call({:reset_session}, _from, state) do
-    # Ensure all session reset events are sent
-    {session, events} = F1Session.reset_session(state.session)
+    ts = maybe_fake_local_time(state)
+    {session, events} = F1Session.reset_session(state.session, ts)
+
     DelayedEvents.clear_all_caches()
     PubSub.broadcast_events(events)
 
@@ -271,9 +313,11 @@ defmodule F1Bot.F1Session.Server do
 
   @impl true
   def handle_info(:periodic_tick, state = %{session: session}) do
+    ts = maybe_fake_local_time(state)
+
     # Prevent server crashes in development when code is recompiled and module is temporarily unloaded
     try do
-      {session, events} = F1Session.periodic_tick(session)
+      {session, events} = F1Session.periodic_tick(session, ts)
       PubSub.broadcast_events(events)
 
       state = %{state | session: session}
@@ -296,6 +340,35 @@ defmodule F1Bot.F1Session.Server do
   end
 
   defp after_live_timing_packet(_packet, _session), do: :skip
+
+  defp maybe_fake_local_time(state = %{}) do
+    use_packet_ts = state.local_time_from_last_packet
+    last_packet_ts = state.last_packet_timestamp
+    last_packet_local_ms = state.last_packet_local_time
+    extrapolation_rate = state.time_extrapolation_rate
+
+    can_extrapolate =
+      last_packet_ts != nil and last_packet_local_ms != nil and extrapolation_rate != nil
+
+    cond do
+      not use_packet_ts ->
+        Timex.now()
+
+      can_extrapolate ->
+        now = System.monotonic_time(:millisecond)
+        elapsed_ms = (now - last_packet_local_ms) * extrapolation_rate
+        elapsed_duration = Timex.Duration.from_milliseconds(elapsed_ms)
+
+        Timex.add(last_packet_ts, elapsed_duration)
+
+      true ->
+        Logger.warn(
+          "Unable to extrapolate local time from packet timestamp. Using current time instead."
+        )
+
+        Timex.now()
+    end
+  end
 
   def server_via() do
     __MODULE__
