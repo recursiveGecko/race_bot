@@ -259,10 +259,11 @@ defmodule F1Bot.F1Session.Server do
       end
 
     if do_reset_session do
+      Logger.warn("Session has been reset.")
       DelayedEvents.clear_all_caches()
-    else
-      PubSub.broadcast_events(events)
     end
+
+    PubSub.broadcast_events(events)
 
     state = %{
       state

@@ -52,4 +52,9 @@ defmodule F1Bot.F1Session.DriverCache.DriverInfo do
   end
 
   def team_color_int(%__MODULE__{}), do: 0
+
+  def has_personal_info?(info = %__MODULE__{}) do
+    some_name = info.full_name || info.first_name || info.last_name
+    some_name != nil and info.driver_number != nil and info.driver_abbr != nil
+  end
 end

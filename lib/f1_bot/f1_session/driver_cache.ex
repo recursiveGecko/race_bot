@@ -21,7 +21,7 @@ defmodule F1Bot.F1Session.DriverCache do
     driver_list =
       drivers
       |> Map.values()
-      |> Enum.sort_by(&(&1.chart_order), :asc)
+      |> Enum.sort_by(& &1.chart_order, :asc)
 
     {:ok, driver_list}
   end
@@ -52,6 +52,20 @@ defmodule F1Bot.F1Session.DriverCache do
   end
 
   def process_updates(driver_cache, partial_drivers) when is_list(partial_drivers) do
+    all_have_info = Enum.all?(partial_drivers, &DriverInfo.has_personal_info?/1)
+
+    driver_cache =
+      if length(partial_drivers) >= 10 and all_have_info do
+        # Replace existing data instead of amending it
+        new()
+      else
+        driver_cache
+      end
+
+    do_process_updates(driver_cache, partial_drivers)
+  end
+
+  defp do_process_updates(driver_cache, partial_drivers) do
     new_driver_cache =
       Enum.reduce(partial_drivers, driver_cache, fn driver, driver_cache ->
         process_update(driver_cache, driver)

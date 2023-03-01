@@ -1,4 +1,5 @@
 defmodule F1Bot.DelayedEvents do
+  require Logger
   alias F1Bot.DelayedEvents.Rebroadcaster
 
   @min_delay 1_000
@@ -55,18 +56,20 @@ defmodule F1Bot.DelayedEvents do
   end
 
   def clear_all_caches() do
+    Logger.warn("Clearing all delayed events caches")
+
     for delay_ms <- @available_delays do
       Rebroadcaster.clear_cache(delay_ms)
     end
   end
 
-  def push_to_all(events) do
-    for delay_ms <- @available_delays do
-      via = Rebroadcaster.server_via(delay_ms)
+  def push_to_all(_events = []), do: {:ok, :empty}
 
-      for e <- events do
-        send(via, e)
-      end
+  def push_to_all(events) do
+    for e <- events,
+        delay_ms <- @available_delays,
+        via = Rebroadcaster.server_via(delay_ms) do
+      send(via, e)
     end
   end
 

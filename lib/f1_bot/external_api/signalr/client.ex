@@ -84,7 +84,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
         {:gun_ws, _conn_pid, _stream_ref, {:text, "{}"}},
         state = %{state: :subscribed}
       ) do
-    Logger.info("Received SignalR keep-alive")
+    Logger.debug("Received SignalR keep-alive")
     state = %{state | last_keepalive: DateTime.utc_now()}
     {:noreply, state}
   end
