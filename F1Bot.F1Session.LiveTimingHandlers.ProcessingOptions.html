@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-07BFBF03.js"></script>
+    <script src="dist/sidebar_items-3B11DA6F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -111,7 +111,10 @@ f1_bot
 
   <section id="moduledoc">
 <p>Packet processing options.</p><p>Fields:</p><ul><li><code class="inline">:ignore_reset</code> - If true, session reset mechanisms won't fire. This is useful for
-processing session replays</li><li><code class="inline">:log_stray_packets</code> - If true, packets received while session is inactive will be logged.</li><li><code class="inline">:log_drivers</code> - Packets related to specified drivers will be logged to console and log file.</li></ul>
+processing session replays</li><li><code class="inline">:log_stray_packets</code> - If true, packets received while session is inactive will be logged.</li><li><code class="inline">:log_drivers</code> - Packets related to specified drivers will be logged to console and log file.</li><li><code class="inline">:local_time_fn</code> - 0-arity function to get the current local time for the purposes of packet processing.
+This can be overriden so that server time (&quot;Utc&quot; field in many Packets) is used in place of local system time,
+useful when replaying sessions where current local time is irrelevant and leads to inconsistencies such
+as the session clock not being reported correctly due to nearly instant passage of time.</li></ul>
   </section>
 
 
@@ -181,7 +184,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/processing_options.ex#L13" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/processing_options.ex#L17" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -195,6 +198,7 @@ Types
 
           <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions{
   ignore_reset: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>() | nil,
+  local_time_fn: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">function</a>() | nil,
   log_drivers: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">integer</a>()] | nil,
   log_stray_packets: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>() | nil
 }</pre>
@@ -226,7 +230,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">merge(a, b)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/processing_options.ex#L21" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/processing_options.ex#L26" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -248,7 +252,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/processing_options.ex#L19" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/live_timing_handlers/processing_options.ex#L24" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

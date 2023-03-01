@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-07BFBF03.js"></script>
+    <script src="dist/sidebar_items-3B11DA6F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -127,7 +127,8 @@ By default this function will process the packet using
 state in the replay state.</p></li><li><p><code class="inline">:events_fn</code> - a 1-arity function that will receive a list of events produced by <strong>default</strong>
 <code class="inline">:packets_fn</code> implementation. This option has no effect when <code class="inline">:packets_fn</code> is overriden.
 By default <code class="inline">:events_fn</code> is unspecified, but <a href="Mix.Tasks.Backtest.html"><code class="inline">Mix.Tasks.Backtest</code></a> for example overrides
-it to broadcast events on the PubSub bus. See module docs for more details.</p></li></ul>
+it to broadcast events on the PubSub bus. See module docs for more details.</p></li><li><p><code class="inline">:processing_options</code> - a map of options that will be passed to default <code class="inline">:packets_fn</code>,
+this option has no effect when <code class="inline">:packets_fn</code> is overriden.</p></li></ul>
   </section>
 
 
@@ -175,7 +176,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay/options.ex#L35" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/replay/options.ex#L38" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

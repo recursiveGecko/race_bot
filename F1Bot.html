@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-07BFBF03.js"></script>
+    <script src="dist/sidebar_items-3B11DA6F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -207,7 +207,7 @@ and best and average sector times.</p></div>
 
       </div>
 
-        <div class="summary-synopsis"><p>Fast-forwards the session replay started with <a href="#replay_session_realtime/1"><code class="inline">replay_session_realtime/1</code></a>
+        <div class="summary-synopsis"><p>Fast-forwards the session replay started with <a href="#replay_session_live/2"><code class="inline">replay_session_live/2</code></a>
 by a given number of seconds.</p></div>
 
     </div>
@@ -285,13 +285,13 @@ restart.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#replay_session_realtime/1" translate="no">replay_session_realtime(url)</a>
+        <a href="#replay_session_live/2" translate="no">replay_session_live(url, playback_rate \\ 1)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Same as <a href="#reload_session/2"><code class="inline">reload_session/2</code></a>, but it replays the archives in real time,
+        <div class="summary-synopsis"><p>Similar to <a href="#reload_session/2"><code class="inline">reload_session/2</code></a>, but replays the session in live,
 as if the session was currently in progress (equivalent to demo mode).
-Useful for development.</p></div>
+Useful for development and debugging.</p></div>
 
     </div>
 
@@ -376,7 +376,7 @@ or time left on the 2h timer during races.</p></div>
 
       </div>
 
-        <div class="summary-synopsis"><p>Stops the session replay started with <a href="#replay_session_realtime/1"><code class="inline">replay_session_realtime/1</code></a>.</p></div>
+        <div class="summary-synopsis"><p>Stops the session replay started with <a href="#replay_session_live/2"><code class="inline">replay_session_live/2</code></a>.</p></div>
 
     </div>
 
@@ -593,7 +593,7 @@ and best and average sector times.</p>
 
   <section class="docstring">
 
-<p>Fast-forwards the session replay started with <a href="#replay_session_realtime/1"><code class="inline">replay_session_realtime/1</code></a>
+<p>Fast-forwards the session replay started with <a href="#replay_session_live/2"><code class="inline">replay_session_live/2</code></a>
 by a given number of seconds.</p>
   </section>
 </section>
@@ -758,14 +758,16 @@ restart.</p>
 
   </section>
 </section>
-<section class="detail" id="replay_session_realtime/1">
+<section class="detail" id="replay_session_live/2">
+
+    <span id="replay_session_live/1"></span>
 
   <div class="detail-header">
-    <a href="#replay_session_realtime/1" class="detail-link" title="Link to this function">
+    <a href="#replay_session_live/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">replay_session_realtime(url)</h1>
+    <h1 class="signature" translate="no">replay_session_live(url, playback_rate \\ 1)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L207" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -777,9 +779,9 @@ restart.</p>
 
   <section class="docstring">
 
-<p>Same as <a href="#reload_session/2"><code class="inline">reload_session/2</code></a>, but it replays the archives in real time,
+<p>Similar to <a href="#reload_session/2"><code class="inline">reload_session/2</code></a>, but replays the session in live,
 as if the session was currently in progress (equivalent to demo mode).
-Useful for development.</p>
+Useful for development and debugging.</p>
   </section>
 </section>
 <section class="detail" id="reset_session/0">
@@ -964,7 +966,7 @@ are stripped from the copy to reduce its size.</p>
 
   <section class="docstring">
 
-<p>Stops the session replay started with <a href="#replay_session_realtime/1"><code class="inline">replay_session_realtime/1</code></a>.</p>
+<p>Stops the session replay started with <a href="#replay_session_live/2"><code class="inline">replay_session_live/2</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="sync_archive_cache/1">

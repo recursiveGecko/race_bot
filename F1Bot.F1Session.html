@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-07BFBF03.js"></script>
+    <script src="dist/sidebar_items-3B11DA6F.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -187,11 +187,11 @@ that have side effects, such as posting to Twitter, it generates events that are
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#make_state_sync_events/1" translate="no">make_state_sync_events(session)</a>
+        <a href="#make_state_sync_events/2" translate="no">make_state_sync_events(session, local_time)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>See <a href="F1Bot.F1Session.EventGenerator.html#make_state_sync_events/1"><code class="inline">F1Bot.F1Session.EventGenerator.make_state_sync_events/1</code></a>.</p></div>
+        <div class="summary-synopsis"><p>See <a href="F1Bot.F1Session.EventGenerator.html#make_state_sync_events/2"><code class="inline">F1Bot.F1Session.EventGenerator.make_state_sync_events/2</code></a>.</p></div>
 
     </div>
 
@@ -205,7 +205,7 @@ that have side effects, such as posting to Twitter, it generates events that are
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#periodic_tick/1" translate="no">periodic_tick(session)</a>
+        <a href="#periodic_tick/2" translate="no">periodic_tick(session, local_time)</a>
 
       </div>
 
@@ -269,7 +269,7 @@ that have side effects, such as posting to Twitter, it generates events that are
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#push_session_info/3" translate="no">push_session_info(session, session_info, ignore_reset)</a>
+        <a href="#push_session_info/4" translate="no">push_session_info(session, session_info, local_time, ignore_reset)</a>
 
       </div>
 
@@ -309,7 +309,7 @@ that have side effects, such as posting to Twitter, it generates events that are
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#reset_session/1" translate="no">reset_session(session)</a>
+        <a href="#reset_session/2" translate="no">reset_session(session, local_time)</a>
 
       </div>
 
@@ -514,14 +514,14 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="make_state_sync_events/1">
+<section class="detail" id="make_state_sync_events/2">
 
   <div class="detail-header">
-    <a href="#make_state_sync_events/1" class="detail-link" title="Link to this function">
+    <a href="#make_state_sync_events/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">make_state_sync_events(session)</h1>
+    <h1 class="signature" translate="no">make_state_sync_events(session, local_time)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L289" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -533,7 +533,7 @@ Functions
 
   <section class="docstring">
 
-<p>See <a href="F1Bot.F1Session.EventGenerator.html#make_state_sync_events/1"><code class="inline">F1Bot.F1Session.EventGenerator.make_state_sync_events/1</code></a>.</p>
+<p>See <a href="F1Bot.F1Session.EventGenerator.html#make_state_sync_events/2"><code class="inline">F1Bot.F1Session.EventGenerator.make_state_sync_events/2</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="new/0">
@@ -558,14 +558,14 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="periodic_tick/1">
+<section class="detail" id="periodic_tick/2">
 
   <div class="detail-header">
-    <a href="#periodic_tick/1" class="detail-link" title="Link to this function">
+    <a href="#periodic_tick/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">periodic_tick(session)</h1>
+    <h1 class="signature" translate="no">periodic_tick(session, local_time)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L265" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -734,14 +734,14 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_session_info/3">
+<section class="detail" id="push_session_info/4">
 
   <div class="detail-header">
-    <a href="#push_session_info/3" class="detail-link" title="Link to this function">
+    <a href="#push_session_info/4" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_session_info(session, session_info, ignore_reset)</h1>
+    <h1 class="signature" translate="no">push_session_info(session, session_info, local_time, ignore_reset)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L192" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -844,14 +844,14 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="reset_session/1">
+<section class="detail" id="reset_session/2">
 
   <div class="detail-header">
-    <a href="#reset_session/1" class="detail-link" title="Link to this function">
+    <a href="#reset_session/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">reset_session(session)</h1>
+    <h1 class="signature" translate="no">reset_session(session, local_time)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L273" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
