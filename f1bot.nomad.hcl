@@ -50,7 +50,7 @@ job "f1bot-____INSERT_ENV_HERE____" {
 
       check {
         type     = "http"
-        path     = "/"
+        path     = "/health-check"
         interval = "2s"
         timeout  = "2s"
       }
