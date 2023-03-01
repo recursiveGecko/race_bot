@@ -25,6 +25,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
     field(:time, Timex.Duration.t())
     field(:timestamp, DateTime, enforce: true)
     field(:sectors, sector_map())
+    field(:is_outlier, boolean())
   end
 
   def new(args) when is_list(args) do

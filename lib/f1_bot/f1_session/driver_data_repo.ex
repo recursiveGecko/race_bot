@@ -19,6 +19,8 @@ defmodule F1Bot.F1Session.DriverDataRepo do
 
     field(:drivers, map(), default: %{})
     field(:best_stats, DriverDataRepo.BestStats.t(), default: DriverDataRepo.BestStats.new())
+    # a list of {timestamp_ms, time_ms}
+    field(:all_lap_times, [{integer(), integer()}], default: [])
   end
 
   def new do
@@ -50,7 +52,14 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     push_result =
       repo
       |> fetch_or_create_driver_from_repo(driver_number)
-      |> DriverData.push_lap_time(lap_time, timestamp)
+      |> DriverData.push_lap_time(lap_time, timestamp, repo.all_lap_times)
+
+    repo =
+      Map.update(repo, :all_lap_times, [], fn all_lap_times ->
+        time_ms = Timex.Duration.to_milliseconds(lap_time)
+        ts_ms = DateTime.to_unix(timestamp, :millisecond)
+        [{ts_ms, time_ms} | all_lap_times]
+      end)
 
     case push_result do
       {:ok, {driver_data, eol_result = %EndOfLapResult{}}} ->

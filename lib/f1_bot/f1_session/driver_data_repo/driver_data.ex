@@ -38,11 +38,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
   def push_lap_time(
         self = %__MODULE__{},
         lap_time = %Timex.Duration{},
-        timestamp
+        timestamp,
+        all_lap_times
       ) do
     fill_result =
       self.laps
-      |> Laps.fill_by_close_timestamp([time: lap_time], timestamp)
+      |> Laps.fill_by_close_timestamp([time: lap_time], timestamp, all_lap_times)
 
     case fill_result do
       {:ok, laps} ->

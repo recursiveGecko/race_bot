@@ -34,7 +34,8 @@ defmodule F1Bot.Analysis.LapTimes do
             not Lap.is_inlap?(lap, stints),
             not Lap.is_outlap?(lap, stints),
             not Lap.is_outlap_after_red_flag?(lap),
-            not Lap.is_neutralized?(lap, neutralized_periods) do
+            not Lap.is_neutralized?(lap, neutralized_periods),
+            not !!lap.is_outlier do
           lap_to_chart_point(lap)
         end
 

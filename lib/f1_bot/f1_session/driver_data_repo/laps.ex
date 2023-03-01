@@ -49,14 +49,6 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     end
   end
 
-  def sort_by_number(laps, direction \\ :asc) do
-    Enum.sort_by(laps, fn l -> l.number end, direction)
-  end
-
-  def sort_by_timestamp(laps, direction \\ :asc) do
-    Enum.sort_by(laps, fn l -> l.timestamp end, {direction, DateTime})
-  end
-
   def fastest(%__MODULE__{data: data}) do
     lap =
       data
@@ -69,17 +61,26 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     end
   end
 
-  @spec fill_by_close_timestamp(t(), keyword(), DateTime.t()) ::
+  @spec fill_by_close_timestamp(t(), keyword(), DateTime.t(), [{pos_integer(), pos_integer()}]) ::
           {:ok, t()} | {:error, atom()}
   def fill_by_close_timestamp(
         self = %__MODULE__{},
         args,
-        timestamp
+        timestamp,
+        all_lap_times \\ []
       ) do
     if accept_lap_information?(self, args, timestamp) do
       self =
         do_fill_by_close_timestamp(self, args, timestamp)
+        |> mark_outliers(all_lap_times)
         |> fix_laps_data()
+
+      self =
+        if args[:time] do
+          mark_outliers(self, all_lap_times)
+        else
+          self
+        end
 
       {:ok, self}
     else
@@ -119,6 +120,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
       |> sort_by_timestamp(:desc)
 
     %{self | data: new_laps}
+  end
+
+  defp sort_by_timestamp(laps, direction) do
+    Enum.sort_by(laps, fn l -> l.timestamp end, {direction, DateTime})
   end
 
   defp do_fill_by_close_timestamp(
@@ -190,5 +195,69 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
   defp should_fill_lap?(lap, ts) do
     delta_ms = Timex.diff(lap.timestamp, ts, :milliseconds) |> abs()
     delta_ms < @max_data_fill_delay_ms
+  end
+
+  @doc """
+  Determine outliers in the given laps based on lap time compared to
+  all other laps that occurred around a similar time (+/- `outlier_window_ms`).
+  Lap is marked as an outlier if it's greater than `factor` * minimum lap time
+  in the window.
+  """
+  def mark_outliers(laps = %__MODULE__{}, all_lap_times) do
+    laps_sorted = sort_by_timestamp(laps.data, :asc)
+    laps_marked = do_mark_outliers(laps_sorted, all_lap_times, [])
+
+    %{laps | data: laps_marked}
+  end
+
+  defp do_mark_outliers(_laps = [], _laps_window, acc), do: Enum.reverse(acc)
+
+  defp do_mark_outliers([lap | rest_laps], all_lap_times_window, acc) do
+    factor = 100.2
+    outlier_window_ms = 60_000 * 2
+
+    with time when time != nil <- lap.time,
+         time_ms = Timex.Duration.to_milliseconds(time),
+         ts when ts != nil <- lap.timestamp do
+      {window_time_ms, all_lap_times_window} =
+        do_mark_outliers_find_window_time(all_lap_times_window, lap, outlier_window_ms)
+
+      lap =
+        if window_time_ms != nil do
+          is_outlier = time_ms > window_time_ms * factor
+          %{lap | is_outlier: is_outlier}
+        else
+          lap
+        end
+
+      do_mark_outliers(rest_laps, all_lap_times_window, [lap | acc])
+    else
+      nil ->
+        do_mark_outliers(rest_laps, all_lap_times_window, [lap | acc])
+    end
+  end
+
+  defp do_mark_outliers_find_window_time(all_lap_times_window, lap, window_size_ms) do
+    lap_ts_ms = DateTime.to_unix(lap.timestamp, :millisecond)
+    discard_before_ms = lap_ts_ms - window_size_ms
+
+    {_discard, window_without_older_laps} =
+      all_lap_times_window
+      |> Enum.split_while(fn {ts_ms, _time_ms} ->
+        ts_ms < discard_before_ms
+      end)
+
+    {relevant_laps, _rest} =
+      window_without_older_laps
+      |> Enum.split_while(fn {ts_ms, _time_ms} ->
+        ts_ms < lap_ts_ms + window_size_ms
+      end)
+
+    window_time_ms =
+      relevant_laps
+      |> Enum.map(fn {_ts_ms, time_ms} -> time_ms end)
+      |> Enum.min(fn -> nil end)
+
+    {window_time_ms, window_without_older_laps}
   end
 end
