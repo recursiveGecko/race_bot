@@ -213,7 +213,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
   defp do_mark_outliers(_laps = [], _laps_window, acc), do: Enum.reverse(acc)
 
   defp do_mark_outliers([lap | rest_laps], all_lap_times_window, acc) do
-    factor = 100.2
+    factor = 1.2
     outlier_window_ms = 60_000 * 2
 
     with time when time != nil <- lap.time,
