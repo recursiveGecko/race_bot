@@ -76,11 +76,12 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
   end
 
   @impl true
-  def handle_info(
-        event = %{scope: _, payload: _},
-        state
-      ) do
-    state = update_in(state.events, &(&1 ++ [event]))
+  def handle_info({:events, events}, state) do
+    # Events should be sorted by timestamp,
+    # no further sorting is performed here because
+    # other parts of the system (currently) generate events
+    # with the current timestamp, which gives them natural order
+    state = update_in(state.events, &(&1 ++ events))
 
     {:noreply, state}
   end
@@ -88,6 +89,7 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
   defp rebroadcast_batch(%{events: []} = state, _until_ts), do: state
 
   defp rebroadcast_batch(%{events: [event | rest_events]} = state, until_ts) do
+    # Assumes that events are approximately sorted by timestamp
     if event.timestamp <= until_ts do
       save_latest_event(state, event)
       do_rebroadcast(state, event)

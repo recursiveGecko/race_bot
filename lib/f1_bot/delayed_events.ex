@@ -66,10 +66,9 @@ defmodule F1Bot.DelayedEvents do
   def push_to_all(_events = []), do: {:ok, :empty}
 
   def push_to_all(events) do
-    for e <- events,
-        delay_ms <- @available_delays,
+    for delay_ms <- @available_delays,
         via = Rebroadcaster.server_via(delay_ms) do
-      send(via, e)
+      send(via, {:events, events})
     end
   end
 
