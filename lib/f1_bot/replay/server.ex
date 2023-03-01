@@ -122,10 +122,7 @@ defmodule F1Bot.Replay.Server do
     # Manually reset the session. The automatic reset logic won't
     # work for replays as the session name and type don't change.
     F1Bot.F1Session.Server.reset_session()
-
-    if state.playback_rate != 1 do
-      F1Bot.F1Session.Server.set_local_time_mode(:last_packet, state.playback_rate)
-    end
+    F1Bot.F1Session.Server.set_local_time_mode(:last_packet, state.playback_rate)
 
     state
     |> fast_forward_to_session_start()
