@@ -28,7 +28,7 @@
         </Component.PopupLink>
       </div>
 
-      <div class="mt-4 grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,25rem)] auto-rows-min">
+      <div class="mt-4 grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,27rem)] auto-rows-min">
         {#for driver_info <- @driver_list}
           <Component.DriverSummary
             :if={driver_info.driver_number in @drivers_of_interest}
