@@ -191,7 +191,7 @@ defmodule F1BotWeb.Component.DriverSummary do
                 </span>
               </div>
 
-              <div class="mt-0.5 grid grid-cols-[minmax(max-content,5.3fr)_repeat(3,1fr)] sm:grid-cols-4 gap-0.5">
+              <div class="mt-0.5 grid grid-cols-[minmax(max-content,1.3fr)_repeat(3,1fr)] sm:grid-cols-4 gap-0.5">
                 <div class="contents">
                   <span class="text-sm" title="Fastest lap">
                     <span class="block sm:hidden">&nbsp;</span>
