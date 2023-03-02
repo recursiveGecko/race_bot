@@ -13,7 +13,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
 
   def generate(data = %DriverData{}, track_status_hist = %TrackStatusHistory{}) do
     stints = stints(data, track_status_hist)
-    stats = aggregate_stats(data, stints)
+    stats = aggregate_stats(data)
 
     %{
       stints: stints,
@@ -75,25 +75,27 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
        when is_struct(next_stint, Stint) or is_nil(next_stint) do
     last_recorded_lap = laps |> List.last()
 
-    lap_end =
+    # Remove outlap
+    timed_laps_start = stint.lap_number + 1
+
+    {stint_end_lap, timed_laps_end} =
       cond do
         next_stint != nil ->
-          next_stint.lap_number - 1
+          # Remove inlap
+          inlap = next_stint.lap_number - 1
+          {inlap, inlap - 1}
 
         last_recorded_lap != nil ->
-          last_recorded_lap
-          |> Map.fetch!(:number)
-          |> max(stint.lap_number)
+          last_lap =
+            last_recorded_lap
+            |> Map.fetch!(:number)
+            |> max(stint.lap_number)
+
+          {last_lap, last_lap}
 
         true ->
-          stint.lap_number
+          {stint.lap_number, stint.lap_number}
       end
-
-    # Keep outlap for now to determine stint start time
-    timed_laps_start = stint.lap_number
-
-    # Keep inlap
-    timed_laps_end = lap_end
 
     relevant_laps =
       find_relevant_laps(
@@ -103,24 +105,13 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
         neutralized_intervals
       )
 
-    # Remove outlap and determine stint start time
-    {stint_start_time, relevant_laps} =
-      case relevant_laps do
-        [outlap | relevant_laps] ->
-          start_time = stint.timestamp || outlap.timestamp
-          {start_time, relevant_laps}
-
-        [] ->
-          {stint.timestamp, []}
-      end
-
     %{
       number: stint.number,
       compound: stint.compound,
       tyre_age: stint.age,
-      start_time: stint_start_time,
+      start_time: stint.timestamp,
       lap_start: stint.lap_number,
-      lap_end: lap_end,
+      lap_end: stint_end_lap,
       timed_laps: length(relevant_laps),
       stats: find_lap_times(relevant_laps)
     }
@@ -214,24 +205,10 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     }
   end
 
-  defp aggregate_stats(data, stints) do
-    fastest_s1 =
-      stints
-      |> Enum.map(& &1.stats.s1_time.fastest)
-      |> Enum.reject(&(&1 == nil))
-      |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
-
-    fastest_s2 =
-      stints
-      |> Enum.map(& &1.stats.s2_time.fastest)
-      |> Enum.reject(&(&1 == nil))
-      |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
-
-    fastest_s3 =
-      stints
-      |> Enum.map(& &1.stats.s3_time.fastest)
-      |> Enum.reject(&(&1 == nil))
-      |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
+  defp aggregate_stats(driver_data) do
+    fastest_s1 = fastest_sector(driver_data, 1)
+    fastest_s2 = fastest_sector(driver_data, 2)
+    fastest_s3 = fastest_sector(driver_data, 3)
 
     theoretical_fl =
       if nil in [fastest_s1, fastest_s2, fastest_s3] do
@@ -243,9 +220,9 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
       end
 
     fastest_lap =
-      stints
-      |> Enum.map(& &1.stats.lap_time.fastest)
-      |> Enum.reject(&(&1 == nil))
+      driver_data.laps.data
+      |> Stream.map(& &1.time)
+      |> Stream.filter(&(&1 != nil))
       |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
 
     %{
@@ -262,7 +239,14 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
       s3_time: %{
         fastest: fastest_s3
       },
-      top_speed: data.top_speed
+      top_speed: driver_data.top_speed
     }
+  end
+
+  defp fastest_sector(driver_data, sector) do
+    driver_data.laps.data
+    |> Stream.map(& &1.sectors[sector][:time])
+    |> Stream.filter(&(&1 != nil))
+    |> Enum.min_by(&Timex.Duration.to_milliseconds/1, fn -> nil end)
   end
 end

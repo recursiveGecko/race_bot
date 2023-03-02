@@ -32,7 +32,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
       number: lap_number,
       time: duration(time_sec),
       timestamp: nil,
-      sectors: sectors
+      sectors: sectors,
+      is_outlier: false
     }
   end
 
@@ -58,7 +59,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
         generate_lap(1, 1000, generate_sectors(nil, 60, 70)),
         generate_lap(2, 80, generate_sectors(nil, 20, nil)),
         generate_lap(3, 90, generate_sectors(40, 25, nil)),
-        generate_lap(4, 100, generate_sectors(40, nil, 50)),
+        generate_lap(4, 100, generate_sectors(30, nil, 50)),
         generate_lap(5, 1000, generate_sectors(nil, 80, 90)),
         generate_lap(6, 80, generate_sectors(nil, nil, 30)),
         generate_lap(7, 95, generate_sectors(30, 20, nil)),
@@ -91,11 +92,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
           start_time: nil,
           compound: Enum.at(stints.data, 0) |> Map.fetch!(:compound),
           tyre_age: Enum.at(stints.data, 0) |> Map.fetch!(:age),
-          timed_laps: 3,
+          timed_laps: 2,
           stats: %{
             lap_time: %{
               fastest: duration(80),
-              average: duration(90),
+              # Lap 1 is excluded as outlap and lap 4 is excluded as inlap
+              average: duration(85),
             },
             s1_time: %{
               fastest: duration(40),
@@ -106,8 +108,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
               average: duration(22.5)
             },
             s3_time: %{
-              fastest: duration(50),
-              average: duration(50)
+              fastest: nil,
+              average: nil
             },
           }
         },
@@ -118,19 +120,20 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
           start_time: nil,
           compound: Enum.at(stints.data, 1) |> Map.fetch!(:compound),
           tyre_age: Enum.at(stints.data, 1) |> Map.fetch!(:age),
-          timed_laps: 4,
+          timed_laps: 3,
           stats: %{
             lap_time: %{
               fastest: duration(80),
-              average: duration(100),
+              # Lap 5 is excluded as outlap and lap 9 is excluded as inlap
+              average: duration(90),
             },
             s1_time: %{
               fastest: duration(30),
-              average: duration(40)
+              average: duration(35)
             },
             s2_time: %{
               fastest: duration(10),
-              average: duration(20)
+              average: duration(15)
             },
             s3_time: %{
               fastest: duration(30),
@@ -149,6 +152,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.SummaryTest do
           stats: %{
             lap_time: %{
               fastest: duration(60),
+              # Lap 10 is excluded as outlap
               average: duration(75),
             },
             s1_time: %{

@@ -2,8 +2,15 @@ defmodule F1Bot.DataTransform.Format do
   @moduledoc false
   alias F1Bot.DataTransform.Format
 
-  def format_lap_time(duration) do
-    case Timex.format_duration(duration, Format.LapTimeDuration) do
+  def format_lap_time(duration, maybe_drop_minutes \\ false) do
+    formatter =
+      if maybe_drop_minutes and Timex.Duration.to_milliseconds(duration) < 60_000 do
+        Format.LapTimeDurationNoMinutes
+      else
+        Format.LapTimeDuration
+      end
+
+    case Timex.format_duration(duration, formatter) do
       {:error, _err} -> "ERROR"
       val -> val
     end

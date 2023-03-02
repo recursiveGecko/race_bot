@@ -36,9 +36,16 @@ defmodule F1BotWeb.Component.LapTimeField do
   end
 
   defp format_value(stats, kind) do
+    maybe_drop_minutes =
+      case kind do
+        {:fastest_sector, _} -> true
+        {:average_sector, _} -> true
+        _ -> false
+      end
+
     case extract_stat(stats, kind) do
       nil -> "—"
-      value -> Format.format_lap_time(value)
+      value -> Format.format_lap_time(value, maybe_drop_minutes)
     end
   end
 
