@@ -134,6 +134,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData.Summary do
     end)
     |> Stream.reject(&Lap.is_outlap_after_red_flag?/1)
     |> Stream.reject(&Lap.is_neutralized?(&1, neutralized_intervals))
+    |> Stream.reject(fn %Lap{is_outlier: outlier} -> !!outlier end)
     |> Enum.sort_by(fn %Lap{number: number} -> number end, :asc)
   end
 
