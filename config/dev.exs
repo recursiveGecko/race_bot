@@ -6,7 +6,8 @@ config :f1_bot,
   start_twitter: false,
   discord_api_module: F1Bot.ExternalApi.Discord.Console,
   twitter_api_module: F1Bot.ExternalApi.Twitter.Console,
-  default_delay_ms: 1_000
+  default_delay_ms: 1_000,
+  auto_reload_session: false
 
 config :logger,
   level: :info

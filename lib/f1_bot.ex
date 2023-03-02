@@ -42,6 +42,13 @@ defmodule F1Bot do
     F1Bot.F1Session.Server.driver_list()
   end
 
+  def api_is_not_streaming?() do
+    case F1Bot.ExternalApi.F1LiveTiming.streaming_status() do
+      {:ok, %{"Status" => "Offline"}} -> true
+      _ -> false
+    end
+  end
+
   @doc """
   Returns the race summary of the driver with the given number which
   contains the driver's stints, top speed, best and average lap times,
@@ -184,18 +191,18 @@ defmodule F1Bot do
       processing_options: processing_opts
     }
 
-    with {_, status} when status in [:ends, :finalised, :not_available] <- session_status(),
+    with true <- api_is_not_streaming?(),
          {:ok, url} <- url_result,
          {:ok, %{session: session}} <- Replay.start_replay(url, replay_options) do
       F1Bot.F1Session.Server.replace_session(session)
     else
-      {:ok, session_status} ->
-        Logger.error("Unable to reload data, session status is #{inspect(session_status)}")
-        {:error, :invalid_session_status}
-
       {:error, err} ->
         Logger.error("Unable to reload data, error: #{inspect(err)}")
         {:error, err}
+
+      false ->
+        Logger.error("Unable to reload data, streaming status is not 'Offline'")
+        {:error, :stream_not_offline}
     end
   end
 
@@ -205,7 +212,12 @@ defmodule F1Bot do
   Useful for development and debugging.
   """
   def replay_session_live(url, playback_rate \\ 1) do
-    Replay.Server.start_replay(url, playback_rate)
+    if api_is_not_streaming?() do
+      Replay.Server.start_replay(url, playback_rate)
+    else
+      Logger.error("Unable to replay data, streaming status is not 'Offline'")
+      {:error, :stream_not_offline}
+    end
   end
 
   @doc """

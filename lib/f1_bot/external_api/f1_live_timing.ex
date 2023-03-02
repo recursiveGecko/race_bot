@@ -21,6 +21,13 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
     |> parse_json_response()
   end
 
+  def streaming_status(base_url \\ @api_base) do
+    url = api_url(base_url, "StreamingStatus.json")
+
+    request(:get, url)
+    |> parse_json_response()
+  end
+
   def current_archive_url_if_completed() do
     with {:ok, response} <- session_info(),
          %{"Status" => "Complete"} <- response["ArchiveStatus"],
