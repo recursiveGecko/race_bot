@@ -4,18 +4,13 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
   """
   use TypedStruct
 
-  alias F1Bot.F1Session.DriverDataRepo.Stints
+  alias F1Bot.F1Session.DriverDataRepo.{Stints, Sector}
   alias F1Bot.F1Session.TrackStatusHistory
 
-  @type sector_data :: %{
-          time: Timex.Duration.t() | nil,
-          timestamp: DateTime.t() | nil
-        }
-
   @type sector_map :: %{
-          1 => sector_data(),
-          2 => sector_data(),
-          3 => sector_data()
+          1 => Sector.t() | nil,
+          2 => Sector.t() | nil,
+          3 => Sector.t() | nil
         }
 
   typedstruct do
@@ -23,22 +18,22 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
 
     field(:number, pos_integer())
     field(:time, Timex.Duration.t())
-    field(:timestamp, DateTime, enforce: true)
-    field(:sectors, sector_map())
+    field(:timestamp, DateTime.t())
+
+    field(:sectors, sector_map(),
+      default: %{1 => nil, 2 => nil, 3 => nil}
+    )
+
     field(:is_outlier, boolean())
+    field(:is_valid, boolean(), default: true)
+    # TODO: Not implemened yet
+    field(:is_deleted, boolean(), default: false)
+    field(:top_speed, pos_integer(), default: 0)
   end
 
   def new(args) when is_list(args) do
     struct!(__MODULE__, args)
   end
-
-  @spec new_clean_sector_map() :: sector_map()
-  def new_clean_sector_map,
-    do: %{
-      1 => %{time: nil, timestamp: nil},
-      2 => %{time: nil, timestamp: nil},
-      3 => %{time: nil, timestamp: nil}
-    }
 
   @spec is_neutralized?(t(), [TrackStatusHistory.interval()]) :: boolean()
   def is_neutralized?(lap = %__MODULE__{}, neutralized_intervals) do
@@ -75,7 +70,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
   def is_inlap?(lap = %__MODULE__{}, stints = %Stints{}) do
     inlaps =
       stints.data
-      |> Enum.map(& &1.lap_number - 1)
+      |> Enum.map(&(&1.lap_number - 1))
 
     lap.number in inlaps
   end
@@ -87,23 +82,5 @@ defmodule F1Bot.F1Session.DriverDataRepo.Lap do
       |> Enum.map(& &1.lap_number)
 
     lap.number in outlaps
-  end
-
-  @spec has_any_sector_time?(sector_map()) :: boolean()
-  def has_any_sector_time?(sectors) do
-    non_nil_sector_times =
-      sectors
-      |> Map.values()
-      |> Enum.map(fn s -> s.time end)
-      |> Enum.filter(&(&1 != nil))
-
-    not Enum.empty?(non_nil_sector_times)
-  end
-
-  def merge_with_args(lap, args) do
-    new_args = args |> Enum.into(%{})
-
-    # Do not replace existing fields
-    MapUtils.patch_missing(lap, new_args)
   end
 end

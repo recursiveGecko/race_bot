@@ -38,7 +38,7 @@ defmodule Integration.Canada2022QualiTest do
     all_driver_data = session.driver_data_repo.drivers
 
     for driver_data <- Map.values(all_driver_data),
-        lap <- driver_data.laps.data do
+        lap <- Map.values(driver_data.laps.data) do
       lap
     end
   end

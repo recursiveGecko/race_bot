@@ -165,6 +165,7 @@ defmodule F1Bot.Replay do
       %ProcessingOptions{
         log_stray_packets: false,
         ignore_reset: true,
+        skip_heavy_events: true,
         local_time_fn: fn -> packet.timestamp end
       }
       |> ProcessingOptions.merge(options.processing_options)

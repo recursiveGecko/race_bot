@@ -113,6 +113,15 @@ defmodule F1Bot.F1Session.Server do
     |> GenServer.call({:reset_session})
   end
 
+  @doc """
+  Calls the given function with current F1Session as argument,
+  the function should return the modified F1Session.
+  """
+  def evaluate(session_fn) when is_function(session_fn, 1) do
+    server_via()
+    |> GenServer.call({:evaluate, session_fn})
+  end
+
   def session_clock_from_local_time(local_time) do
     server_via()
     |> GenServer.call({:session_clock_from_local_time, local_time})
@@ -152,7 +161,10 @@ defmodule F1Bot.F1Session.Server do
   @impl true
   def handle_call({:resync_state_events}, _from, state = %{session: session}) do
     ts = maybe_fake_local_time(state)
-    events = F1Session.make_state_sync_events(session, ts)
+
+    {session, events} = F1Session.make_state_sync_events(session, ts)
+    state = %{state | session: session}
+
     PubSub.broadcast_events(events)
 
     {:reply, :ok, state}
@@ -278,8 +290,10 @@ defmodule F1Bot.F1Session.Server do
   @impl true
   def handle_call({:replace_session, session}, _from, state) do
     ts = maybe_fake_local_time(state)
+
+    {session, events} = F1Session.make_state_sync_events(session, ts)
     state = %{state | session: session}
-    events = F1Session.make_state_sync_events(session, ts)
+
     DelayedEvents.clear_all_caches()
     PubSub.broadcast_events(events)
 
@@ -313,6 +327,30 @@ defmodule F1Bot.F1Session.Server do
   end
 
   @impl true
+  def handle_call({:evaluate, session_fn}, _from, state = %{session: session}) do
+    try do
+      new_session = session_fn.(session)
+
+      {reply, session} =
+        if is_struct(new_session, F1Session) do
+          {:ok, new_session}
+        else
+          reply = {:error, :function_must_return_session}
+          {reply, session}
+        end
+
+      state = %{state | session: session}
+      {:reply, reply, state}
+    rescue
+      _e ->
+        Logger.error("Rescued an error in :evaluate")
+        Logger.error("Stacktrace: \n#{Exception.format_stacktrace(__STACKTRACE__)}")
+
+        {:noreply, state}
+    end
+  end
+
+  @impl true
   def handle_info(:periodic_tick, state = %{session: session}) do
     ts = maybe_fake_local_time(state)
 
@@ -324,8 +362,9 @@ defmodule F1Bot.F1Session.Server do
       state = %{state | session: session}
       {:noreply, state}
     rescue
-      _e ->
-        Logger.error("Rescued an error in periodic tick")
+      e ->
+        err_text = Exception.format(:error, e, __STACKTRACE__)
+        Logger.error("Rescued an error in periodic tick: #{err_text}")
         Logger.error("Stacktrace: \n#{Exception.format_stacktrace(__STACKTRACE__)}")
 
         {:noreply, state}

@@ -12,7 +12,12 @@ defmodule F1BotWeb.Component.PopupLink do
   def render(assigns) do
     ~F"""
     <button id={@id}
-            class={"transition-all inline-flex items-center font-semibold text-white rounded", "bg-blue-500", "hover:bg-blue-700", "py-1 px-2", @class}
+            class={
+              "transition-all inline-flex items-center",
+              "font-semibold text-white rounded",
+              "bg-blue-500", "hover:bg-blue-700", "py-1 px-2",
+              @class
+            }
             data-href={@href}
             data-width={@width}
             data-height={@height}

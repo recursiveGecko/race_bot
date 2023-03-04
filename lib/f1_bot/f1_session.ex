@@ -11,6 +11,7 @@ defmodule F1Bot.F1Session do
 
   alias F1Bot.F1Session
   alias F1Bot.F1Session.Common.Event
+  alias F1Bot.F1Session.LiveTimingHandlers.TimingData
 
   typedstruct do
     @typedoc "F1 Session State"
@@ -50,7 +51,7 @@ defmodule F1Bot.F1Session do
   end
 
   def driver_session_data(session, driver_number) when is_integer(driver_number) do
-    F1Session.DriverDataRepo.info(session.driver_data_repo, driver_number)
+    F1Session.DriverDataRepo.fetch(session.driver_data_repo, driver_number)
   end
 
   def session_best_stats(session) do
@@ -65,71 +66,45 @@ defmodule F1Bot.F1Session do
     {session, events}
   end
 
-  def push_sector_time(session, driver_number, sector, sector_time, timestamp)
-      when is_integer(driver_number) do
+  def push_timing_data(
+        session,
+        timing_data = %TimingData{},
+        skip_heavy_events \\ false
+      ) do
     {repo, events} =
-      session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_sector_time(driver_number, sector, sector_time, timestamp)
+      F1Session.DriverDataRepo.push_timing_data(
+        session.driver_data_repo,
+        timing_data
+      )
 
     session = %{session | driver_data_repo: repo}
 
     events =
       events
       |> Event.attach_session_info(session)
-      |> Event.attach_driver_info(session, [driver_number])
+      |> Event.attach_driver_info(session, [timing_data.driver_number])
 
-    driver_data_events =
-      F1Session.EventGenerator.make_events_on_any_new_driver_data(session, driver_number)
+    if !skip_heavy_events do
+      {session, driver_data_events} =
+        F1Session.EventGenerator.make_events_on_any_new_driver_data(
+          session,
+          timing_data.driver_number
+        )
 
-    events = events ++ driver_data_events
-
-    {session, events}
+      events = events ++ driver_data_events
+      {session, events}
+    else
+      {session, []}
+    end
   end
 
-  def push_lap_time(session, driver_number, lap_time, timestamp) when is_integer(driver_number) do
-    push_result =
-      session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_lap_time(driver_number, lap_time, timestamp)
-
-    {repo, events} =
-      case push_result do
-        {:ok, {repo, events}} ->
-          {repo, events}
-
-        {:error, _error} ->
-          {session.driver_data_repo, []}
-      end
-
-    session = %{session | driver_data_repo: repo}
-
-    events =
-      events
-      |> Event.attach_session_info(session)
-      |> Event.attach_driver_info(session, [driver_number])
-
-    driver_data_events =
-      F1Session.EventGenerator.make_events_on_any_new_driver_data(session, driver_number)
-
-    lap_time_chart_events =
-      F1Session.EventGenerator.make_lap_time_chart_events(session, driver_number, nil)
-
-    events = events ++ driver_data_events ++ lap_time_chart_events
-
-    {session, events}
-  end
-
-  def push_lap_number(session, driver_number, lap_number, timestamp)
+  def push_stint_data(
+        session,
+        driver_number,
+        stint_data,
+        skip_heavy_events \\ false
+      )
       when is_integer(driver_number) do
-    driver_data_repo =
-      session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_lap_number(driver_number, lap_number, timestamp)
-
-    session = %{session | driver_data_repo: driver_data_repo}
-
-    {session, []}
-  end
-
-  def push_stint_data(session, driver_number, stint_data) when is_integer(driver_number) do
     {repo, events} =
       session.driver_data_repo
       |> F1Session.DriverDataRepo.push_stint_data(driver_number, stint_data)
@@ -141,12 +116,15 @@ defmodule F1Bot.F1Session do
       |> Event.attach_session_info(session)
       |> Event.attach_driver_info(session, [driver_number])
 
-    driver_data_events =
-      F1Session.EventGenerator.make_events_on_any_new_driver_data(session, driver_number)
+    if !skip_heavy_events do
+      {session, driver_data_events} =
+        F1Session.EventGenerator.make_events_on_any_new_driver_data(session, driver_number)
 
-    events = events ++ driver_data_events
-
-    {session, events}
+      events = events ++ driver_data_events
+      {session, events}
+    else
+      {session, []}
+    end
   end
 
   def push_telemetry(session, driver_number, channels) when is_integer(driver_number) do
@@ -282,7 +260,9 @@ defmodule F1Bot.F1Session do
         clock: nil
     }
 
-    state_sync_events = F1Session.EventGenerator.make_state_sync_events(session, local_time)
+    {session, state_sync_events} =
+      F1Session.EventGenerator.make_state_sync_events(session, local_time)
+
     {session, state_sync_events}
   end
 

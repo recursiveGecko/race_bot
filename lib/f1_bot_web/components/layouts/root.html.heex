@@ -1,43 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix=" ~ Race Bot">
       <%= assigns[:page_title] || "F1 Live Telemetry" %>
     </.live_title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"}>
-    <script defer data-domain={phx_host()} src="https://hits.recursiveprojects.cloud/js/script.js"></script>
-    <script
-      defer
-      phx-track-static
-      type="text/javascript"
-      src={~p"/assets/app.js"}
-    />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer data-domain={phx_host()} src="https://hits.recursiveprojects.cloud/js/script.js">
+    </script>
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"} />
   </head>
   <body class="bg-slate-50 font-exo2 min-h-screen flex flex-col">
     <div class="flex-[1_0_auto]">
       <%= @inner_content %>
     </div>
 
-    <footer class="mt-4 p-2 bg-slate-200 flex flex-col">
-      <div class="flex justify-center">
-        <.other_site_link class="mr-4 p-2" />
+    <footer class="mt-4 p-3 bg-slate-200">
+      <div class="w-max mx-auto grid sm:grid-cols-2 gap-2">
+        <.other_site_link class="" />
 
-        <span class="mr-4 p-2">
-          Developed by <span class="font-semibold">recursiveGecko</span>
-        </span>
+        <a
+          class="flex items-center shrink-0"
+          href="https://twitter.com/LiveRaceBot"
+        >
+          <Heroicons.link class="w-5 h-5 mr-1" /> Twitter
+        </a>
 
-        <a class="inline-flex items-center font-semibold p-2 mr-4" href="https://github.com/recursiveGecko/race_bot">
-          <Heroicons.code_bracket mini class="w-5 h-5 mr-1"/>
-          GitHub
+        <a
+          class="flex items-center shrink-0"
+          href="https://github.com/recursiveGecko/race_bot"
+        >
+          <Heroicons.code_bracket class="w-5 h-5 mr-1" /> GitHub
+        </a>
+
+        <a
+          class="flex items-center shrink-0"
+          href="https://github.com/recursiveGecko/race_bot/discussions/new?category=ideas"
+        >
+          <Heroicons.light_bulb class="w-5 h-5 mr-1" /> Ideas & Feedback
+        </a>
+
+        <a
+          class="flex items-center shrink-0"
+          href="https://github.com/recursiveGecko/race_bot/issues"
+        >
+          <Heroicons.exclamation_triangle class="w-5 h-5 mr-1" /> Bug Reports
         </a>
       </div>
 
-      <div class="mt-2 text-sm font-light italic text-center ml-auto mr-auto text-sm max-w-2xl">
+      <div class="mt-3 mx-auto text-sm font-light italic text-center text-sm max-w-2xl">
         This is a fan project. All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.
       </div>
     </footer>

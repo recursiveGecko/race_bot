@@ -9,7 +9,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
   import LiveTimingHandlers.Helpers
 
   alias F1Bot.F1Session
-  alias LiveTimingHandlers.{Packet, ProcessingResult}
+  alias LiveTimingHandlers.{Packet, ProcessingOptions, ProcessingResult}
 
   @behaviour LiveTimingHandlers
   @scope "TimingAppData"
@@ -61,7 +61,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
          {driver_number, data},
          {session, events},
          timestamp,
-         options
+         options = %ProcessingOptions{}
        ) do
     %{"Stints" => stints} = data
 
@@ -109,13 +109,20 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.StintData do
           case raw_tyres_not_changed do
             nil -> nil
             val -> val == "0"
-          end,
+          end
         # lap_number: lap_number
       }
 
       maybe_log_driver_data("Stint data", driver_number, {timestamp, data}, options)
 
-      {session, new_events} = F1Session.push_stint_data(session, driver_number, stint_data)
+      {session, new_events} =
+        F1Session.push_stint_data(
+          session,
+          driver_number,
+          stint_data,
+          !!options.skip_heavy_events
+        )
+
       {session, events ++ new_events}
     end)
   end

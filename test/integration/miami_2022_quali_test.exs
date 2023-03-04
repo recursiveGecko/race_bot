@@ -33,10 +33,13 @@ defmodule Integration.Miami2022QualiTest do
 
   defp laps_for_driver(session, driver_number) do
     {:ok, driver_data} = F1Session.driver_session_data(session, driver_number)
-    driver_data.laps.data |> order_laps()
+
+    driver_data.laps.data
+    |> Map.values()
+    |> order_laps()
   end
 
   defp order_laps(laps) do
-    Enum.sort_by(laps, fn l -> l.timestamp end, {:asc, DateTime})
+    Enum.sort_by(laps, fn l -> l.number end, :asc)
   end
 end

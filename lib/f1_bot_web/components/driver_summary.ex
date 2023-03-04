@@ -1,11 +1,12 @@
 defmodule F1BotWeb.Component.DriverSummary do
   use F1BotWeb, :live_component
   alias F1BotWeb.Component
+  alias F1Bot.F1Session.DriverDataRepo.Summary
 
   prop delay_ms, :integer, required: true
   prop driver_info, :map, required: true
-  data driver_summary, :map
-  data session_best_stats, :map
+  data driver_summary, :map, default: Summary.empty_summary()
+  data initial_load_complete, :boolean, default: false
 
   @impl true
   def update(assigns, socket) do
@@ -28,41 +29,28 @@ defmodule F1BotWeb.Component.DriverSummary do
     delayed_payload = fetch_delayed_event_payload("driver:#{driver_no}:summary", delay_ms, nil)
 
     driver_summary =
-      case delayed_payload[:driver_summary] do
-        nil ->
-          F1Bot.F1Session.DriverDataRepo.DriverData.Summary.empty_summary()
-
-        value ->
-          value
-      end
-
-    session_best_stats =
-      case delayed_payload[:session_best_stats] do
-        nil ->
-          F1Bot.F1Session.DriverDataRepo.BestStats.new()
-          |> Map.from_struct()
-
-        value ->
-          value
+      if delayed_payload[:driver_summary] != nil do
+        delayed_payload[:driver_summary]
+      else
+        socket.assigns.driver_summary
       end
 
     socket
     |> assign(:initial_load_complete, true)
     |> assign(:driver_summary, driver_summary)
-    |> assign(:session_best_stats, session_best_stats)
   end
 
-  def handle_summary_event(_event = %{scope: "driver_summary:" <> _driver_number, payload: payload}) do
+  def handle_summary_event(
+        _event = %{scope: "driver_summary:" <> _driver_number, payload: payload}
+      ) do
     %{
       driver_number: driver_number,
-      driver_summary: driver_summary,
-      session_best_stats: session_best_stats
+      driver_summary: driver_summary
     } = payload
 
     send_update(__MODULE__,
       id: driver_number,
-      driver_summary: driver_summary,
-      session_best_stats: session_best_stats
+      driver_summary: driver_summary
     )
   end
 
@@ -95,12 +83,8 @@ defmodule F1BotWeb.Component.DriverSummary do
             <!-- <span class="hidden sm:inline-block">Fastest Lap</span> -->
             <span class="___sm:hidden">FL</span>
             <Component.LapTimeField
-              id={generate_field_id(@driver_info, :fastest_lap)}
-              class="px-0.5 rounded border"
-              stats={@driver_summary.stats}
-              personal_best_stats={@driver_summary.stats}
-              session_best_stats={@session_best_stats}
-              kind={:fastest_lap}
+              id={field_id(@driver_info, :fastest_lap)}
+              stat={@driver_summary.stats.lap_time.fastest}
             />
           </div>
 
@@ -111,48 +95,32 @@ defmodule F1BotWeb.Component.DriverSummary do
             <!-- <span class="hidden sm:inline-block">Theoretical FL</span> -->
             <span class="___sm:hidden">TFL</span>
             <Component.LapTimeField
-              id={generate_field_id(@driver_info, :theoretical_fl)}
-              class="px-0.5 rounded border"
-              stats={@driver_summary.stats}
-              personal_best_stats={@driver_summary.stats}
-              session_best_stats={@session_best_stats}
-              kind={:theoretical_fl}
+              id={field_id(@driver_info, :theoretical_fl)}
+              stat={@driver_summary.stats.lap_time.theoretical}
             />
           </div>
 
           <span class="order-2 inline-grid grid-cols-[auto_max-content] gap-x-1" title="Fastest sector 1">
             <span class="justify-self-center">S1</span>
             <Component.LapTimeField
-              id={generate_field_id(@driver_info, :fastest_sector_1)}
-              class="px-0.5 rounded border"
-              stats={@driver_summary.stats}
-              personal_best_stats={@driver_summary.stats}
-              session_best_stats={@session_best_stats}
-              kind={{:fastest_sector, 1}}
+              id={field_id(@driver_info, :fastest_sector_1)}
+              stat={@driver_summary.stats.s1_time.fastest}
             />
           </span>
 
           <span class="order-4 inline-grid grid-cols-[auto_max-content] gap-x-1" title="Fastest sector 2">
             <span class="justify-self-center">S2</span>
             <Component.LapTimeField
-              id={generate_field_id(@driver_info, :fastest_sector_2)}
-              class="px-0.5 rounded border"
-              stats={@driver_summary.stats}
-              personal_best_stats={@driver_summary.stats}
-              session_best_stats={@session_best_stats}
-              kind={{:fastest_sector, 2}}
+              id={field_id(@driver_info, :fastest_sector_2)}
+              stat={@driver_summary.stats.s2_time.fastest}
             />
           </span>
 
           <span class="order-6 inline-grid grid-cols-[auto_max-content] gap-x-1" title="Fastest sector 3">
             <span class="justify-self-center">S3</span>
             <Component.LapTimeField
-              id={generate_field_id(@driver_info, :fastest_sector_3)}
-              class="px-0.5 rounded border"
-              stats={@driver_summary.stats}
-              personal_best_stats={@driver_summary.stats}
-              session_best_stats={@session_best_stats}
-              kind={{:fastest_sector, 3}}
+              id={field_id(@driver_info, :fastest_sector_3)}
+              stat={@driver_summary.stats.s3_time.fastest}
             />
           </span>
         </div>
@@ -197,45 +165,29 @@ defmodule F1BotWeb.Component.DriverSummary do
                     <span class="block sm:hidden">&nbsp;</span>
                     <span class="px-1 inline-block w-7">FL</span>
                     <Component.LapTimeField
-                      id={generate_field_id(@driver_info, stint, :fastest_lap)}
-                      class="px-0.5 rounded border"
-                      stats={stint.stats}
-                      personal_best_stats={@driver_summary.stats}
-                      session_best_stats={@session_best_stats}
-                      kind={:fastest_lap}
+                      id={field_id(@driver_info, stint, :fastest_lap)}
+                      stat={stint.stats.lap_time.fastest}
                     />
                   </span>
                   <span class="text-sm" title="Fastest sector 1">
                     <span class="px-1 block sm:inline-block">S1</span>
                     <Component.LapTimeField
-                      id={generate_field_id(@driver_info, stint, :fastest_sector_1)}
-                      class="px-0.5 rounded border"
-                      stats={stint.stats}
-                      personal_best_stats={@driver_summary.stats}
-                      session_best_stats={@session_best_stats}
-                      kind={{:fastest_sector, 1}}
+                      id={field_id(@driver_info, stint, :fastest_sector_1)}
+                      stat={stint.stats.s1_time.fastest}
                     />
                   </span>
                   <span class="text-sm" title="Fastest sector 2">
                     <span class="px-1 block sm:inline-block">S2</span>
                     <Component.LapTimeField
-                      id={generate_field_id(@driver_info, stint, :fastest_sector_2)}
-                      class="px-0.5 rounded border"
-                      stats={stint.stats}
-                      personal_best_stats={@driver_summary.stats}
-                      session_best_stats={@session_best_stats}
-                      kind={{:fastest_sector, 2}}
+                      id={field_id(@driver_info, stint, :fastest_sector_2)}
+                      stat={stint.stats.s2_time.fastest}
                     />
                   </span>
                   <span class="text-sm" title="Fastest sector 3">
                     <span class="px-1 block sm:inline-block">S3</span>
                     <Component.LapTimeField
-                      id={generate_field_id(@driver_info, stint, :fastest_sector_3)}
-                      class="px-0.5 rounded border"
-                      stats={stint.stats}
-                      personal_best_stats={@driver_summary.stats}
-                      session_best_stats={@session_best_stats}
-                      kind={{:fastest_sector, 3}}
+                      id={field_id(@driver_info, stint, :fastest_sector_3)}
+                      stat={stint.stats.s3_time.fastest}
                     />
                   </span>
                 </div>
@@ -244,45 +196,29 @@ defmodule F1BotWeb.Component.DriverSummary do
                   <span class="text-sm" title="Average lap">
                     <span class="px-1 w-7 inline-block">Avg.</span>
                     <Component.LapTimeField
-                      id={generate_field_id(@driver_info, stint, :average_lap)}
-                      class="px-0.5 rounded border"
-                      stats={stint.stats}
-                      personal_best_stats={@driver_summary.stats}
-                      session_best_stats={@session_best_stats}
-                      kind={:average_lap}
+                      id={field_id(@driver_info, stint, :average_lap)}
+                      stat={stint.stats.lap_time.average}
                     />
                   </span>
                   <span class="text-sm" title="Average sector 1">
                     <span class="px-1 hidden sm:inline-block">S1</span>
                     <Component.LapTimeField
-                      id={generate_field_id(@driver_info, stint, :average_sector_1)}
-                      class="px-0.5 rounded border"
-                      stats={stint.stats}
-                      personal_best_stats={@driver_summary.stats}
-                      session_best_stats={@session_best_stats}
-                      kind={{:average_sector, 1}}
+                      id={field_id(@driver_info, stint, :average_sector_1)}
+                      stat={stint.stats.s1_time.average}
                     />
                   </span>
                   <span class="text-sm" title="Average sector 2">
                     <span class="px-1 hidden sm:inline-block">S2</span>
                     <Component.LapTimeField
-                      id={generate_field_id(@driver_info, stint, :average_sector_2)}
-                      class="px-0.5 rounded border"
-                      stats={stint.stats}
-                      personal_best_stats={@driver_summary.stats}
-                      session_best_stats={@session_best_stats}
-                      kind={{:average_sector, 2}}
+                      id={field_id(@driver_info, stint, :average_sector_2)}
+                      stat={stint.stats.s2_time.average}
                     />
                   </span>
                   <span class="text-sm" title="Average sector 3">
                     <span class="px-1 hidden sm:inline-block">S3</span>
                     <Component.LapTimeField
-                      id={generate_field_id(@driver_info, stint, :average_sector_3)}
-                      class="px-0.5 rounded border"
-                      stats={stint.stats}
-                      personal_best_stats={@driver_summary.stats}
-                      session_best_stats={@session_best_stats}
-                      kind={{:average_sector, 3}}
+                      id={field_id(@driver_info, stint, :average_sector_3)}
+                      stat={stint.stats.s3_time.average}
                     />
                   </span>
                 </div>
@@ -295,11 +231,11 @@ defmodule F1BotWeb.Component.DriverSummary do
     """
   end
 
-  def generate_field_id(driver_info, stint, kind) do
-    generate_field_id(driver_info, "#{stint.number}-#{kind}")
+  def field_id(driver_info, stint, kind) do
+    field_id(driver_info, "#{stint.number}-#{kind}")
   end
 
-  def generate_field_id(driver_info, kind) do
+  def field_id(driver_info, kind) do
     "ltf-#{driver_info.driver_number}-#{kind}"
   end
 end

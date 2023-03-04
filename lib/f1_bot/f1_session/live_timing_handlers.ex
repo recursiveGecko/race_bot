@@ -88,7 +88,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
   end
 
   defp process_for_topic(session, packet = %Packet{topic: "TimingData"}, options) do
-    LiveTimingHandlers.LapData.process_packet(session, packet, options)
+    LiveTimingHandlers.TimingData.process_packet(session, packet, options)
   end
 
   defp process_for_topic(session, packet = %Packet{topic: "RaceControlMessages"}, options) do

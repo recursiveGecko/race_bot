@@ -58,6 +58,7 @@ defmodule Integration.Saudi2022QualiTest do
     {:ok, driver_data} = F1Session.driver_session_data(session, driver_number)
 
     driver_data.laps.data
+    |> Map.values()
     |> Enum.filter(fn l -> l.time != nil end)
     |> Enum.filter(fn l -> Timex.Duration.diff(l.time, max_time, :milliseconds) < 0 end)
     |> Enum.sort_by(fn l -> l.number end, :asc)

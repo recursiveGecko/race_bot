@@ -8,11 +8,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
   alias F1Bot.LightCopy
   alias F1Bot.F1Session.DriverDataRepo.{Laps, Stints}
 
-  alias F1Bot.F1Session.DriverDataRepo.DriverData.{
-    EndOfLapResult,
-    EndOfSectorResult
-  }
-
+  alias F1Bot.F1Session.LiveTimingHandlers.TimingData
   alias F1Bot.F1Session.Common.TimeSeriesStore
 
   typedstruct do
@@ -20,9 +16,6 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
 
     field(:number, pos_integer(), enforce: true)
     field(:current_lap_number, non_neg_integer(), default: 1)
-    field(:fastest_lap, Timex.Duration.t(), default: nil)
-    field(:top_speed, non_neg_integer(), default: nil)
-    field(:top_speed_curr_lap, non_neg_integer(), default: nil)
     field(:laps, Laps.t(), default: Laps.new())
     field(:stints, Stints.t(), default: Stints.new())
     field(:telemetry_hist, TimeSeriesStore.t(), default: TimeSeriesStore.new())
@@ -35,81 +28,40 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     }
   end
 
-  def push_lap_time(
+  def push_timing_data(
         self = %__MODULE__{},
-        lap_time = %Timex.Duration{},
-        timestamp,
+        timing_data = %TimingData{},
         all_lap_times
       ) do
-    fill_result =
-      self.laps
-      |> Laps.fill_by_close_timestamp([time: lap_time], timestamp, all_lap_times)
+    is_end_of_lap = timing_data.lap_time != nil or timing_data.sector_times[3] != nil
 
-    case fill_result do
-      {:ok, laps} ->
-        {self, is_fastest_lap, lap_delta} = maybe_replace_fastest_lap(self, lap_time)
-        {self, is_top_speed, speed_delta} = maybe_replace_top_speed_after_lap(self)
+    laps = Laps.push_timing_data(self.laps, self.current_lap_number, timing_data)
 
-        result = %EndOfLapResult{
-          driver_number: self.number,
-          lap_time: lap_time,
-          is_fastest_lap: is_fastest_lap,
-          is_top_speed: is_top_speed,
-          lap_delta: lap_delta,
-          speed_delta: speed_delta,
-          lap_top_speed: self.top_speed_curr_lap
-        }
-
-        self = reset_current_lap_stats(self)
-
-        self = %{self | laps: laps}
-        {:ok, {self, result}}
-
-      {:error, error} ->
-        {:error, error}
-    end
-  end
-
-  def push_sector_time(
-        self = %__MODULE__{},
-        sector,
-        sector_time = %Timex.Duration{},
-        timestamp
-      ) do
     laps =
-      self.laps
-      |> Laps.fill_sector_times(sector, sector_time, timestamp)
+      if is_end_of_lap do
+        Laps.mark_outliers(laps, all_lap_times, timing_data.timestamp)
+      else
+        laps
+      end
 
-    self = %{self | laps: laps}
+    # Maybe update current lap number
+    lap_num = timing_data.lap_number
 
-    result = %EndOfSectorResult{
-      driver_number: self.number,
-      sector: sector,
-      sector_time: sector_time
-    }
-
-    {self, result}
-  end
-
-  @spec push_lap_number(t(), pos_integer() | nil, DateTime.t()) :: t()
-  def push_lap_number(
-        self = %__MODULE__{},
-        lap_number,
-        timestamp
-      )
-      when is_integer(lap_number) do
-    {:ok, laps} =
-      self.laps
-      |> Laps.fill_by_close_timestamp([number: lap_number], timestamp)
-
-    new_lap_number =
-      if lap_number >= self.current_lap_number do
-        lap_number + 1
+    new_current_lap_num =
+      if lap_num != nil and lap_num + 1 > self.current_lap_number do
+        lap_num + 1
       else
         self.current_lap_number
       end
 
-    %{self | laps: laps, current_lap_number: new_lap_number}
+    self = %{self | laps: laps, current_lap_number: new_current_lap_num}
+
+    self
+  end
+
+  def personal_best_stats(self = %__MODULE__{}) do
+    min_time_stats = Laps.personal_best_stats(self.laps)
+    %{min_time_stats | driver_number: self.number}
   end
 
   def push_telemetry(
@@ -119,8 +71,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     telemetry_hist = TimeSeriesStore.push_data(telemetry_hist, telemetry)
 
     self
-    |> maybe_replace_top_speed_curr_lap(telemetry)
     |> Map.put(:telemetry_hist, telemetry_hist)
+    |> push_speed_to_lap(telemetry)
   end
 
   def push_position(
@@ -167,69 +119,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     |> Enum.reject(&(&1 == nil))
   end
 
-  # Returns {self, is_fastest_lap, lap_delta}
-  defp maybe_replace_fastest_lap(
-         self = %__MODULE__{fastest_lap: fastest_lap},
-         lap_time = %Timex.Duration{}
-       ) do
-    if fastest_lap == nil do
-      self = %{self | fastest_lap: lap_time}
-      {self, true, nil}
-    else
-      delta = Timex.Duration.diff(lap_time, fastest_lap)
-      delta_ms = Timex.Duration.to_milliseconds(delta)
-
-      if delta_ms < 0 do
-        self = %{self | fastest_lap: lap_time}
-        {self, true, delta}
-      else
-        {self, false, nil}
-      end
-    end
+  defp push_speed_to_lap(self = %__MODULE__{}, _telemetry = %{speed: speed}) when is_integer(speed) do
+    laps = Laps.push_speed(self.laps, self.current_lap_number, speed)
+    %{self | laps: laps}
   end
 
-  defp maybe_replace_top_speed_curr_lap(
-         self = %__MODULE__{top_speed_curr_lap: top_speed_curr_lap},
-         _telemetry = %{speed: speed}
-       ) do
-    if top_speed_curr_lap == nil do
-      %{self | top_speed_curr_lap: speed}
-    else
-      if speed > top_speed_curr_lap do
-        %{self | top_speed_curr_lap: speed}
-      else
-        self
-      end
-    end
-  end
-
-  defp maybe_replace_top_speed_after_lap(
-         self = %__MODULE__{
-           top_speed: top_speed,
-           top_speed_curr_lap: top_speed_curr_lap
-         }
-       ) do
-    {self, is_top_speed, speed_delta} =
-      if top_speed_curr_lap != nil and (top_speed == nil or top_speed_curr_lap > top_speed) do
-        speed_delta =
-          if top_speed == nil do
-            nil
-          else
-            top_speed_curr_lap - top_speed
-          end
-
-        self = %{self | top_speed: top_speed_curr_lap}
-        {self, true, speed_delta}
-      else
-        {self, false, nil}
-      end
-
-    {self, is_top_speed, speed_delta}
-  end
-
-  defp reset_current_lap_stats(self) do
-    %{self | top_speed_curr_lap: nil}
-  end
+  defp push_speed_to_lap(self = %__MODULE__{}, _telemetry), do: self
 
   defimpl LightCopy do
     def light_copy(self) do

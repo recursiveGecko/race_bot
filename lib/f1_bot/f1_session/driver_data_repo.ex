@@ -6,13 +6,9 @@ defmodule F1Bot.F1Session.DriverDataRepo do
   """
   use TypedStruct
 
+  alias F1Bot.F1Session.LiveTimingHandlers.TimingData
   alias F1Bot.F1Session.DriverDataRepo
-  alias F1Bot.F1Session.DriverDataRepo.{DriverData, BestStats, Events}
-
-  alias F1Bot.F1Session.DriverDataRepo.DriverData.{
-    EndOfLapResult,
-    EndOfSectorResult
-  }
+  alias F1Bot.F1Session.DriverDataRepo.{DriverData, BestStats, Events, Summary}
 
   typedstruct do
     @typedoc "Repository for all car, lap time, and stint-related data"
@@ -27,76 +23,64 @@ defmodule F1Bot.F1Session.DriverDataRepo do
     %__MODULE__{}
   end
 
-  def info(repo, driver_number) do
-    data =
-      repo
-      |> fetch_or_create_driver_from_repo(driver_number)
-
-    {:ok, data}
+  def fetch(repo, driver_number) do
+    case Map.fetch(repo.drivers, driver_number) do
+      {:ok, val} -> {:ok, val}
+      :error -> {:error, :driver_not_found}
+    end
   end
 
-  def driver_summary(repo, driver_number, track_status_history) when is_integer(driver_number) do
-    summary =
-      case info(repo, driver_number) do
-        {:ok, data} -> DriverData.Summary.generate(data, track_status_history)
-      end
-
-    {:ok, summary}
-  end
-
-  def session_best_stats(repo) do
-    repo.best_stats
-  end
-
-  def push_lap_time(repo, driver_number, lap_time, timestamp) do
-    push_result =
-      repo
-      |> fetch_or_create_driver_from_repo(driver_number)
-      |> DriverData.push_lap_time(lap_time, timestamp, repo.all_lap_times)
-
-    repo =
-      Map.update(repo, :all_lap_times, [], fn all_lap_times ->
-        time_ms = Timex.Duration.to_milliseconds(lap_time)
-        ts_ms = DateTime.to_unix(timestamp, :millisecond)
-        [{ts_ms, time_ms} | all_lap_times]
-      end)
-
-    case push_result do
-      {:ok, {driver_data, eol_result = %EndOfLapResult{}}} ->
-        # Save updated DriverData
-        repo = update_driver(repo, driver_data)
-
-        # Determine if this lap had record pace or top speed, creates PB/overall best events
-        {best_stats, events} = BestStats.push_end_of_lap_result(repo.best_stats, eol_result)
-        repo = %{repo | best_stats: best_stats}
-
-        {:ok, {repo, events}}
+  def driver_summary(
+        repo = %__MODULE__{},
+        driver_number,
+        track_status_history
+      )
+      when is_integer(driver_number) do
+    case fetch(repo, driver_number) do
+      {:ok, data} ->
+        summary = Summary.generate(data, track_status_history, repo.best_stats)
+        {:ok, summary}
 
       {:error, error} ->
         {:error, error}
     end
   end
 
-  def push_sector_time(repo, driver_number, sector, sector_time, timestamp) do
-    {driver_data, eos_result = %EndOfSectorResult{}} =
-      repo
-      |> fetch_or_create_driver_from_repo(driver_number)
-      |> DriverData.push_sector_time(sector, sector_time, timestamp)
-
-    {best_stats, events} = BestStats.push_end_of_sector_result(repo.best_stats, eos_result)
-
-    repo = %{repo | best_stats: best_stats}
-    repo = update_driver(repo, driver_data)
-    {repo, events}
+  def session_best_stats(repo) do
+    repo.best_stats
   end
 
-  def push_lap_number(repo, driver_number, lap_number, timestamp) do
-    driver =
+  def push_timing_data(repo, timing_data = %TimingData{}) do
+    driver_data =
       repo
-      |> fetch_or_create_driver_from_repo(driver_number)
-      |> DriverData.push_lap_number(lap_number, timestamp)
+      |> fetch_or_create_driver_from_repo(timing_data.driver_number)
 
-    update_driver(repo, driver)
+    driver_data =
+      driver_data
+      |> DriverData.push_timing_data(timing_data, repo.all_lap_times)
+
+    pb_stats = DriverData.personal_best_stats(driver_data)
+
+    # Store received lap time in a cache of all lap times for outlier detection
+    repo =
+      if timing_data.lap_time do
+        Map.update(repo, :all_lap_times, [], fn all_lap_times ->
+          time_ms = Timex.Duration.to_milliseconds(timing_data.lap_time)
+          ts_ms = DateTime.to_unix(timing_data.timestamp, :millisecond)
+          [{ts_ms, time_ms} | all_lap_times]
+        end)
+      else
+        repo
+      end
+
+    {best_stats, events} = BestStats.push_personal_best_stats(repo.best_stats, pb_stats)
+
+    repo =
+      repo
+      |> update_driver(driver_data)
+      |> Map.put(:best_stats, best_stats)
+
+    {repo, events}
   end
 
   def push_telemetry(repo, driver_number, telemetry) do

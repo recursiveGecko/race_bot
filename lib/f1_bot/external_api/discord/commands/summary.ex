@@ -5,7 +5,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
   require Logger
   alias Nostrum.Struct.Interaction
   alias F1Bot
-  alias F1Bot.F1Session.DriverDataRepo.DriverData.Summary
+  alias F1Bot.F1Session.DriverDataRepo.Summary
   alias F1Bot.F1Session.DriverCache.DriverInfo
   alias F1Bot.ExternalApi.Discord
   alias F1Bot.ExternalApi.Discord.Permissions
@@ -47,15 +47,33 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
     {:ok, session_info} = F1Bot.session_info()
     track_status_history = F1Bot.track_status_history()
 
-    embeds =
+    embed_results =
       for driver_number <- options.drivers do
-        {:ok, driver_info} = F1Bot.driver_info_by_number(driver_number)
-        {:ok, driver_data} = F1Bot.driver_session_data(driver_number)
-
-        summary = Summary.generate(driver_data, track_status_history)
-
-        generate_summary_embed(session_info, driver_info, summary, use_emojis)
+        with {:ok, driver_info} <- F1Bot.driver_info_by_number(driver_number),
+             {:ok, driver_data} <- F1Bot.driver_session_data(driver_number) do
+          summary = Summary.generate(driver_data, track_status_history)
+          embed = generate_summary_embed(session_info, driver_info, summary, use_emojis)
+          {:ok, embed}
+        else
+          {:error, error} ->
+            {:error, {driver_number, error}}
+        end
       end
+
+    embeds =
+      embed_results
+      |> Enum.filter(fn {status, maybe_err} ->
+        if status == :error do
+          {driver_number, error} = maybe_err
+
+          Logger.error(
+            "Failed to generate summary for driver #{driver_number}: #{inspect(error)}"
+          )
+        end
+
+        status == :ok
+      end)
+      |> Enum.map(fn {_status, embed} -> embed end)
 
     flags
     |> Response.make_followup_message(nil, [], embeds)
@@ -75,15 +93,15 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
       },
       fields:
         [
-          %{inline: true, name: "Fastest S1", value: format_lap_time(stats.s1_time[:fastest])},
-          %{inline: true, name: "Fastest S2", value: format_lap_time(stats.s2_time[:fastest])},
-          %{inline: true, name: "Fastest S3", value: format_lap_time(stats.s3_time[:fastest])},
-          %{inline: true, name: "Fastest lap", value: format_lap_time(stats.lap_time[:fastest])},
-          %{inline: true, name: "Top speed", value: format_speed(stats.top_speed)},
+          %{inline: true, name: "Fastest S1", value: format_lap_time(stats.s1_time.fastest.value)},
+          %{inline: true, name: "Fastest S2", value: format_lap_time(stats.s2_time.fastest.value)},
+          %{inline: true, name: "Fastest S3", value: format_lap_time(stats.s3_time.fastest.value)},
+          %{inline: true, name: "Fastest lap", value: format_lap_time(stats.lap_time.fastest.value)},
+          %{inline: true, name: "Top speed", value: format_speed(stats.top_speed.value)},
           %{
             inline: true,
             name: "Ideal lap",
-            value: format_lap_time(stats.lap_time.theoretical)
+            value: format_lap_time(stats.lap_time.theoretical.value)
           }
         ] ++ generate_stint_fields(summary, use_emojis),
       footer: %{
@@ -106,8 +124,8 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
 
       first_row = "#{tyre_info} `#{stint_info}  #{laps_info}   #{timed_laps_info}`"
 
-      avg_lap = format_lap_time(stint.stats.lap_time.average) |> format_width(8)
-      fast_lap = format_lap_time(stint.stats.lap_time.fastest) |> format_width(8)
+      avg_lap = format_lap_time(stint.stats.lap_time.average.value) |> format_width(8)
+      fast_lap = format_lap_time(stint.stats.lap_time.fastest.value) |> format_width(8)
 
       second_row = "`Lap (min/avg):  #{fast_lap} /  #{avg_lap} `"
 

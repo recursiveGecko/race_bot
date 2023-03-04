@@ -32,7 +32,7 @@ defmodule F1BotWeb.Component.CoreComponents do
       |> assign(:other_site_link, other_site_link)
 
     ~H"""
-    <a class={["inline-flex items-center font-semibold", @class]} href={@other_site_link}>
+    <a class={["inline-flex items-center shrink-0", @class]} href={@other_site_link}>
       <Heroicons.arrow_top_right_on_square mini class="w-5 h-5 mr-1"/>
       <%= @other_site_name %>
     </a>

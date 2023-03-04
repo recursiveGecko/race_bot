@@ -4,14 +4,16 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
   e.g. lap number, lap time and timestamp.
   """
   use TypedStruct
+  require Logger
 
-  alias F1Bot.F1Session.DriverDataRepo.Lap
+  alias F1Bot.F1Session.LiveTimingHandlers.TimingData
+  alias F1Bot.F1Session.DriverDataRepo.{Lap, Sector, PersonalBestStats}
 
   @max_data_fill_delay_ms 15_000
+  @outlier_window_ms 60_000 * 2
 
   typedstruct do
-    field(:data, [Lap.t()], default: [])
-    field(:sectors, Lap.sector_map(), default: Lap.new_clean_sector_map())
+    field(:data, %{pos_integer() => Lap.t()}, default: %{})
   end
 
   def new() do
@@ -22,30 +24,6 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     case Enum.find(laps.data, fn l -> l.number == lap_no end) do
       nil -> {:error, :not_found}
       lap -> {:ok, lap}
-    end
-  end
-
-  @doc """
-  Starting with the last completed lap (by timestamp), finds the first lap that meets the following criteria:
-  - lap was completed no more than `padding_ms` after the given timestamp
-  - first lap completed before the given timestamp
-  """
-  def find_around_or_before(laps = %__MODULE__{}, timestamp = %DateTime{}, padding_ms) do
-    search_ts_ms = DateTime.to_unix(timestamp, :millisecond) + padding_ms
-
-    lap =
-      laps.data
-      |> sort_by_timestamp(:desc)
-      |> Enum.find(fn l ->
-        if l.timestamp != nil do
-          ts_ms = DateTime.to_unix(l.timestamp, :millisecond)
-          ts_ms <= search_ts_ms
-        end
-      end)
-
-    case lap do
-      nil -> {:error, :not_found}
-      _ -> {:ok, lap}
     end
   end
 
@@ -61,166 +39,304 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     end
   end
 
-  @spec fill_by_close_timestamp(t(), keyword(), DateTime.t(), [{pos_integer(), pos_integer()}]) ::
-          {:ok, t()} | {:error, atom()}
-  def fill_by_close_timestamp(
-        self = %__MODULE__{},
-        args,
-        timestamp,
-        all_lap_times \\ []
-      ) do
-    if accept_lap_information?(self, args, timestamp) do
-      self =
-        do_fill_by_close_timestamp(self, args, timestamp)
-        |> mark_outliers(all_lap_times)
-        |> fix_laps_data()
+  def personal_best_stats(%__MODULE__{data: data}) do
+    laps =
+      data
+      |> Map.values()
+      |> Stream.filter(fn lap -> lap.is_valid and not lap.is_deleted end)
 
-      self =
-        if args[:time] do
-          mark_outliers(self, all_lap_times)
-        else
-          self
-        end
+    acc = %{
+      lap_time: nil,
+      s1_time: nil,
+      s2_time: nil,
+      s3_time: nil,
+      top_speed: nil
+    }
 
-      {:ok, self}
-    else
-      {:error, :missing_prerequisites}
-    end
-  end
+    acc =
+      Enum.reduce(laps, acc, fn lap, acc ->
+        s = lap.sectors
+        is_complete = lap.timestamp != nil
 
-  @spec fill_sector_times(t(), pos_integer(), Timex.Duration.t(), DateTime.t()) ::
-          t()
-  def fill_sector_times(
-        self = %__MODULE__{sectors: sectors},
-        sector,
-        sector_time,
-        timestamp
-      )
-      when sector in [1, 2, 3] do
-    sectors =
-      sectors
-      |> put_in([sector, :time], sector_time)
-      |> put_in([sector, :timestamp], timestamp)
+        new_top_speed =
+          if is_complete do
+            max_val(acc.top_speed, lap.top_speed)
+          else
+            acc.top_speed
+          end
 
-    if sector == 3 do
-      {:ok, laps} = fill_by_close_timestamp(self, [sectors: sectors], timestamp)
-      laps = clear_sector_data(laps)
-
-      laps
-    else
-      %{self | sectors: sectors}
-    end
-  end
-
-  def fix_laps_data(self = %__MODULE__{data: laps}) do
-    new_laps =
-      laps
-      |> sort_by_timestamp(:asc)
-      |> do_fix_laps_data([])
-      |> sort_by_timestamp(:desc)
-
-    %{self | data: new_laps}
-  end
-
-  defp sort_by_timestamp(laps, direction) do
-    Enum.sort_by(laps, fn l -> l.timestamp end, {direction, DateTime})
-  end
-
-  defp do_fill_by_close_timestamp(
-         self = %__MODULE__{data: data},
-         args,
-         timestamp
-       ) do
-    {found, data_reversed} =
-      Enum.reduce(data, {_skip = false, _new_data = []}, fn lap, {skip, data} ->
-        cond do
-          skip == true ->
-            data = [lap | data]
-            {skip, data}
-
-          should_fill_lap?(lap, timestamp) ->
-            lap = Lap.merge_with_args(lap, args)
-            data = [lap | data]
-            {true, data}
-
-          true ->
-            data = [lap | data]
-            {false, data}
-        end
+        %{
+          lap_time: min_time(acc.lap_time, lap.time),
+          s1_time: if(!!s[1], do: min_time(acc.s1_time, s[1].time), else: acc.s1_time),
+          s2_time: if(!!s[2], do: min_time(acc.s2_time, s[2].time), else: acc.s2_time),
+          s3_time: if(!!s[3], do: min_time(acc.s3_time, s[3].time), else: acc.s3_time),
+          top_speed: new_top_speed
+        }
       end)
 
-    if found do
-      %{self | data: Enum.reverse(data_reversed)}
-    else
-      args = Keyword.put_new(args, :timestamp, timestamp)
-      lap = Lap.new(args)
-
-      %{self | data: [lap | data]}
-    end
+    %PersonalBestStats{
+      lap_time_ms: acc.lap_time,
+      sectors_ms: %{
+        1 => acc.s1_time,
+        2 => acc.s2_time,
+        3 => acc.s3_time
+      },
+      top_speed: acc.top_speed
+    }
   end
 
-  defp accept_lap_information?(%__MODULE__{sectors: sectors}, args, _timestamp) do
-    cond do
-      # Ignore received lap time if we hadn't received any sector times prior to this
-      # See Canada 2022 quali integration test
-      Keyword.has_key?(args, :time) ->
-        Lap.has_any_sector_time?(sectors)
+  def push_timing_data(
+        self = %__MODULE__{},
+        current_lap_number,
+        timing_data = %TimingData{}
+      ) do
+    self =
+      self
+      |> ensure_lap_exists(current_lap_number)
+      |> ensure_lap_exists(timing_data.lap_number)
+      |> maybe_fill_lap_time(current_lap_number, timing_data)
+      |> maybe_fill_sector_times(current_lap_number, timing_data)
 
-      true ->
-        true
-    end
+    self
   end
 
-  defp do_fix_laps_data(_laps = [first, second | rest], acc) do
-    first_is_candidate = first.number == nil
+  def push_speed(
+        self = %__MODULE__{},
+        current_lap_number,
+        speed
+      ) do
+    self =
+      self
+      |> ensure_lap_exists(current_lap_number)
+      |> maybe_fill_top_speed(current_lap_number, speed)
 
-    second_is_candidate = second.number != nil and second.time == nil and second.sectors == nil
-
-    if first_is_candidate and second_is_candidate do
-      first = %{first | number: second.number}
-      do_fix_laps_data(rest, [first | acc])
-    else
-      do_fix_laps_data([second | rest], [first | acc])
-    end
-  end
-
-  defp do_fix_laps_data(laps, acc) do
-    acc ++ laps
-  end
-
-  defp clear_sector_data(self = %__MODULE__{}) do
-    %{self | sectors: Lap.new_clean_sector_map()}
-  end
-
-  defp should_fill_lap?(lap, ts) do
-    delta_ms = Timex.diff(lap.timestamp, ts, :milliseconds) |> abs()
-    delta_ms < @max_data_fill_delay_ms
+    self
   end
 
   @doc """
   Determine outliers in the given laps based on lap time compared to
-  all other laps that occurred around a similar time (+/- `outlier_window_ms`).
+  all other laps that occurred around a similar time (+/- `@outlier_window_ms`).
   Lap is marked as an outlier if it's greater than `factor` * minimum lap time
   in the window.
   """
-  def mark_outliers(laps = %__MODULE__{}, all_lap_times) do
-    laps_sorted = sort_by_timestamp(laps.data, :asc)
-    laps_marked = do_mark_outliers(laps_sorted, all_lap_times, [])
+  def mark_outliers(laps = %__MODULE__{}, all_lap_times, around_ts \\ nil) do
+    laps_to_check =
+      laps.data
+      |> Map.values()
+      |> Stream.filter(fn lap ->
+        cond do
+          lap.timestamp == nil ->
+            false
 
-    %{laps | data: laps_marked}
+          around_ts == nil ->
+            true
+
+          abs(Timex.diff(around_ts, lap.timestamp, :millisecond)) < 2 * @outlier_window_ms ->
+            true
+
+          true ->
+            false
+        end
+      end)
+      |> sort_by(:number, :asc)
+
+    laps_marked = do_mark_outliers(laps_to_check, all_lap_times, %{})
+    laps_merged = Map.merge(laps.data, laps_marked)
+    %{laps | data: laps_merged}
   end
 
-  defp do_mark_outliers(_laps = [], _laps_window, acc), do: Enum.reverse(acc)
+  defp ensure_lap_exists(self, _current_lap_number = nil), do: self
 
+  defp ensure_lap_exists(
+         self = %__MODULE__{},
+         lap_number
+       ) do
+    if self.data[lap_number] != nil do
+      self
+    else
+      lap = %Lap{
+        number: lap_number
+      }
+
+      data = Map.put(self.data, lap_number, lap)
+      %{self | data: data}
+    end
+  end
+
+  defp maybe_fill_lap_time(self, current_lap_number, timing_data)
+
+  defp maybe_fill_lap_time(self, _current_lap_number, %TimingData{lap_time: nil}), do: self
+
+  defp maybe_fill_lap_time(
+         self = %__MODULE__{},
+         current_lap_number,
+         timing_data = %TimingData{}
+       ) do
+    lap_number = timing_data.lap_number || current_lap_number
+    lap = self.data[lap_number]
+
+    lap_ts_age_ms =
+      if lap.timestamp != nil do
+        DateTime.diff(timing_data.timestamp, lap.timestamp, :millisecond)
+      else
+        0
+      end
+
+    lap_num_diff = current_lap_number - lap_number
+
+    cond do
+      lap.time != nil ->
+        Logger.warn(
+          "Received lap time for lap #{lap_number} but it already has a time. Lap: #{inspect(lap)}, Data: #{inspect(timing_data)}"
+        )
+
+        self
+
+      lap_ts_age_ms > @max_data_fill_delay_ms ->
+        Logger.warn(
+          "Received lap time for lap #{lap_number} but it is too old: #{lap_ts_age_ms}ms. Lap: #{inspect(lap)}, Data: #{inspect(timing_data)}"
+        )
+
+        self
+
+      lap_num_diff > 1 ->
+        Logger.warn(
+          "Received lap time for lap #{lap_number} but it is too old: #{lap_num_diff} laps. Lap: #{inspect(lap)}, Data: #{inspect(timing_data)}"
+        )
+
+        self
+
+      true ->
+        ts = lap.timestamp || timing_data.timestamp
+        lap = %{lap | time: timing_data.lap_time, timestamp: ts}
+        data = Map.put(self.data, lap.number, lap)
+        %{self | data: data}
+    end
+  end
+
+  defp maybe_fill_sector_times(self, current_lap_number, timing_data)
+
+  defp maybe_fill_sector_times(self, _current_lap_number, %TimingData{sector_times: nil}),
+    do: self
+
+  defp maybe_fill_sector_times(
+         self = %__MODULE__{},
+         current_lap_number,
+         timing_data = %TimingData{}
+       ) do
+    self =
+      timing_data.sector_times
+      |> Enum.filter(fn {sector, sector_time} -> sector != nil and sector_time != nil end)
+      |> Enum.reduce(self, fn {sector, _sector_time}, self ->
+        self = maybe_fill_sector(self, current_lap_number, sector, timing_data)
+        self
+      end)
+
+    self
+  end
+
+  defp maybe_fill_sector(
+         self,
+         current_lap_number,
+         sector_num,
+         timing_data = %TimingData{}
+       ) do
+    sector_time = timing_data.sector_times[sector_num]
+    timestamp = timing_data.timestamp
+
+    current_lap = self.data[current_lap_number]
+    last_lap = self.data[current_lap_number - 1]
+
+    last_lap_ts_age_ms =
+      if last_lap != nil and last_lap.timestamp != nil do
+        DateTime.diff(timestamp, last_lap.timestamp, :millisecond)
+      else
+        nil
+      end
+
+    curr_lap_has_sector = current_lap.sectors[sector_num] != nil
+
+    last_lap_has_sector =
+      if last_lap == nil do
+        nil
+      else
+        last_lap.sectors[sector_num] != nil
+      end
+
+    can_fill_last_lap = last_lap_ts_age_ms != nil and last_lap_ts_age_ms < @max_data_fill_delay_ms
+
+    lap_to_fill =
+      cond do
+        curr_lap_has_sector ->
+          Logger.warn(
+            "Received sector #{sector_num} time but current lap already has a time. Lap: #{inspect(current_lap)}, Data: #{inspect(timing_data)}"
+          )
+
+          nil
+
+        last_lap == nil ->
+          current_lap
+
+        # Sector 3 time is sometimes received after the next lap has started
+        sector_num == 3 and not last_lap_has_sector and can_fill_last_lap ->
+          last_lap
+
+        true ->
+          current_lap
+      end
+
+    if lap_to_fill != nil do
+      new_lap_ts =
+        if sector_num == 3 do
+          # Do not override existing (earlier) lap timestamp
+          lap_to_fill.timestamp || timestamp
+        else
+          lap_to_fill.timestamp
+        end
+
+      sector = Sector.new(sector_time, timestamp)
+      sectors = Map.put(lap_to_fill.sectors, sector_num, sector)
+
+      lap = %{lap_to_fill | sectors: sectors, timestamp: new_lap_ts}
+      data = Map.put(self.data, lap.number, lap)
+
+      %{self | data: data}
+    else
+      self
+    end
+  end
+
+  defp maybe_fill_top_speed(self, current_lap_number, speed) do
+    lap = self.data[current_lap_number]
+
+    if lap.top_speed < speed do
+      lap = %{lap | top_speed: speed}
+      data = Map.put(self.data, lap.number, lap)
+      %{self | data: data}
+    else
+      self
+    end
+  end
+
+  defp sort_by(laps, _field = :timestamp, direction) do
+    Enum.sort_by(laps, fn l -> l.timestamp end, {direction, DateTime})
+  end
+
+  defp sort_by(laps, _field = :number, direction) do
+    Enum.sort_by(laps, fn l -> l.number end, direction)
+  end
+
+  defp do_mark_outliers(_laps = [], _laps_window, acc), do: acc
+
+  # all_lap_times_window needs to be sorted by timestamp
   defp do_mark_outliers([lap | rest_laps], all_lap_times_window, acc) do
     factor = 1.2
-    outlier_window_ms = 60_000 * 2
 
     with time when time != nil <- lap.time,
          time_ms = Timex.Duration.to_milliseconds(time),
          ts when ts != nil <- lap.timestamp do
       {window_time_ms, all_lap_times_window} =
-        do_mark_outliers_find_window_time(all_lap_times_window, lap, outlier_window_ms)
+        do_mark_outliers_find_window_time(all_lap_times_window, lap, @outlier_window_ms)
 
       lap =
         if window_time_ms != nil do
@@ -230,10 +346,12 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
           lap
         end
 
-      do_mark_outliers(rest_laps, all_lap_times_window, [lap | acc])
+      acc = Map.put(acc, lap.number, lap)
+      do_mark_outliers(rest_laps, all_lap_times_window, acc)
     else
       nil ->
-        do_mark_outliers(rest_laps, all_lap_times_window, [lap | acc])
+        acc = Map.put(acc, lap.number, lap)
+        do_mark_outliers(rest_laps, all_lap_times_window, acc)
     end
   end
 
@@ -241,12 +359,14 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     lap_ts_ms = DateTime.to_unix(lap.timestamp, :millisecond)
     discard_before_ms = lap_ts_ms - window_size_ms
 
+    # Discard all laps older than the window to avoid walking through the whole list again
     {_discard, window_without_older_laps} =
       all_lap_times_window
       |> Enum.split_while(fn {ts_ms, _time_ms} ->
         ts_ms < discard_before_ms
       end)
 
+    # Find all laps inside the window that we care about
     {relevant_laps, _rest} =
       window_without_older_laps
       |> Enum.split_while(fn {ts_ms, _time_ms} ->
@@ -255,9 +375,47 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
 
     window_time_ms =
       relevant_laps
-      |> Enum.map(fn {_ts_ms, time_ms} -> time_ms end)
+      |> Stream.map(fn {_ts_ms, time_ms} -> time_ms end)
       |> Enum.min(fn -> nil end)
 
     {window_time_ms, window_without_older_laps}
+  end
+
+  defp min_time(a, b) when is_integer(a) and is_integer(b) do
+    if a < b do
+      a
+    else
+      b
+    end
+  end
+
+  defp min_time(a = %Timex.Duration{}, b = %Timex.Duration{}) do
+    min_time(
+      Timex.Duration.to_milliseconds(a, truncate: true),
+      Timex.Duration.to_milliseconds(b, truncate: true)
+    )
+  end
+
+  defp min_time(a, b = %Timex.Duration{}) do
+    min_time(a, Timex.Duration.to_milliseconds(b, truncate: true))
+  end
+
+  defp min_time(a = %Timex.Duration{}, b) do
+    min_time(Timex.Duration.to_milliseconds(a, truncate: true), b)
+  end
+
+  defp min_time(_a = nil, b), do: b
+
+  defp min_time(a, _b = nil), do: a
+
+  defp max_val(_a = nil, b), do: b
+  defp max_val(a, _b = nil), do: a
+
+  defp max_val(a, b) when is_integer(a) and is_integer(b) do
+    if a > b do
+      a
+    else
+      b
+    end
   end
 end

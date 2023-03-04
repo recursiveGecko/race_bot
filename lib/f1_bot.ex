@@ -49,6 +49,13 @@ defmodule F1Bot do
     end
   end
 
+  def can_reload_session?() do
+    not_streaming = api_is_not_streaming?()
+    not_connected = F1Bot.get_env(:connect_to_signalr, false)
+
+    not_streaming or not not_connected
+  end
+
   @doc """
   Returns the race summary of the driver with the given number which
   contains the driver's stints, top speed, best and average lap times,
@@ -191,7 +198,7 @@ defmodule F1Bot do
       processing_options: processing_opts
     }
 
-    with true <- api_is_not_streaming?(),
+    with true <- can_reload_session?(),
          {:ok, url} <- url_result,
          {:ok, %{session: session}} <- Replay.start_replay(url, replay_options) do
       F1Bot.F1Session.Server.replace_session(session)
@@ -211,8 +218,17 @@ defmodule F1Bot do
   as if the session was currently in progress (equivalent to demo mode).
   Useful for development and debugging.
   """
-  def replay_session_live(url, playback_rate \\ 1) do
-    if api_is_not_streaming?() do
+  def replay_session_live(playback_rate \\ 1) when is_integer(playback_rate) do
+    with {:ok, url} <- F1Bot.ExternalApi.F1LiveTiming.current_archive_url_if_completed() do
+      replay_session_live(url, playback_rate)
+    else
+      {:error, err} ->
+        {:error, err}
+    end
+  end
+
+  def replay_session_live(url, playback_rate) when is_integer(playback_rate) do
+    if can_reload_session?() do
       Replay.Server.start_replay(url, playback_rate)
     else
       Logger.error("Unable to replay data, streaming status is not 'Offline'")

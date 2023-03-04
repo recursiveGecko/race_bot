@@ -25,8 +25,13 @@ defmodule F1Bot.Analysis.LapTimes do
     # because the underlying data is not always consistent with the API occasionally
     # providing garbage stint data and then correcting it later
 
-    with {:ok, %Laps{data: laps}} <- fetch_driver_laps(session, driver_number),
+    with {:ok, %Laps{data: laps_data}} <- fetch_driver_laps(session, driver_number),
          {:ok, stints} <- fetch_driver_stints(session, driver_number) do
+      laps =
+        laps_data
+        |> Map.values()
+        |> Enum.sort_by(& &1.number, :asc)
+
       data =
         for lap = %Lap{} <- laps,
             lap.number != nil and lap.number <= to_lap and lap.number >= from_lap,
@@ -35,7 +40,7 @@ defmodule F1Bot.Analysis.LapTimes do
             not Lap.is_outlap?(lap, stints),
             not Lap.is_outlap_after_red_flag?(lap),
             not Lap.is_neutralized?(lap, neutralized_periods),
-            not !!lap.is_outlier do
+            not (!!lap.is_outlier) do
           lap_to_chart_point(lap)
         end
 

@@ -1,37 +1,83 @@
 defmodule F1Bot.F1Session.EventGenerator.Driver do
+  require Logger
+
   alias F1Bot.Analysis
   alias F1Bot.F1Session
   alias F1Bot.F1Session.Common.Event
-  alias F1Bot.F1Session.DriverDataRepo.Lap
+  alias F1Bot.F1Session.EventGenerator
 
-  def on_any_new_driver_data(session, driver_number) do
-    [
-      summary_events(session, driver_number)
-    ]
-    |> List.flatten()
+  def on_any_new_driver_data(session = %F1Session{}, driver_number) do
+    cached_summaries = session.event_generator.event_deduplication[:driver_summary] || %{}
+
+    # We generate a new summary for the driver that has new data and maybe
+    # create events if the summary is different from before.
+    {session, primary_driver_events} = summary_events(session, driver_number)
+
+    # We also need to re-generate the summaries for any drivers that used
+    # to have session best stats because they might have changed now.
+    # Gather a list of those drivers.
+    drivers_to_recheck =
+      # If primary driver's summary hasn't changed, then nobody else's has
+      if primary_driver_events == [] do
+        []
+      else
+        cached_summaries
+        |> Map.values()
+        |> Stream.filter(fn summary -> summary.has_best_overall end)
+        |> Enum.map(fn summary -> summary.driver_number end)
+      end
+
+    if drivers_to_recheck != [] do
+      Logger.debug(
+        "Driver #{driver_number} has new data, recalculating summaries for #{inspect(drivers_to_recheck, charlists: :as_lists)} because they had overall best stats"
+      )
+    end
+
+    # Recalculate the summaries for those drivers and add accumulate
+    # their events. Events are only generated if the summary is different
+    # from before.
+    {session, other_driver_events} =
+      drivers_to_recheck
+      |> Enum.reduce({session, []}, fn driver_number, {session, events} ->
+        {session, new_events} = summary_events(session, driver_number)
+        {session, new_events ++ events}
+      end)
+
+    events =
+      [
+        primary_driver_events,
+        other_driver_events
+      ]
+      |> List.flatten()
+
+    {session, events}
   end
 
   def summary_events(session = %F1Session{}, driver_number)
       when is_integer(driver_number) do
     with {:ok, summary} <- F1Session.driver_summary(session, driver_number),
-         {:ok, session_best_stats} <- F1Session.session_best_stats(session) do
+         {session, _dup = false} <- check_set_deduplication(session, summary) do
       payload = %{
         driver_number: driver_number,
-        driver_summary: summary,
-        session_best_stats: Map.from_struct(session_best_stats)
+        driver_summary: summary
       }
 
       scope = "driver_summary:#{driver_number}"
-      [Event.new(scope, payload)]
+      events = [Event.new(scope, payload)]
+      {session, events}
     else
-      {:error, _} -> []
+      {:error, _} ->
+        {session, []}
+
+      {session, _duplicated = true} ->
+        {session, []}
     end
   end
 
-  def lap_time_chart_events(session, driver_number, lap_or_nil \\ nil)
+  def lap_time_chart_events(session, driver_number)
 
-  def lap_time_chart_events(session = %F1Session{}, driver_number, lap)
-      when is_integer(driver_number) and (is_nil(lap) or is_struct(lap, Lap)) do
+  def lap_time_chart_events(session = %F1Session{}, driver_number)
+      when is_integer(driver_number) do
     common_payload = %{
       dataset: "driver_data"
     }
@@ -66,6 +112,31 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
       }
 
       {:ok, p}
+    end
+  end
+
+  defp check_set_deduplication(
+         session = %F1Session{},
+         summary = %{driver_number: driver_number}
+       ) do
+    evt_gen = session.event_generator
+    driver_summary_dedup = evt_gen.event_deduplication[:driver_summary] || %{}
+    last_summary = driver_summary_dedup[driver_number]
+
+    if last_summary == summary do
+      {session, true}
+    else
+      driver_summary_dedup = Map.put(driver_summary_dedup, driver_number, summary)
+
+      event_generator =
+        EventGenerator.put_deduplication(
+          evt_gen,
+          :driver_summary,
+          driver_summary_dedup
+        )
+
+      session = %{session | event_generator: event_generator}
+      {session, false}
     end
   end
 end

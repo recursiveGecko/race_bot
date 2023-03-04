@@ -11,6 +11,8 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions do
       This can be overriden so that server time ("Utc" field in many Packets) is used in place of local system time,
       useful when replaying sessions where current local time is irrelevant and leads to inconsistencies such
       as the session clock not being reported correctly due to nearly instant passage of time.
+    - `:skip_heavy_events` - If true, events such as driver summaries won't be created, this is useful
+      during session replays to speed up processing time.
   """
   use TypedStruct
 
@@ -19,6 +21,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions do
     field(:log_stray_packets, boolean())
     field(:log_drivers, [integer()])
     field(:local_time_fn, function())
+    field(:skip_heavy_events, boolean())
   end
 
   def new(), do: %__MODULE__{}
