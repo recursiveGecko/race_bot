@@ -14,7 +14,7 @@
         <Component.DelayControl id="delay_control" {=@pubsub_delay_ms} />
       </div>
 
-      <div class="order-1 sm:order-3 basis-6/6 mt-2 grow">
+      <div class="order-1 sm:order-3 basis-full sm:basis-auto mt-2 grow">
         <Component.DriverSelector {=@driver_list} {=@drivers_of_interest} toggle_driver="toggle-driver" />
       </div>
     </div>
@@ -28,7 +28,7 @@
         </Component.PopupLink>
       </div>
 
-      <div class="mt-4 grid gap-2 grid-cols-[minmax(0,1fr)] sm:grid-cols-[repeat(auto-fill,27rem)] auto-rows-min">
+      <div class="mt-4 grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,27rem)] auto-rows-min">
         {#for driver_info <- @driver_list}
           <Component.DriverSummary
             :if={driver_info.driver_number in @drivers_of_interest}

@@ -18,7 +18,7 @@ module.exports = {
         'exo2': ["'Exo 2'", 'sans-serif'],
       },
       screens: {
-        'xs': '350px',
+        'xs': '430px',
         'sm': '640px',  
         'md': '768px',
         'lg': '1024px',
