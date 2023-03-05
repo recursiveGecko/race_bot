@@ -17,7 +17,7 @@ defmodule F1BotWeb.Component.LapTimeField do
       id={@id}
       :hook={"HighlightOnChange", from: Component.Utility}
       class={
-        "inline-block font-roboto px-1 rounded border border-b-2 w-13 min-w-max text-center",
+        "inline-block font-roboto px-1 rounded border border-b-2 w-14 min-w-max text-center",
         @class,
         class_for_best_type(
           stat: @stat,

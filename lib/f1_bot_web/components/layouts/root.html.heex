@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,38 +14,38 @@
     </script>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"} />
   </head>
-  <body class="bg-slate-50 font-exo2 min-h-screen flex flex-col">
+  <body class="bg-slate-50 dark:bg-[hsl(220,15%,7%)] dark:text-gray-200 font-exo2 min-h-screen flex flex-col">
     <div class="flex-[1_0_auto]">
       <%= @inner_content %>
     </div>
 
-    <footer class="mt-4 p-3 bg-slate-200">
-      <div class="w-max mx-auto grid sm:grid-cols-2 gap-2">
+    <footer class="mt-4 p-3 bg-slate-200 dark:bg-transparent">
+      <div class="flex sm:justify-center flex-wrap gap-x-8 gap-y-2">
         <.other_site_link class="" />
 
         <a
-          class="flex items-center shrink-0"
+          class="inline-flex items-center"
           href="https://twitter.com/LiveRaceBot"
         >
           <Heroicons.link class="w-5 h-5 mr-1" /> Twitter
         </a>
 
         <a
-          class="flex items-center shrink-0"
+          class="inline-flex items-center"
           href="https://github.com/recursiveGecko/race_bot"
         >
           <Heroicons.code_bracket class="w-5 h-5 mr-1" /> GitHub
         </a>
 
         <a
-          class="flex items-center shrink-0"
+          class="inline-flex items-center"
           href="https://github.com/recursiveGecko/race_bot/discussions/new?category=ideas"
         >
           <Heroicons.light_bulb class="w-5 h-5 mr-1" /> Ideas & Feedback
         </a>
 
         <a
-          class="flex items-center shrink-0"
+          class="inline-flex items-center"
           href="https://github.com/recursiveGecko/race_bot/issues"
         >
           <Heroicons.exclamation_triangle class="w-5 h-5 mr-1" /> Bug Reports

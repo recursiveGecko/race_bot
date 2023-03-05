@@ -30,9 +30,9 @@ defmodule F1BotWeb.Component.DriverSelector do
 
   defp selected_classes(driver_info, drivers_of_interest) do
     if driver_info.driver_number in drivers_of_interest do
-      "bg-white"
+      "bg-white dark:bg-[hsl(220,15%,20%)]"
     else
-      "bg-slate-200"
+      "bg-slate-200 dark:bg-[hsl(220,15%,11%)]"
     end
   end
 
@@ -41,7 +41,7 @@ defmodule F1BotWeb.Component.DriverSelector do
     if driver_info.driver_number in drivers_of_interest do
       "border-left-color: #{team_color}; border-bottom-color: #{team_color};"
     else
-      "border-left-color: #{team_color};"
+      "border-left-color: #{team_color}; border-bottom-color: transparent;"
     end
   end
 end

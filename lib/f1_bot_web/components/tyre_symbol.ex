@@ -18,11 +18,11 @@ defmodule F1BotWeb.Component.TyreSymbol do
         <text
           font-family="'Exo 2'"
           font-weight="800"
-          fill="black"
           x="20%"
           y="72%"
           font-size="21"
           text-anchor="middle"
+          class="fill-black dark:fill-gray-200"
         >
           {letter_for_compound(@compound)}
         </text>
@@ -37,11 +37,11 @@ defmodule F1BotWeb.Component.TyreSymbol do
         <text
           font-family="'Exo 2'"
           font-weight="700"
-          fill="black"
           x="50%"
           y="72%"
           font-size="21"
           text-anchor="start"
+          class="fill-black dark:fill-gray-200"
         >
           {age_text(@tyre_age)}
         </text>

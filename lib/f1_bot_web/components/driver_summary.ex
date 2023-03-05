@@ -56,7 +56,7 @@ defmodule F1BotWeb.Component.DriverSummary do
 
   def render(assigns) do
     ~F"""
-    <div class="px-1 pt-1.5 pb-0.5 bg-slate-100 border border-slate-200 h-min drop-shadow rounded-lg">
+    <div class="px-1 pt-1.5 pb-0.5 bg-slate-100 dark:bg-[hsl(220,15%,12%)] border border-slate-200 dark:border-gray-800 h-min drop-shadow rounded-lg">
       <div class="flex">
         <div
           class="bg-white shrink-0 hidden xs:block xs:w-12 xs:h-12 sm:w-14 sm:h-14 overflow-hidden rounded-full drop-shadow-md"
@@ -71,7 +71,7 @@ defmodule F1BotWeb.Component.DriverSummary do
 
         <div class="ml-2 mr-auto flex flex-col min-w-0">
           <span class="text-md text-ellipsis overflow-hidden">{"#{@driver_info.full_name}"}</span>
-          <span class="text-sm text-gray-800 text-ellipsis overflow-hidden">{@driver_info.team_name}</span>
+          <span class="text-sm text-gray-800 dark:text-gray-400 text-ellipsis overflow-hidden">{@driver_info.team_name}</span>
         </div>
 
         <div class="ml-2 grid grid-cols-[repeat(2,max-content)] gap-y-0.5 gap-x-3 text-sm">
@@ -126,13 +126,13 @@ defmodule F1BotWeb.Component.DriverSummary do
         </div>
       </div>
 
-      <p class="text-left text-sm mb-1 text-gray-500">Stint information</p>
+      <p class="text-left text-sm mb-1 text-gray-700 dark:text-gray-400">Stints</p>
 
-      <div class="max-h-64 overflow-auto flex flex-col-reverse">
+      <div class="max-h-44 overflow-auto flex flex-col-reverse">
         <div>
           {#for stint <- @driver_summary.stints}
-            <div class="mt-1 p-0.5 bg-white drop-shadow rounded-lg">
-              <div class="flex flex-wrap items-center">
+            <div class="mt-1 p-0.5 bg-white dark:bg-[hsl(220,15%,15%)] drop-shadow rounded-lg">
+              <div class="flex flex-wrap items-center text-sm text-gray-500 dark:text-gray-400">
                 <span class="mr-auto pl-0.5 pr-2">
                   <Component.TyreSymbol
                     class="h-6 inline-block"
@@ -142,17 +142,17 @@ defmodule F1BotWeb.Component.DriverSummary do
                 </span>
 
                 <span
-                  class="pr-2 text-sm text-gray-500"
+                  class="pr-2"
                   title="Stint start time (UTC)"
                   :if={stint.start_time != nil}
                 >
                   {Timex.format!(stint.start_time, "{h24}:{m}")} UTC
                 </span>
-                <span class="pr-2 hidden xs:inline text-sm text-gray-500" title="Stint start/end (lap numbers)">
+                <span class="pr-2 hidden xs:inline" title="Stint start/end (lap numbers)">
                   Laps: {stint.lap_start}-{stint.lap_end}
                 </span>
                 <span
-                  class="pr-2 text-sm text-gray-500"
+                  class="pr-2"
                   title="Number of laps included in statistics (excl. outlaps, inlaps, VSC, SC)"
                 >
                   Timed laps: {stint.timed_laps}
@@ -170,21 +170,21 @@ defmodule F1BotWeb.Component.DriverSummary do
                     />
                   </span>
                   <span class="text-sm" title="Fastest sector 1">
-                    <span class="px-1 block xs:inline-block text-gray-500">S1</span>
+                    <span class="px-1 block xs:inline-block text-gray-500 dark:text-gray-400">S1</span>
                     <Component.LapTimeField
                       id={field_id(@driver_info, stint, :fastest_sector_1)}
                       stat={stint.stats.s1_time.fastest}
                     />
                   </span>
                   <span class="text-sm" title="Fastest sector 2">
-                    <span class="px-1 block xs:inline-block text-gray-500">S2</span>
+                    <span class="px-1 block xs:inline-block text-gray-500 dark:text-gray-400">S2</span>
                     <Component.LapTimeField
                       id={field_id(@driver_info, stint, :fastest_sector_2)}
                       stat={stint.stats.s2_time.fastest}
                     />
                   </span>
                   <span class="text-sm" title="Fastest sector 3">
-                    <span class="px-1 block xs:inline-block text-gray-500">S3</span>
+                    <span class="px-1 block xs:inline-block text-gray-500 dark:text-gray-400">S3</span>
                     <Component.LapTimeField
                       id={field_id(@driver_info, stint, :fastest_sector_3)}
                       stat={stint.stats.s3_time.fastest}
@@ -192,7 +192,7 @@ defmodule F1BotWeb.Component.DriverSummary do
                   </span>
                 </div>
 
-                <div class="contents text-gray-500">
+                <div class="contents text-gray-500 dark:text-gray-400">
                   <span class="text-sm" title="Average lap">
                     <span class="px-1 w-7 inline-block">Avg.</span>
                     <Component.LapTimeField

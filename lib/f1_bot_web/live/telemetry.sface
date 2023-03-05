@@ -1,5 +1,5 @@
 <div id="telemetry-live" :hook={"SaveParams", from: Component.Utility}>
-  <div class="p-2 w-full flex bg-slate-200">
+  <div class="p-2 w-full flex bg-slate-200 dark:bg-transparent">
     <.brand />
   </div>
 
@@ -28,7 +28,7 @@
         </Component.PopupLink>
       </div>
 
-      <div class="mt-4 grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,27rem)] auto-rows-min">
+      <div class="mt-4 grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,24rem)] auto-rows-min">
         {#for driver_info <- @driver_list}
           <Component.DriverSummary
             :if={driver_info.driver_number in @drivers_of_interest}

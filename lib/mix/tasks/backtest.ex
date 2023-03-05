@@ -15,6 +15,7 @@ defmodule Mix.Tasks.Backtest do
   require Logger
 
   alias F1Bot.Replay
+  alias F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions
 
   @impl Mix.Task
   def run(argv) do
@@ -31,7 +32,10 @@ defmodule Mix.Tasks.Backtest do
       # the sanity of F1 packet processing logic by inspecting the console output
       # for simulated Discord and Twitter messages.
       events_fn: &F1Bot.PubSub.broadcast_events/1,
-      report_progress: true
+      report_progress: true,
+      processing_options: %ProcessingOptions{
+        skip_heavy_events: false
+      }
     }
 
     # profile_start()

@@ -15,7 +15,8 @@ defmodule F1BotWeb.Component.PopupLink do
             class={
               "transition-all inline-flex items-center",
               "font-semibold text-white rounded",
-              "bg-blue-500", "hover:bg-blue-700", "py-1 px-2",
+              "bg-blue-500 dark:bg-blue-900 hover:bg-blue-700 dark:hover:bg-blue-600",
+              "py-1 px-2",
               @class
             }
             data-href={@href}
