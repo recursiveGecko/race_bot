@@ -8,23 +8,34 @@
 
 .data-update-highlight {
   animation: data-update-highlight 2s ease-in-out;
+  --highlight-bg-color: rgb(255, 251, 0);
+  --highlight-color: none;
+}
+
+.dark .data-update-highlight {
+  --highlight-bg-color: hsl(220, 15%, 23%);
+  --highlight-color: hsl(0, 0%, 100%);
 }
 
 @keyframes data-update-highlight {
   0% {
     /* opacity: 1; */
     background-color: none;
+    color: none;
   }
   25% {
     /* opacity: 0.3; */
-    background-color: rgb(255, 251, 0);
+    background-color: var(--highlight-bg-color);
+    color: var(--highlight-color);
   }
   75% {
     /* opacity: 0.3; */
-    background-color: rgb(255, 251, 0);
+    background-color: var(--highlight-bg-color);
+    color: var(--highlight-color);
   }  
   100% {
     /* opacity: 1; */
     background-color: none;
+    color: none;
   }
 }
