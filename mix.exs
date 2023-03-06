@@ -120,7 +120,6 @@ defmodule F1Bot.MixProject do
       {:gnuplot, "~> 1.22"},
       {:extwitter, "~> 0.14.0"},
       {:oauther, "~> 1.3"},
-      {:memoize, "~> 1.4"},
       {:scribe, "~> 0.10.0", only: :dev},
       {:kino, "~> 0.8.1", only: :dev},
       {:vega_lite, "~> 0.1.6", only: :dev},

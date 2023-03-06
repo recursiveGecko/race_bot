@@ -20,11 +20,11 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.TimingData do
         }
 
   typedstruct do
-    field :driver_number, pos_integer(), enforce: true
-    field :timestamp, DateTime.t(), enforce: true
-    field :lap_number, pos_integer() | nil
-    field :lap_time, Timex.Duration.t() | nil
-    field :sector_times, sector_times() | nil
+    field(:driver_number, pos_integer(), enforce: true)
+    field(:timestamp, DateTime.t(), enforce: true)
+    field(:lap_number, pos_integer() | nil)
+    field(:lap_time, Timex.Duration.t() | nil)
+    field(:sector_times, sector_times() | nil)
   end
 
   @behaviour LiveTimingHandlers
@@ -92,23 +92,14 @@ defmodule F1Bot.F1Session.LiveTimingHandlers.TimingData do
       sector_times: sector_times
     }
 
-    has_any_data =
-      timing_data
-      |> Map.values()
-      |> Enum.any?(&(&1 != nil))
+    {session, new_events} =
+      F1Session.push_timing_data(
+        session,
+        timing_data,
+        !!options.skip_heavy_events
+      )
 
-    if has_any_data do
-      {session, new_events} =
-        F1Session.push_timing_data(
-          session,
-          timing_data,
-          !!options.skip_heavy_events
-        )
-
-      {session, [new_events | events]}
-    else
-      {session, events}
-    end
+    {session, [new_events | events]}
   end
 
   defp maybe_extract_lap_time(data) do
