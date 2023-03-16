@@ -1,5 +1,5 @@
 <div id="charts-live" class="w-full h-screen flex flex-col" :hook={"SaveParams", from: Component.Utility}>
-  <div class="w-full bg-slate-200 px-2 py-1 flex items-center">
+  <div class="w-full bg-slate-200 dark:bg-transparent px-2 py-1 flex items-center">
     <.brand class="shrink-0 hidden lg:flex mr-8" />
 
     <div class="mr-4 lg:mr-8">
@@ -8,7 +8,7 @@
 
     <div class="grow"></div>
 
-    <p class="hidden md:inline-flex text-gray-700 text-sm font-light items-center">
+    <p class="hidden md:inline-flex text-gray-700 dark:text-gray-400 text-sm font-light items-center">
       <Heroicons.light_bulb class="shrink-0 w-6 h-6 mr-1" />
       Tip: Click on legend entries to toggle visibility, hover over them to glance at the data, shift-click to hide all other entries.
       Hover over the data points to see exact values.

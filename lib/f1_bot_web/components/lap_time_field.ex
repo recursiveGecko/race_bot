@@ -1,8 +1,7 @@
 defmodule F1BotWeb.Component.LapTimeField do
-  use F1BotWeb, :component
+  use F1BotWeb, :live_component
   alias F1Bot.DataTransform.Format
 
-  prop id, :string, required: true
   prop class, :css_class
   prop stat, :map, required: true
   prop overall_fastest_class, :css_class, default: "border-purple-600"

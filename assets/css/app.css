@@ -17,6 +17,14 @@
   --highlight-color: hsl(0, 0%, 100%);
 }
 
+html:not(.dark) {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
 @keyframes data-update-highlight {
   0% {
     /* opacity: 1; */

@@ -4,19 +4,27 @@ import { ChartVisualization } from '.';
 import { TrackStatusData, AnyChartData, LapTimeDataPoint, DriverLapTimeData, TrackStatusDataPoint } from './DataPayloads';
 import { DataSetUtils } from './DatasetUtils';
 import { Storage } from "@assets/Storage";
+import { DarkModeObserver } from '@assets/DarkModeObserver';
+
+const isDark = DarkModeObserver.isDarkModeEnabled.bind(DarkModeObserver);
+const darkModeText = 'hsl(220,10%,90%)';
+const lightModeText = 'hsl(0,0%,5%)';
 
 class RaceLapTimeChart implements ChartVisualization {
   protected chart: Chart;
   protected driverData: { [key: number]: ChartDataset } = {};
   protected updateTimeout?: number;
   protected hideDatasetAfterLeave: Record<number, boolean> = {};
+  protected darkModeListener: EventListener = () => this.update();
 
   constructor(protected canvas: HTMLCanvasElement) {
     const schema = this.schema();
     this.chart = new Chart(canvas, schema);
+    DarkModeObserver.subscribe(this.darkModeListener);
   }
 
   destroy() {
+    DarkModeObserver.unsubscribe(this.darkModeListener);
     this.chart.destroy();
   }
 
@@ -106,42 +114,62 @@ class RaceLapTimeChart implements ChartVisualization {
   }
 
   protected makeIntervalAnnotation(point: TrackStatusDataPoint): AnnotationOptions {
+    const backgroundColor = () => isDark() ? 'hsla(54, 100%, 30%, 0.3)' : 'rgba(255, 230, 0, 0.4)';
+    const borderColor = () => isDark() ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,0)';
+    const labelColor = () => isDark() ? 'white' : 'black';
+
+    let rotation = 0;
+
+    if (point.lap_to && point.lap_from && (point.lap_to - point.lap_from) < 2) {
+      rotation = -90;
+    }
+
     return {
       type: 'box',
       xMin: point.lap_from,
       xMax: point.lap_to,
-      backgroundColor: 'rgba(255, 230, 0, 0.25)',
-      borderColor: 'rgba(255, 150, 0, 0.25)',
+      backgroundColor: backgroundColor,
+      borderColor: borderColor,
       borderRadius: 2,
       borderWidth: 2,
       drawTime: 'beforeDatasetsDraw',
       label: {
         display: true,
         content: point.status,
-        drawTime: 'afterDraw',
-        color: 'rgba(100, 100, 100, 1)',
+        color: labelColor,
+        rotation: rotation,
         position: {
           x: 'center',
           y: 'start'
-        }
+        },
+        drawTime: 'afterDatasetsDraw',
       }
     }
   }
 
   protected makeInstantAnnotation(point: TrackStatusDataPoint): AnnotationOptions {
+    const borderColor = () => isDark() ? 'red' : 'red';
+    const labelColor = () => isDark() ? 'white' : 'black';
+    const labelBorderColor = () => isDark() ? 'red' : 'red';
+    const labelBackgroundColor = () => isDark() ? 'black' : 'white';
+
     return {
       type: 'line',
       xMin: point.lap_from,
       xMax: point.lap_from,
-      borderColor: 'rgba(255, 0, 0, 1)',
+      borderColor: borderColor,
       borderWidth: 2,
       drawTime: 'beforeDatasetsDraw',
       label: {
         display: true,
         content: point.status,
-        drawTime: 'afterDraw',
+        backgroundColor: labelBackgroundColor,
+        borderColor: labelBorderColor,
+        borderWidth: 1,
+        color: labelColor,
         position: 'start',
-      }
+        drawTime: 'afterDatasetsDraw',
+      },
     }
   }
 
@@ -266,12 +294,15 @@ class RaceLapTimeChart implements ChartVisualization {
       family: monoFontFamily,
       size: 16,
     };
-    const scalesTitleColor = 'black';
     const ticksFontConfig: Partial<FontSpec> = {
       family: monoFontFamily,
       size: 14
     };
-    const ticksColor = 'black';
+
+    const scalesTitleColor = () => isDark() ? darkModeText : lightModeText;
+    const ticksColor = () => isDark() ? darkModeText : lightModeText;
+    const legendColor = () => isDark() ? darkModeText : lightModeText;
+    const gridColor = () => isDark() ? 'hsl(220,10%,20%)' : 'rgba(0,0,0,0.1)';
 
     const schema: ChartConfiguration = {
       type: 'line',
@@ -286,7 +317,8 @@ class RaceLapTimeChart implements ChartVisualization {
           yAxisKey: 't'
         },
         animation: false,
-        layout: {},
+        layout: {
+        },
         scales: {
           x: {
             display: true,
@@ -295,13 +327,18 @@ class RaceLapTimeChart implements ChartVisualization {
               display: true,
               text: "Lap",
               font: scalesTitleFontConfig,
-              color: scalesTitleColor,
+              color: scalesTitleColor as any,
+              padding: 0
             },
             ticks: {
               precision: 0,
               stepSize: 5,
               font: ticksFontConfig,
-              color: ticksColor
+              color: ticksColor,
+              padding: 0
+            },
+            grid: {
+              color: gridColor as any,
             }
           },
           y: {
@@ -311,13 +348,19 @@ class RaceLapTimeChart implements ChartVisualization {
               display: true,
               text: "Lap Time",
               font: scalesTitleFontConfig,
-              color: scalesTitleColor
+              color: scalesTitleColor as any,
+              padding: {
+                top: 0
+              }
             },
             ticks: {
               font: ticksFontConfig,
-              color: ticksColor
+              color: ticksColor,
+            },
+            grid: {
+              color: gridColor as any
             }
-          }
+          },
         },
         plugins: {
           legend: {
@@ -331,7 +374,7 @@ class RaceLapTimeChart implements ChartVisualization {
                 size: 15,
                 style: 'normal',
               },
-              color: 'rgba(0, 0, 0, 1)',
+              color: legendColor as any,
               boxWidth: 20,
               boxHeight: 15,
             },
@@ -341,7 +384,7 @@ class RaceLapTimeChart implements ChartVisualization {
             common: {
               font: {
                 family: monoFontFamily
-              }
+              },
             }
           },
           tooltip: {
@@ -360,21 +403,6 @@ class RaceLapTimeChart implements ChartVisualization {
               family: monoFontFamily
             }
           }
-          // zoom: {
-          //   zoom: {
-          //     mode: 'y',
-          //     wheel: {
-          //       enabled: true
-          //     },
-          //     pinch: {
-          //       enabled: true
-          //     }
-          //   },
-          //   pan: {
-          //     enabled: true,
-          //     mode: 'xy',
-          //   },
-          // }
         }
       },
     };

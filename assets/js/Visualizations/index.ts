@@ -1,12 +1,12 @@
-import {Chart} from 'chart.js/auto';
+import { Chart } from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 import annotationPlugin from 'chartjs-plugin-annotation';
 // import zoomPlugin from 'chartjs-plugin-zoom';
 
-import {RaceLapTimeChart} from "./RaceLapTimeChart"
-import {LapTimeScale} from './LapTimeScale';
-import {AnyChartData} from './DataPayloads';
-import {FPQualiLapTimeChart} from "@assets/Visualizations/FPQualiLapTimeChart";
+import { RaceLapTimeChart } from "./RaceLapTimeChart"
+import { LapTimeScale } from './LapTimeScale';
+import { AnyChartData } from './DataPayloads';
+import { FPQualiLapTimeChart } from "./FPQualiLapTimeChart";
 
 // Chart.register(zoomPlugin);
 Chart.register(annotationPlugin);

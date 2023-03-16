@@ -6,6 +6,9 @@ import { LiveSocket } from "@deps/phoenix_live_view"
 import topbar from "../vendor/topbar"
 import Hooks from "./_hooks"
 import { Storage } from "./Storage"
+import { DarkModeObserver } from "./DarkModeObserver";
+
+DarkModeObserver.init();
 
 const fetchParams = () => {
   const csrfToken = document.querySelector("meta[name='csrf-token']")?.getAttribute("content")
