@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.4.0">
 
-    <title>F1Bot.Analysis.Common — f1_bot v0.4.0</title>
+    <title>F1BotWeb.Component.StintSummary — f1_bot v0.4.0</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
@@ -98,19 +98,25 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/common.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/stint_summary.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.Analysis.Common</span> 
+  <span translate="no">F1BotWeb.Component.StintSummary</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.4.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Common functions for analysis</p>
+<h2 id="module-properties" class="section-heading">
+  <a href="#module-properties" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">properties</p>
+  </a>
+  Properties
+</h2>
+<ul><li><p><strong>id</strong> <em>:string, required: true</em> - The id of the live component (required by LiveView for stateful components).</p></li><li><p><strong>stint</strong> <em>:map, required: true</em></p></li></ul>
   </section>
 
 
@@ -129,7 +135,7 @@ f1_bot
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#all_driver_data/1" translate="no">all_driver_data(session)</a>
+        <a href="#field_id/2" translate="no">field_id(id, kind)</a>
 
       </div>
 
@@ -137,33 +143,31 @@ f1_bot
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#fetch_driver_lap/3" translate="no">fetch_driver_lap(all_driver_data, driver_no, lap_no)</a>
+        <a href="#mount/1" translate="no">mount(socket)</a>
 
       </div>
+
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix_live_view/0.18.16/Phoenix.LiveComponent.html#c:mount/1"><code class="inline">Phoenix.LiveComponent.mount/1</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#fetch_driver_laps/2" translate="no">fetch_driver_laps(session, driver_no)</a>
+        <a href="#render/1" translate="no">render(assigns)</a>
 
       </div>
+
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix_live_view/0.18.16/Phoenix.LiveComponent.html#c:render/1"><code class="inline">Phoenix.LiveComponent.render/1</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#fetch_driver_stints/2" translate="no">fetch_driver_stints(session, driver_no)</a>
+        <a href="#update/2" translate="no">update(assigns, socket)</a>
 
       </div>
 
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#neutralized_periods/1" translate="no">neutralized_periods(session)</a>
-
-      </div>
+        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/phoenix_live_view/0.18.16/Phoenix.LiveComponent.html#c:update/2"><code class="inline">Phoenix.LiveComponent.update/2</code></a>.</p></div>
 
     </div>
 
@@ -181,16 +185,16 @@ f1_bot
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="all_driver_data/1">
+<section class="detail" id="field_id/2">
 
   <div class="detail-header">
-    <a href="#all_driver_data/1" class="detail-link" title="Link to this function">
+    <a href="#field_id/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">all_driver_data(session)</h1>
+    <h1 class="signature" translate="no">field_id(id, kind)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/common.ex#L10" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/stint_summary.ex#L104" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -203,16 +207,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="fetch_driver_lap/3">
+<section class="detail" id="mount/1">
 
   <div class="detail-header">
-    <a href="#fetch_driver_lap/3" class="detail-link" title="Link to this function">
+    <a href="#mount/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">fetch_driver_lap(all_driver_data, driver_no, lap_no)</h1>
+    <h1 class="signature" translate="no">mount(socket)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/common.ex#L39" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/stint_summary.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -222,19 +226,19 @@ Functions
 
   <section class="docstring">
 
-
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix_live_view/0.18.16/Phoenix.LiveComponent.html#c:mount/1"><code class="inline">Phoenix.LiveComponent.mount/1</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="fetch_driver_laps/2">
+<section class="detail" id="render/1">
 
   <div class="detail-header">
-    <a href="#fetch_driver_laps/2" class="detail-link" title="Link to this function">
+    <a href="#render/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">fetch_driver_laps(session, driver_no)</h1>
+    <h1 class="signature" translate="no">render(assigns)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/common.ex#L25" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/stint_summary.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -244,19 +248,19 @@ Functions
 
   <section class="docstring">
 
-
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix_live_view/0.18.16/Phoenix.LiveComponent.html#c:render/1"><code class="inline">Phoenix.LiveComponent.render/1</code></a>.</p>
   </section>
 </section>
-<section class="detail" id="fetch_driver_stints/2">
+<section class="detail" id="update/2">
 
   <div class="detail-header">
-    <a href="#fetch_driver_stints/2" class="detail-link" title="Link to this function">
+    <a href="#update/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">fetch_driver_stints(session, driver_no)</h1>
+    <h1 class="signature" translate="no">update(assigns, socket)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/common.ex#L32" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot_web/components/stint_summary.ex#L1" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -266,29 +270,7 @@ Functions
 
   <section class="docstring">
 
-
-  </section>
-</section>
-<section class="detail" id="neutralized_periods/1">
-
-  <div class="detail-header">
-    <a href="#neutralized_periods/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">neutralized_periods(session)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/analysis/common.ex#L46" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
+<p>Callback implementation for <a href="https://hexdocs.pm/phoenix_live_view/0.18.16/Phoenix.LiveComponent.html#c:update/2"><code class="inline">Phoenix.LiveComponent.update/2</code></a>.</p>
   </section>
 </section>
 

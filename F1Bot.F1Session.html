@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-3900DF92.js"></script>
+    <script src="dist/sidebar_items-532581BE.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -229,22 +229,6 @@ that have side effects, such as posting to Twitter, it generates events that are
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#push_lap_number/4" translate="no">push_lap_number(session, driver_number, lap_number, timestamp)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#push_lap_time/4" translate="no">push_lap_time(session, driver_number, lap_time, timestamp)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
         <a href="#push_position/3" translate="no">push_position(session, driver_number, position)</a>
 
       </div>
@@ -254,14 +238,6 @@ that have side effects, such as posting to Twitter, it generates events that are
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#push_race_control_messages/2" translate="no">push_race_control_messages(session, messages)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#push_sector_time/5" translate="no">push_sector_time(session, driver_number, sector, sector_time, timestamp)</a>
 
       </div>
 
@@ -285,7 +261,7 @@ that have side effects, such as posting to Twitter, it generates events that are
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#push_stint_data/3" translate="no">push_stint_data(session, driver_number, stint_data)</a>
+        <a href="#push_stint_data/4" translate="no">push_stint_data(session, driver_number, stint_data, skip_heavy_events \\ false)</a>
 
       </div>
 
@@ -294,6 +270,14 @@ that have side effects, such as posting to Twitter, it generates events that are
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#push_telemetry/3" translate="no">push_telemetry(session, driver_number, channels)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#push_timing_data/3" translate="no">push_timing_data(session, timing_data, skip_heavy_events \\ false)</a>
 
       </div>
 
@@ -362,7 +346,7 @@ Types
     </a>
     <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L15" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L16" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -413,7 +397,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">driver_info_by_abbr(session, driver_abbr)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L48" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L49" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -435,7 +419,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">driver_info_by_number(session, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L44" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L45" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -457,7 +441,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">driver_list(session)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L35" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L36" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -479,7 +463,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">driver_session_data(session, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L52" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L53" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -501,7 +485,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">driver_summary(session, driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L39" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L40" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -523,7 +507,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">make_state_sync_events(session, local_time)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L289" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L269" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -545,7 +529,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L33" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L34" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -567,7 +551,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">periodic_tick(session, local_time)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L265" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L243" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -589,7 +573,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_driver_list_update(session, drivers)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L61" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L62" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -611,51 +595,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_lap_counter_update(session, current_lap, total_laps, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L168" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="push_lap_number/4">
-
-  <div class="detail-header">
-    <a href="#push_lap_number/4" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">push_lap_number(session, driver_number, lap_number, timestamp)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L121" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="push_lap_time/4">
-
-  <div class="detail-header">
-    <a href="#push_lap_time/4" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">push_lap_time(session, driver_number, lap_time, timestamp)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L89" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L146" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -677,7 +617,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_position(session, driver_number, position)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L160" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L138" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -699,29 +639,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_race_control_messages(session, messages)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L179" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="push_sector_time/5">
-
-  <div class="detail-header">
-    <a href="#push_sector_time/5" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">push_sector_time(session, driver_number, sector, sector_time, timestamp)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L68" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L157" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -743,7 +661,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_session_info(session, session_info, local_time, ignore_reset)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L192" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L170" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -765,7 +683,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_session_status(session, session_status)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L210" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L188" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -778,16 +696,18 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="push_stint_data/3">
+<section class="detail" id="push_stint_data/4">
+
+    <span id="push_stint_data/3"></span>
 
   <div class="detail-header">
-    <a href="#push_stint_data/3" class="detail-link" title="Link to this function">
+    <a href="#push_stint_data/4" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">push_stint_data(session, driver_number, stint_data)</h1>
+    <h1 class="signature" translate="no">push_stint_data(session, driver_number, stint_data, skip_heavy_events \\ false)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L132" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L101" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -809,7 +729,31 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_telemetry(session, driver_number, channels)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L152" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L130" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="push_timing_data/3">
+
+    <span id="push_timing_data/2"></span>
+
+  <div class="detail-header">
+    <a href="#push_timing_data/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">push_timing_data(session, timing_data, skip_heavy_events \\ false)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L69" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -831,7 +775,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_track_status(session, track_status, timestamp)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L235" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L213" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -853,7 +797,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">reset_session(session, local_time)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L273" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L251" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -875,7 +819,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">session_best_stats(session)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L56" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L57" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -897,7 +841,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">session_clock_from_local_time(session, local_time)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L246" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L224" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -919,7 +863,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">update_clock(session, server_time, local_time, remaining, is_running)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L257" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session.ex#L235" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

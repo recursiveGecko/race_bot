@@ -7,13 +7,13 @@
     <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.4.0">
 
-    <title>F1Bot.F1Session.DriverDataRepo.DriverData.EndOfSectorResult — f1_bot v0.4.0</title>
+    <title>F1Bot.F1Session.DriverDataRepo.Summary — f1_bot v0.4.0</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-3900DF92.js"></script>
+    <script src="dist/sidebar_items-532581BE.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -98,20 +98,20 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data/end_of_sector_result.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/summary.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.F1Session.DriverDataRepo.DriverData.EndOfSectorResult</span> 
+  <span translate="no">F1Bot.F1Session.DriverDataRepo.Summary</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.4.0)</small>
 
 </h1>
 
 
   <section id="moduledoc">
-<p>Result of pushing a sector time to DriverData repo, contains information
-about personal best sector times</p>
+<p>Generates a driver summary that includes fastest lap, top speed and summarized
+stint information (stint laps, tyre compound, average &amp; minimum lap time)</p>
   </section>
 
 
@@ -123,14 +123,22 @@ about personal best sector times</p>
       </a>
       Summary
     </h1>
-<div class="summary-types summary">
+<div class="summary-functions summary">
   <h2>
-    <a href="#types">Types</a>
+    <a href="#functions">Functions</a>
   </h2>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#t:t/0" translate="no">t()</a>
+        <a href="#empty_summary/0" translate="no">empty_summary()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#generate/3" translate="no">generate(data, track_status_hist, best_stats \\ BestStats.new())</a>
 
       </div>
 
@@ -141,25 +149,25 @@ about personal best sector times</p>
   </section>
 
 
-  <section id="types" class="details-list">
+  <section id="functions" class="details-list">
     <h1 class="section-heading">
-      <a class="hover-link" href="#types">
+      <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
         <span class="sr-only">Link to this section</span>
       </a>
-Types
+Functions
     </h1>
-    <div class="types-list">
-<section class="detail" id="t:t/0">
+    <div class="functions-list">
+<section class="detail" id="empty_summary/0">
 
   <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
+    <a href="#empty_summary/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
+      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">t()</h1>
+    <h1 class="signature" translate="no">empty_summary()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data/end_of_sector_result.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/summary.ex#L47" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -169,15 +177,29 @@ Types
 
   <section class="docstring">
 
-      <div class="specs">
 
-          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.DriverDataRepo.DriverData.EndOfSectorResult{
-  driver_number: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  sector: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  sector_time: <a href="https://hexdocs.pm/timex/3.7.9/Timex.Duration.html#t:t/0">Timex.Duration.t</a>()
-}</pre>
+  </section>
+</section>
+<section class="detail" id="generate/3">
 
-      </div>
+    <span id="generate/2"></span>
+
+  <div class="detail-header">
+    <a href="#generate/3" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">generate(data, track_status_hist, best_stats \\ BestStats.new())</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/summary.ex#L16" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
 
 
   </section>

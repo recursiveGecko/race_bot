@@ -28,15 +28,15 @@ F1Bot.F1Session.Common.TimeSeriesStore.html
 F1Bot.F1Session.DriverCache.DriverInfo.html
 F1Bot.F1Session.DriverCache.html
 F1Bot.F1Session.DriverDataRepo.BestStats.html
-F1Bot.F1Session.DriverDataRepo.DriverData.EndOfLapResult.html
-F1Bot.F1Session.DriverDataRepo.DriverData.EndOfSectorResult.html
-F1Bot.F1Session.DriverDataRepo.DriverData.Summary.html
 F1Bot.F1Session.DriverDataRepo.DriverData.html
 F1Bot.F1Session.DriverDataRepo.Events.html
 F1Bot.F1Session.DriverDataRepo.Lap.html
 F1Bot.F1Session.DriverDataRepo.Laps.html
+F1Bot.F1Session.DriverDataRepo.PersonalBestStats.html
+F1Bot.F1Session.DriverDataRepo.Sector.html
 F1Bot.F1Session.DriverDataRepo.Stint.html
 F1Bot.F1Session.DriverDataRepo.Stints.html
+F1Bot.F1Session.DriverDataRepo.Summary.html
 F1Bot.F1Session.DriverDataRepo.html
 F1Bot.F1Session.EventGenerator.Charts.html
 F1Bot.F1Session.EventGenerator.Driver.html
@@ -49,7 +49,6 @@ F1Bot.F1Session.LiveTimingHandlers.DriverList.html
 F1Bot.F1Session.LiveTimingHandlers.ExtrapolatedClock.html
 F1Bot.F1Session.LiveTimingHandlers.Helpers.html
 F1Bot.F1Session.LiveTimingHandlers.LapCount.html
-F1Bot.F1Session.LiveTimingHandlers.LapData.html
 F1Bot.F1Session.LiveTimingHandlers.Packet.html
 F1Bot.F1Session.LiveTimingHandlers.PositionData.html
 F1Bot.F1Session.LiveTimingHandlers.ProcessingOptions.html
@@ -58,6 +57,7 @@ F1Bot.F1Session.LiveTimingHandlers.RaceControlMessages.html
 F1Bot.F1Session.LiveTimingHandlers.SessionInfo.html
 F1Bot.F1Session.LiveTimingHandlers.SessionStatus.html
 F1Bot.F1Session.LiveTimingHandlers.StintData.html
+F1Bot.F1Session.LiveTimingHandlers.TimingData.html
 F1Bot.F1Session.LiveTimingHandlers.TrackStatus.html
 F1Bot.F1Session.LiveTimingHandlers.html
 F1Bot.F1Session.RaceControl.Message.html
@@ -88,6 +88,7 @@ F1BotWeb.Component.DriverSummary.html
 F1BotWeb.Component.LapAndClock.html
 F1BotWeb.Component.LapTimeField.html
 F1BotWeb.Component.PopupLink.html
+F1BotWeb.Component.StintSummary.html
 F1BotWeb.Component.TyreSymbol.html
 F1BotWeb.Component.Utility.html
 F1BotWeb.Endpoint.html
@@ -133,8 +134,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_items-591FBD18.js
-dist/sidebar_items-3900DF92.js
+dist/search_items-E87A64E1.js
+dist/sidebar_items-532581BE.js
 index.html
 license.html
 readme.html

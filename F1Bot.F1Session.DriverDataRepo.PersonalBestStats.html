@@ -7,13 +7,13 @@
     <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.4.0">
 
-    <title>F1Bot.F1Session.DriverDataRepo.DriverData.Summary — f1_bot v0.4.0</title>
+    <title>F1Bot.F1Session.DriverDataRepo.PersonalBestStats — f1_bot v0.4.0</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-3900DF92.js"></script>
+    <script src="dist/sidebar_items-532581BE.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -98,21 +98,16 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data/summary.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/personal_best_stats.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.F1Session.DriverDataRepo.DriverData.Summary</span> 
+  <span translate="no">F1Bot.F1Session.DriverDataRepo.PersonalBestStats</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.4.0)</small>
 
 </h1>
 
-
-  <section id="moduledoc">
-<p>Generates a driver summary that includes fastest lap, top speed and summarized
-stint information (stint laps, tyre compound, average &amp; minimum lap time)</p>
-  </section>
 
 
   <section id="summary" class="details-list">
@@ -123,6 +118,20 @@ stint information (stint laps, tyre compound, average &amp; minimum lap time)</p
       </a>
       Summary
     </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:t/0" translate="no">t()</a>
+
+      </div>
+
+    </div>
+
+</div>
 <div class="summary-functions summary">
   <h2>
     <a href="#functions">Functions</a>
@@ -130,15 +139,7 @@ stint information (stint laps, tyre compound, average &amp; minimum lap time)</p
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#empty_summary/0" translate="no">empty_summary()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#generate/2" translate="no">generate(data, track_status_hist)</a>
+        <a href="#new/1" translate="no">new(driver_number)</a>
 
       </div>
 
@@ -149,25 +150,25 @@ stint information (stint laps, tyre compound, average &amp; minimum lap time)</p
   </section>
 
 
-  <section id="functions" class="details-list">
+  <section id="types" class="details-list">
     <h1 class="section-heading">
-      <a class="hover-link" href="#functions">
+      <a class="hover-link" href="#types">
         <i class="ri-link-m" aria-hidden="true"></i>
         <span class="sr-only">Link to this section</span>
       </a>
-Functions
+Types
     </h1>
-    <div class="functions-list">
-<section class="detail" id="empty_summary/0">
+    <div class="types-list">
+<section class="detail" id="t:t/0">
 
   <div class="detail-header">
-    <a href="#empty_summary/0" class="detail-link" title="Link to this function">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
+      <span class="sr-only">Link to this type</span>
     </a>
-    <h1 class="signature" translate="no">empty_summary()</h1>
+    <h1 class="signature" translate="no">t()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data/summary.ex#L24" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/personal_best_stats.ex#L4" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -177,19 +178,49 @@ Functions
 
   <section class="docstring">
 
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.DriverDataRepo.PersonalBestStats{
+  driver_number: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>() | nil,
+  lap_time_ms: (<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>() | nil) | nil,
+  sectors_ms:
+    %{
+      required(1) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>() | nil,
+      required(2) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>() | nil,
+      required(3) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>() | nil
+    }
+    | nil,
+  top_speed: (<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>() | nil) | nil
+}</pre>
+
+      </div>
+
 
   </section>
 </section>
-<section class="detail" id="generate/2">
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+        <span class="sr-only">Link to this section</span>
+      </a>
+Functions
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="new/1">
 
   <div class="detail-header">
-    <a href="#generate/2" class="detail-link" title="Link to this function">
+    <a href="#new/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">generate(data, track_status_hist)</h1>
+    <h1 class="signature" translate="no">new(driver_number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data/summary.ex#L14" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/personal_best_stats.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
