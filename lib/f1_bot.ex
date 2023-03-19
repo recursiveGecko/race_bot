@@ -163,21 +163,24 @@ defmodule F1Bot do
   Useful for testing and restoring data from the last session on server
   restart.
   """
-  def reload_session(light_data) when is_boolean(light_data) do
-    reload_session(nil, ProcessingOptions.new(), light_data)
+  def reload_session(light_data, force_reload \\ false) when is_boolean(light_data) do
+    reload_session(nil, ProcessingOptions.new(), light_data, force_reload)
   end
 
-  def reload_session(url, light_data) when is_binary(url) and is_boolean(light_data) do
-    reload_session(url, ProcessingOptions.new(), light_data)
+  def reload_session(url, light_data, force_reload)
+      when is_binary(url) and is_boolean(light_data) and is_boolean(force_reload) do
+    reload_session(url, ProcessingOptions.new(), light_data, force_reload)
   end
 
-  def reload_session(processing_opts, light_data)
-      when is_struct(processing_opts, ProcessingOptions) and is_boolean(light_data) do
-    reload_session(nil, processing_opts, light_data)
+  def reload_session(processing_opts, light_data, force_reload)
+      when is_struct(processing_opts, ProcessingOptions) and is_boolean(light_data) and
+             is_boolean(force_reload) do
+    reload_session(nil, processing_opts, light_data, force_reload)
   end
 
-  def reload_session(url, processing_opts, light_data)
-      when is_struct(processing_opts, ProcessingOptions) and is_boolean(light_data) do
+  def reload_session(url, processing_opts, light_data, force_reload)
+      when is_struct(processing_opts, ProcessingOptions) and is_boolean(light_data) and
+             is_boolean(force_reload) do
     url_result =
       if url == nil do
         F1Bot.ExternalApi.F1LiveTiming.current_archive_url_if_completed()
@@ -198,7 +201,7 @@ defmodule F1Bot do
       processing_options: processing_opts
     }
 
-    with true <- can_reload_session?(),
+    with true <- force_reload or can_reload_session?(),
          {:ok, url} <- url_result,
          {:ok, %{session: session}} <- Replay.start_replay(url, replay_options) do
       F1Bot.F1Session.Server.replace_session(session)
