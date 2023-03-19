@@ -13,7 +13,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-532581BE.js"></script>
+    <script src="dist/sidebar_items-3C173CBB.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -272,7 +272,7 @@ Returns an error if the session info is not available.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#reload_session/1" translate="no">reload_session(light_data)</a>
+        <a href="#reload_session/2" translate="no">reload_session(light_data, force_reload \\ false)</a>
 
       </div>
 
@@ -285,7 +285,7 @@ restart.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#reload_session/2" translate="no">reload_session(url, light_data)</a>
+        <a href="#reload_session/3" translate="no">reload_session(url, light_data, force_reload)</a>
 
       </div>
 
@@ -293,7 +293,7 @@ restart.</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#reload_session/3" translate="no">reload_session(url, processing_opts, light_data)</a>
+        <a href="#reload_session/4" translate="no">reload_session(url, processing_opts, light_data, force_reload)</a>
 
       </div>
 
@@ -651,7 +651,7 @@ and best and average sector times.</p>
     </a>
     <h1 class="signature" translate="no">fast_forward_replay(seconds)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L250" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L253" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -720,7 +720,7 @@ by a given number of seconds.</p>
     </a>
     <h1 class="signature" translate="no">is_race?()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L275" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L278" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -744,7 +744,7 @@ Returns an error if the session info is not available.</p>
     </a>
     <h1 class="signature" translate="no">lap_number()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L257" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L260" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -757,14 +757,16 @@ Returns an error if the session info is not available.</p>
 <p>Returns the current lap number.</p>
   </section>
 </section>
-<section class="detail" id="reload_session/1">
+<section class="detail" id="reload_session/2">
+
+    <span id="reload_session/1"></span>
 
   <div class="detail-header">
-    <a href="#reload_session/1" class="detail-link" title="Link to this function">
+    <a href="#reload_session/2" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">reload_session(light_data)</h1>
+    <h1 class="signature" translate="no">reload_session(light_data, force_reload \\ false)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L166" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -782,14 +784,14 @@ Useful for testing and restoring data from the last session on server
 restart.</p>
   </section>
 </section>
-<section class="detail" id="reload_session/2">
+<section class="detail" id="reload_session/3">
 
   <div class="detail-header">
-    <a href="#reload_session/2" class="detail-link" title="Link to this function">
+    <a href="#reload_session/3" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">reload_session(url, light_data)</h1>
+    <h1 class="signature" translate="no">reload_session(url, light_data, force_reload)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L170" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -804,16 +806,16 @@ restart.</p>
 
   </section>
 </section>
-<section class="detail" id="reload_session/3">
+<section class="detail" id="reload_session/4">
 
   <div class="detail-header">
-    <a href="#reload_session/3" class="detail-link" title="Link to this function">
+    <a href="#reload_session/4" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">reload_session(url, processing_opts, light_data)</h1>
+    <h1 class="signature" translate="no">reload_session(url, processing_opts, light_data, force_reload)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L179" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L181" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -837,7 +839,7 @@ restart.</p>
     </a>
     <h1 class="signature" translate="no">replay_session_live(playback_rate \\ 1)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L221" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L224" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -861,7 +863,7 @@ Useful for development and debugging.</p>
     </a>
     <h1 class="signature" translate="no">replay_session_live(url, playback_rate)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L230" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L233" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1046,7 +1048,7 @@ are stripped from the copy to reduce its size.</p>
     </a>
     <h1 class="signature" translate="no">stop_session_replay()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L242" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L245" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -1070,7 +1072,7 @@ are stripped from the copy to reduce its size.</p>
     </a>
     <h1 class="signature" translate="no">sync_archive_cache(recheck_index \\ false)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L291" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot.ex#L294" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
