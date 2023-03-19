@@ -11,14 +11,16 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
 
     # We generate a new summary for the driver that has new data and maybe
     # create events if the summary is different from before.
-    {session, primary_driver_events} = summary_events(session, driver_number)
+    {session, primary_driver_summary_events} = summary_events(session, driver_number)
+
+    chart_events = lap_time_chart_events(session, driver_number)
 
     # We also need to re-generate the summaries for any drivers that used
     # to have session best stats because they might have changed now.
     # Gather a list of those drivers.
+    # If primary driver's summary hasn't changed, then nobody else's has
     drivers_to_recheck =
-      # If primary driver's summary hasn't changed, then nobody else's has
-      if primary_driver_events == [] do
+      if primary_driver_summary_events == [] do
         []
       else
         cached_summaries
@@ -36,7 +38,7 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
     # Recalculate the summaries for those drivers and add accumulate
     # their events. Events are only generated if the summary is different
     # from before.
-    {session, other_driver_events} =
+    {session, other_drivers_summary_events} =
       drivers_to_recheck
       |> Enum.reduce({session, []}, fn driver_number, {session, events} ->
         {session, new_events} = summary_events(session, driver_number)
@@ -45,8 +47,9 @@ defmodule F1Bot.F1Session.EventGenerator.Driver do
 
     events =
       [
-        primary_driver_events,
-        other_driver_events
+        primary_driver_summary_events,
+        other_drivers_summary_events,
+        chart_events
       ]
       |> List.flatten()
 
