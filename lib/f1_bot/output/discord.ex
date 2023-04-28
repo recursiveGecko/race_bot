@@ -9,6 +9,7 @@ defmodule F1Bot.Output.Discord do
   alias F1Bot.Output.Common
   alias F1Bot.PubSub
   alias F1Bot.DataTransform.Format
+  alias F1Bot.F1Session.DriverDataRepo.Transcript
 
   def start_link(init_arg) do
     GenServer.start_link(__MODULE__, init_arg, name: server_via())
@@ -20,6 +21,7 @@ defmodule F1Bot.Output.Discord do
     PubSub.subscribe_to_event("aggregate_stats:fastest_sector")
     PubSub.subscribe_to_event("aggregate_stats:top_speed")
     PubSub.subscribe_to_event("driver:tyre_change")
+    PubSub.subscribe_to_event("driver:transcript")
     PubSub.subscribe_to_event("session_status:started")
     PubSub.subscribe_to_event("race_control:message")
 
@@ -178,6 +180,29 @@ defmodule F1Bot.Output.Discord do
 
   @impl true
   def handle_info(
+        e = %{
+          scope: "driver:transcript",
+          payload: %{
+            transcript: %Transcript{
+              driver_number: driver_number,
+              message: transcript_msg
+            }
+          },
+        },
+        state
+      ) do
+    driver = Common.get_driver_name_by_number(e, driver_number)
+    emoji = ":studio_microphone:"
+    disclaimer = "***Note:** Transcripts are AI-generated, experimental, and often wrong. Reach out to recursiveGecko if you think you could help us improve.*"
+    msg = "#{emoji}  `#{driver}` radio: #{transcript_msg}\n#{disclaimer}"
+
+    F1Bot.ExternalApi.Discord.post_message(msg)
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(
         _e = %{
           scope: "session_status:started",
           payload: %{
@@ -231,8 +256,8 @@ defmodule F1Bot.Output.Discord do
   end
 
   @impl true
-  def handle_info(_msg, state) do
-    # Logger.info("Ignored output message: #{inspect(msg)}")
+  def handle_info(msg, state) do
+    Logger.info("Ignored output message: #{inspect(msg)}")
     {:noreply, state}
   end
 

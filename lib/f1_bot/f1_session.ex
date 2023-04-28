@@ -9,58 +9,61 @@ defmodule F1Bot.F1Session do
   use TypedStruct
   require Logger
 
+  alias F1Bot.LightCopy.F1Bot.F1Session.DriverDataRepo
   alias F1Bot.F1Session
   alias F1Bot.F1Session.Common.Event
+  alias F1Bot.F1Session.{DriverDataRepo, DriverCache, LapCounter}
+  alias F1Bot.F1Session.DriverDataRepo.Transcript
   alias F1Bot.F1Session.LiveTimingHandlers.TimingData
 
   typedstruct do
     @typedoc "F1 Session State"
 
-    field(:driver_data_repo, F1Session.DriverDataRepo.t(), default: F1Session.DriverDataRepo.new())
+    field(:driver_data_repo, DriverDataRepo.t(), default: DriverDataRepo.new())
 
     field(:track_status_history, F1Session.TrackStatusHistory.t(),
       default: F1Session.TrackStatusHistory.new()
     )
 
     field(:race_control, F1Session.RaceControl.t(), default: F1Session.RaceControl.new())
-    field(:driver_cache, F1Session.DriverCache.t(), default: F1Session.DriverCache.new())
+    field(:driver_cache, DriverCache.t(), default: DriverCache.new())
     field(:session_info, F1Session.SessionInfo.t(), default: F1Session.SessionInfo.new())
     field(:session_status, atom())
     field(:clock, F1Session.Clock.t())
-    field(:lap_counter, F1Session.LapCounter.t(), default: F1Session.LapCounter.new())
+    field(:lap_counter, LapCounter.t(), default: LapCounter.new())
     field(:event_generator, F1Session.EventGenerator.t(), default: F1Session.EventGenerator.new())
   end
 
   def new(), do: %__MODULE__{}
 
   def driver_list(session) do
-    F1Session.DriverCache.driver_list(session.driver_cache)
+    DriverCache.driver_list(session.driver_cache)
   end
 
   def driver_summary(session, driver_number) when is_integer(driver_number) do
     session.driver_data_repo
-    |> F1Session.DriverDataRepo.driver_summary(driver_number, session.track_status_history)
+    |> DriverDataRepo.driver_summary(driver_number, session.track_status_history)
   end
 
   def driver_info_by_number(session, driver_number) when is_integer(driver_number) do
-    F1Session.DriverCache.get_driver_by_number(session.driver_cache, driver_number)
+    DriverCache.get_driver_by_number(session.driver_cache, driver_number)
   end
 
   def driver_info_by_abbr(session, driver_abbr) do
-    F1Session.DriverCache.get_driver_by_abbr(session.driver_cache, driver_abbr)
+    DriverCache.get_driver_by_abbr(session.driver_cache, driver_abbr)
   end
 
   def driver_session_data(session, driver_number) when is_integer(driver_number) do
-    F1Session.DriverDataRepo.fetch(session.driver_data_repo, driver_number)
+    DriverDataRepo.fetch(session.driver_data_repo, driver_number)
   end
 
   def session_best_stats(session) do
-    best_stats = F1Session.DriverDataRepo.session_best_stats(session.driver_data_repo)
+    best_stats = DriverDataRepo.session_best_stats(session.driver_data_repo)
     {:ok, best_stats}
   end
 
   def push_driver_list_update(session, drivers) do
-    {driver_cache, events} = F1Session.DriverCache.process_updates(session.driver_cache, drivers)
+    {driver_cache, events} = DriverCache.process_updates(session.driver_cache, drivers)
 
     session = %{session | driver_cache: driver_cache}
     {session, events}
@@ -72,7 +75,7 @@ defmodule F1Bot.F1Session do
         skip_heavy_events \\ false
       ) do
     {repo, events} =
-      F1Session.DriverDataRepo.push_timing_data(
+      DriverDataRepo.push_timing_data(
         session.driver_data_repo,
         timing_data
       )
@@ -107,7 +110,7 @@ defmodule F1Bot.F1Session do
       when is_integer(driver_number) do
     {repo, events} =
       session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_stint_data(driver_number, stint_data)
+      |> DriverDataRepo.push_stint_data(driver_number, stint_data)
 
     session = %{session | driver_data_repo: repo}
 
@@ -130,7 +133,7 @@ defmodule F1Bot.F1Session do
   def push_telemetry(session, driver_number, channels) when is_integer(driver_number) do
     repo =
       session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_telemetry(driver_number, channels)
+      |> DriverDataRepo.push_telemetry(driver_number, channels)
 
     %{session | driver_data_repo: repo}
   end
@@ -138,18 +141,24 @@ defmodule F1Bot.F1Session do
   def push_position(session, driver_number, position) when is_integer(driver_number) do
     repo =
       session.driver_data_repo
-      |> F1Session.DriverDataRepo.push_position(driver_number, position)
+      |> DriverDataRepo.push_position(driver_number, position)
 
     %{session | driver_data_repo: repo}
   end
 
-  def push_lap_counter_update(session, current_lap, total_laps, timestamp) do
-    lap_counter =
-      F1Session.LapCounter.update(session.lap_counter, current_lap, total_laps, timestamp)
+  def process_transcript(session, transcript = %Transcript{}) do
+    {repo, events} = DriverDataRepo.process_transcript(session.driver_data_repo, transcript)
+    events = Event.attach_driver_info(events, session, [transcript.driver_number])
 
+    session = %{session | driver_data_repo: repo}
+    {session, events}
+  end
+
+  def push_lap_counter_update(session, current_lap, total_laps, timestamp) do
+    lap_counter = LapCounter.update(session.lap_counter, current_lap, total_laps, timestamp)
     session = %{session | lap_counter: lap_counter}
 
-    event = F1Session.LapCounter.to_event(lap_counter)
+    event = LapCounter.to_event(lap_counter)
 
     {session, [event]}
   end
@@ -253,10 +262,10 @@ defmodule F1Bot.F1Session do
     # summary because the DriverDataRepo had been reset.
     session = %{
       session
-      | driver_data_repo: F1Session.DriverDataRepo.new(),
+      | driver_data_repo: DriverDataRepo.new(),
         track_status_history: F1Session.TrackStatusHistory.new(),
         race_control: F1Session.RaceControl.new(),
-        lap_counter: F1Session.LapCounter.new(),
+        lap_counter: LapCounter.new(),
         clock: nil
     }
 

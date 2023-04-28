@@ -77,6 +77,8 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
 
   @impl true
   def handle_info({:events, events}, state) do
+    # TODO: Ensure that events are re-sorted by timestamp
+
     # Events should be sorted by timestamp,
     # no further sorting is performed here because
     # other parts of the system (currently) generate events

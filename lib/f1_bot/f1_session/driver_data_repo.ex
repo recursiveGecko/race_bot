@@ -8,7 +8,7 @@ defmodule F1Bot.F1Session.DriverDataRepo do
 
   alias F1Bot.F1Session.LiveTimingHandlers.TimingData
   alias F1Bot.F1Session.DriverDataRepo
-  alias F1Bot.F1Session.DriverDataRepo.{DriverData, BestStats, Events, Summary}
+  alias F1Bot.F1Session.DriverDataRepo.{DriverData, BestStats, Events, Summary, Transcript}
 
   typedstruct do
     @typedoc "Repository for all car, lap time, and stint-related data"
@@ -108,6 +108,16 @@ defmodule F1Bot.F1Session.DriverDataRepo do
       |> DriverData.push_stint_data(stint_data)
 
     events = Events.make_tyre_change_events(driver, result)
+
+    repo = update_driver(repo, driver)
+    {repo, events}
+  end
+
+  def process_transcript(repo, transcript = %Transcript{}) do
+    {driver, events} =
+      repo
+      |> fetch_or_create_driver_from_repo(transcript.driver_number)
+      |> DriverData.process_transcript(transcript)
 
     repo = update_driver(repo, driver)
     {repo, events}

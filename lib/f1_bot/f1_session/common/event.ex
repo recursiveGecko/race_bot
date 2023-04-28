@@ -14,11 +14,13 @@ defmodule F1Bot.F1Session.Common.Event do
   end
 
   @spec new(binary(), any()) :: t()
-  def new(scope, payload) do
+  def new(scope, payload, timestamp \\ System.monotonic_time(:millisecond))
+      # Ensure that the timestamp is in milliseconds
+      when is_integer(timestamp) and timestamp > 1_000_000_000_000 do
     %__MODULE__{
       scope: scope,
       payload: payload,
-      timestamp: System.monotonic_time(:millisecond)
+      timestamp: timestamp
     }
   end
 
@@ -44,7 +46,7 @@ defmodule F1Bot.F1Session.Common.Event do
   def attach_session_info(events, session = %F1Session{}) when is_list(events) do
     new_meta = %{
       lap_number: session.lap_counter.current,
-      session_type: session.session_info.type,
+      session_type: session.session_info.type
     }
 
     for e <- events do

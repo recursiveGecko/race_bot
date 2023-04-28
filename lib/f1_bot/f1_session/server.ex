@@ -8,6 +8,7 @@ defmodule F1Bot.F1Session.Server do
   require Logger
 
   alias F1Bot.F1Session
+  alias F1Bot.F1Session.DriverDataRepo.Transcript
   alias F1Bot.F1Session.LiveTimingHandlers
   alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingOptions, ProcessingResult}
   alias F1Bot.PubSub
@@ -101,6 +102,11 @@ defmodule F1Bot.F1Session.Server do
       ) do
     server_via()
     |> GenServer.call({:process_live_timing_packet, packet, processing_options})
+  end
+
+  def process_transcript(transcript = %Transcript{}) do
+    server_via()
+    |> GenServer.call({:process_transcript, transcript})
   end
 
   def replace_session(session = %F1Session{}) do
@@ -283,6 +289,16 @@ defmodule F1Bot.F1Session.Server do
         last_packet_timestamp: packet.timestamp,
         last_packet_local_time: System.monotonic_time(:millisecond)
     }
+
+    {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_call({:process_transcript, transcript}, _from, state) do
+    {session, events} = F1Session.process_transcript(state.session, transcript)
+    state = %{state | session: session}
+
+    PubSub.broadcast_events(events)
 
     {:reply, :ok, state}
   end

@@ -21,5 +21,4 @@ RUN mix assets.setup && mix assets.deploy && mix release && chown -R app:app /ap
 
 USER app
 
-ENTRYPOINT ["/app/_build/prod/rel/f1bot/bin/f1bot"]
-CMD ["start"]
+CMD ["/app/entrypoint.sh"]

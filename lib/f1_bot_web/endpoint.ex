@@ -16,6 +16,9 @@ defmodule F1BotWeb.Endpoint do
   end
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  socket "/api-socket", F1BotWeb.ApiSocket,
+    websocket: true,
+    longpoll: false
 
   plug F1BotWeb.HealthCheck,
     path: "/health-check"

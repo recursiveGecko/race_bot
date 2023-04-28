@@ -6,7 +6,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
   use TypedStruct
 
   alias F1Bot.LightCopy
-  alias F1Bot.F1Session.DriverDataRepo.{Laps, Stints}
+  alias F1Bot.F1Session.DriverDataRepo.{Laps, Stints, Transcript, Transcripts}
 
   alias F1Bot.F1Session.LiveTimingHandlers.TimingData
   alias F1Bot.F1Session.Common.TimeSeriesStore
@@ -20,11 +20,13 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     field(:stints, Stints.t(), default: Stints.new())
     field(:telemetry_hist, TimeSeriesStore.t(), default: TimeSeriesStore.new())
     field(:position_hist, TimeSeriesStore.t(), default: TimeSeriesStore.new())
+    field(:transcripts, Transcripts.t())
   end
 
   def new(number) when is_integer(number) do
     %__MODULE__{
-      number: number
+      number: number,
+      transcripts: Transcripts.new(number)
     }
   end
 
@@ -110,6 +112,14 @@ defmodule F1Bot.F1Session.DriverDataRepo.DriverData do
     else
       {self, nil}
     end
+  end
+
+  def process_transcript(self = %__MODULE__{}, transcript = %Transcript{}) do
+    transcripts = Transcripts.append(self.transcripts, transcript)
+    self = %{self | transcripts: transcripts}
+    events = [Transcript.to_event(transcript)]
+
+    {self, events}
   end
 
   @spec outlap_lap_numbers(t()) :: [pos_integer()]
