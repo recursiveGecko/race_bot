@@ -67,7 +67,7 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
   @impl true
   def handle_info(:rebroadcast, state) do
     delay_ms = state.delay_ms
-    now = System.monotonic_time(:millisecond)
+    now = F1Bot.Time.unix_timestamp_now(:millisecond)
 
     until_ts = now - delay_ms
     state = rebroadcast_batch(state, until_ts)

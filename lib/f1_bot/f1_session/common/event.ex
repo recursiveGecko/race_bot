@@ -13,10 +13,20 @@ defmodule F1Bot.F1Session.Common.Event do
     field(:meta, map())
   end
 
-  @spec new(binary(), any()) :: t()
-  def new(scope, payload, timestamp \\ System.monotonic_time(:millisecond))
-      # Ensure that the timestamp is in milliseconds
-      when is_integer(timestamp) and timestamp > 1_000_000_000_000 do
+  @spec new(binary(), any(), pos_integer() | nil) :: t()
+  def new(scope, payload, timestamp \\ nil) do
+    timestamp =
+      cond do
+        is_nil(timestamp) ->
+          F1Bot.Time.unix_timestamp_now(:millisecond)
+
+        timestamp < 1_000_000_000_000 ->
+          raise ArgumentError, "timestamp must be in milliseconds"
+
+        true ->
+          timestamp
+      end
+
     %__MODULE__{
       scope: scope,
       payload: payload,

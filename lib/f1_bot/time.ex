@@ -50,4 +50,9 @@ defmodule F1Bot.Time do
         Timex.between?(ts, from_ts, to_ts)
     end
   end
+
+  def unix_timestamp_now(precision) when precision in [:second, :millisecond] do
+    DateTime.utc_now()
+    |> DateTime.to_unix(precision)
+  end
 end
