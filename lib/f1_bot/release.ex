@@ -7,13 +7,13 @@ defmodule F1Bot.Release do
   def migrate() do
     for repo <- repos() do
       Logger.info("Migrating #{inspect(repo)}")
-      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+      {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :up, all: true))
     end
   end
 
   def rollback(repo, version) do
     Logger.info("Rolling back migrations for #{inspect(repo)} to version #{version}")
-    {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
+    {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :down, to: version))
   end
 
   def repos do
