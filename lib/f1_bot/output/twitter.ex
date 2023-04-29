@@ -204,9 +204,9 @@ defmodule F1Bot.Output.Twitter do
     driver = Common.get_driver_name_by_number(e, driver_number)
     _msg =
       """
-      🎙️ #{driver} radio: #{transcript_msg}
+      🎙️ #{driver} radio (AI): #{transcript_msg}
 
-      Note: AI-generated, experimental and often wrong. Reach out if you think you could help.
+      Note: Experimental and often wrong. Reach out if you think you could help.
       #Radio ##{Common.get_driver_abbr_by_number(e, driver_number)} #{@common_hashtags} #{ts_hashtag()}
       """
       |> String.trim()

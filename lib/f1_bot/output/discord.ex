@@ -202,9 +202,9 @@ defmodule F1Bot.Output.Discord do
     emoji = ":studio_microphone:"
 
     disclaimer =
-      "***Note:** Transcripts are AI-generated, experimental, and often wrong. Reach out to recursiveGecko if you think you could help us improve.*"
+      "Experimental and often wrong. Reach out if you think you could help."
 
-    msg = "#{emoji}  `#{driver}` radio: #{transcript_msg}\n#{disclaimer}"
+    msg = "#{emoji} `#{driver}` radio (AI): #{transcript_msg} ||*(#{disclaimer})*||"
 
     F1Bot.ExternalApi.Discord.post_message(msg)
 
