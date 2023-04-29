@@ -211,7 +211,8 @@ defmodule F1Bot.Output.Twitter do
       """
       |> String.trim()
 
-    F1Bot.ExternalApi.Twitter.post_tweet(msg)
+    # TODO: Temporarily disabled due to low Twitter rate limits
+    # F1Bot.ExternalApi.Twitter.post_tweet(msg)
 
     {:noreply, state}
   end
