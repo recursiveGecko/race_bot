@@ -5,15 +5,15 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.29.1">
-    <meta name="project" content="f1_bot v0.4.0">
+    <meta name="project" content="f1_bot v0.5.1">
 
-    <title>F1Bot.F1Session.DriverDataRepo.DriverData — f1_bot v0.4.0</title>
+    <title>F1Bot.F1Session.DriverDataRepo.DriverData — f1_bot v0.5.1</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-3C173CBB.js"></script>
+    <script src="dist/sidebar_items-5DB8A88E.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -68,7 +68,7 @@
 f1_bot
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.4.0
+        v0.5.1
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -104,7 +104,7 @@ f1_bot
     </a>
 
   <span translate="no">F1Bot.F1Session.DriverDataRepo.DriverData</span> 
-  <small class="app-vsn" translate="no">(f1_bot v0.4.0)</small>
+  <small class="app-vsn" translate="no">(f1_bot v0.5.1)</small>
 
 </h1>
 
@@ -163,6 +163,14 @@ car telemetry, stint data and more.</p>
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#personal_best_stats/1" translate="no">personal_best_stats(self)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#process_transcript/2" translate="no">process_transcript(self, transcript)</a>
 
       </div>
 
@@ -241,7 +249,8 @@ Types
   number: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   position_hist: <a href="F1Bot.F1Session.Common.TimeSeriesStore.html#t:t/0">F1Bot.F1Session.Common.TimeSeriesStore.t</a>(),
   stints: <a href="F1Bot.F1Session.DriverDataRepo.Stints.html#t:t/0">F1Bot.F1Session.DriverDataRepo.Stints.t</a>(),
-  telemetry_hist: <a href="F1Bot.F1Session.Common.TimeSeriesStore.html#t:t/0">F1Bot.F1Session.Common.TimeSeriesStore.t</a>()
+  telemetry_hist: <a href="F1Bot.F1Session.Common.TimeSeriesStore.html#t:t/0">F1Bot.F1Session.Common.TimeSeriesStore.t</a>(),
+  transcripts: <a href="F1Bot.F1Session.DriverDataRepo.Transcripts.html#t:t/0">F1Bot.F1Session.DriverDataRepo.Transcripts.t</a>() | nil
 }</pre>
 
       </div>
@@ -271,7 +280,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">new(number)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L25" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L26" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -293,7 +302,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">outlap_lap_numbers(self)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L116" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L126" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -321,7 +330,29 @@ Functions
     </a>
     <h1 class="signature" translate="no">personal_best_stats(self)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L62" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L64" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="process_transcript/2">
+
+  <div class="detail-header">
+    <a href="#process_transcript/2" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">process_transcript(self, transcript)</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L117" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -343,7 +374,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_position(self, position)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L78" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L80" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -365,7 +396,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_stint_data(self, stint_data)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L87" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L89" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -387,7 +418,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_telemetry(self, telemetry)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L67" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L69" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -409,7 +440,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">push_timing_data(self, timing_data, all_lap_times)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L31" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/driver_data.ex#L33" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
