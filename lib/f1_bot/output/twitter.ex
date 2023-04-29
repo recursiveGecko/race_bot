@@ -202,7 +202,7 @@ defmodule F1Bot.Output.Twitter do
         state
       ) do
     driver = Common.get_driver_name_by_number(e, driver_number)
-    msg =
+    _msg =
       """
       🎙️ #{driver} radio: #{transcript_msg}
 
