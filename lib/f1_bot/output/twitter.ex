@@ -7,7 +7,7 @@ defmodule F1Bot.Output.Twitter do
   require Logger
 
   alias F1Bot.Output.Common
-  alias F1Bot.PubSub
+  alias F1Bot.DelayedEvents
   alias F1Bot.DataTransform.Format
   alias F1Bot.F1Session.DriverDataRepo.Transcript
 
@@ -19,13 +19,19 @@ defmodule F1Bot.Output.Twitter do
 
   @impl true
   def init(_init_arg) do
-    PubSub.subscribe_to_event("aggregate_stats:fastest_lap")
-    PubSub.subscribe_to_event("aggregate_stats:fastest_sector")
-    PubSub.subscribe_to_event("aggregate_stats:top_speed")
-    PubSub.subscribe_to_event("driver:tyre_change")
-    PubSub.subscribe_to_event("driver:transcript")
-    PubSub.subscribe_to_event("session_status:started")
-    PubSub.subscribe_to_event("race_control:message")
+    DelayedEvents.subscribe_with_delay(
+      [
+        "aggregate_stats:fastest_lap",
+        "aggregate_stats:fastest_sector",
+        "aggregate_stats:top_speed",
+        "driver:tyre_change",
+        "driver:transcript",
+        "session_status:started",
+        "race_control:message"
+      ],
+      25_000,
+      false
+    )
 
     state = %{}
 

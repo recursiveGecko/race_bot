@@ -3,7 +3,6 @@ import Config
 config :f1_bot,
   connect_to_signalr: false,
   start_discord: false,
-  start_twitter: false,
   discord_api_module: F1Bot.ExternalApi.Discord.Console,
   twitter_api_module: F1Bot.ExternalApi.Twitter.Console,
   default_delay_ms: 1_000,
@@ -32,7 +31,7 @@ config :f1_bot, F1BotWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   url: [host: "localhost"],
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

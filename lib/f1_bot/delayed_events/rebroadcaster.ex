@@ -45,7 +45,7 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
 
     state =
       options
-      |> Map.put(:events, [])
+      |> Map.put(:event_queue, :gb_trees.empty())
       |> Map.put(:timer_ref, timer_ref)
 
     {:ok, state}
@@ -53,7 +53,7 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
 
   @impl true
   def handle_call(:clear_cache, _from, state) do
-    state = %{state | events: []}
+    state = %{state | event_queue: :gb_trees.empty()}
 
     state.delay_ms
     |> ets_table_name()
@@ -77,30 +77,32 @@ defmodule F1Bot.DelayedEvents.Rebroadcaster do
 
   @impl true
   def handle_info({:events, events}, state) do
-    # TODO: Ensure that events are re-sorted by timestamp
+    event_queue =
+      Enum.reduce(events, state.event_queue, fn event, event_queue ->
+        :gb_trees.insert(event.sort_key, event, event_queue)
+      end)
 
-    # Events should be sorted by timestamp,
-    # no further sorting is performed here because
-    # other parts of the system (currently) generate events
-    # with the current timestamp, which gives them natural order
-    state = update_in(state.events, &(&1 ++ events))
+    state = %{state | event_queue: event_queue}
 
     {:noreply, state}
   end
 
-  defp rebroadcast_batch(%{events: []} = state, _until_ts), do: state
-
-  defp rebroadcast_batch(%{events: [event | rest_events]} = state, until_ts) do
-    # Assumes that events are approximately sorted by timestamp
-    if event.timestamp <= until_ts do
-      save_latest_event(state, event)
-      do_rebroadcast(state, event)
-
-      state = %{state | events: rest_events}
-
-      rebroadcast_batch(state, until_ts)
-    else
+  defp rebroadcast_batch(state, until_ts) do
+    if :gb_trees.size(state.event_queue) == 0 do
       state
+    else
+      {sort_key, event, rest_event_q} = :gb_trees.take_smallest(state.event_queue)
+      {ts, _} = sort_key
+
+      if ts <= until_ts do
+        save_latest_event(state, event)
+        do_rebroadcast(state, event)
+
+        state = %{state | event_queue: rest_event_q}
+        rebroadcast_batch(state, until_ts)
+      else
+        state
+      end
     end
   end
 

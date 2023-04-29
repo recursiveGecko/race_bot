@@ -7,7 +7,7 @@ defmodule F1Bot.Output.Discord do
   require Logger
 
   alias F1Bot.Output.Common
-  alias F1Bot.PubSub
+  alias F1Bot.DelayedEvents
   alias F1Bot.DataTransform.Format
   alias F1Bot.F1Session.DriverDataRepo.Transcript
 
@@ -17,13 +17,19 @@ defmodule F1Bot.Output.Discord do
 
   @impl true
   def init(_init_arg) do
-    PubSub.subscribe_to_event("aggregate_stats:fastest_lap")
-    PubSub.subscribe_to_event("aggregate_stats:fastest_sector")
-    PubSub.subscribe_to_event("aggregate_stats:top_speed")
-    PubSub.subscribe_to_event("driver:tyre_change")
-    PubSub.subscribe_to_event("driver:transcript")
-    PubSub.subscribe_to_event("session_status:started")
-    PubSub.subscribe_to_event("race_control:message")
+    DelayedEvents.subscribe_with_delay(
+      [
+        "aggregate_stats:fastest_lap",
+        "aggregate_stats:fastest_sector",
+        "aggregate_stats:top_speed",
+        "driver:tyre_change",
+        "driver:transcript",
+        "session_status:started",
+        "race_control:message"
+      ],
+      25_000,
+      false
+    )
 
     state = %{}
 
@@ -170,7 +176,8 @@ defmodule F1Bot.Output.Discord do
         |> String.to_atom()
         |> F1Bot.ExternalApi.Discord.get_emoji_or_default(":arrows_counterclockwise:")
 
-      msg = "#{emoji}  **Pit Stop#{correction}**: `#{driver}` for `#{compound}` tyres (`#{age_str}`)"
+      msg =
+        "#{emoji}  **Pit Stop#{correction}**: `#{driver}` for `#{compound}` tyres (`#{age_str}`)"
 
       F1Bot.ExternalApi.Discord.post_message(msg)
     end
@@ -187,13 +194,16 @@ defmodule F1Bot.Output.Discord do
               driver_number: driver_number,
               message: transcript_msg
             }
-          },
+          }
         },
         state
       ) do
     driver = Common.get_driver_name_by_number(e, driver_number)
     emoji = ":studio_microphone:"
-    disclaimer = "***Note:** Transcripts are AI-generated, experimental, and often wrong. Reach out to recursiveGecko if you think you could help us improve.*"
+
+    disclaimer =
+      "***Note:** Transcripts are AI-generated, experimental, and often wrong. Reach out to recursiveGecko if you think you could help us improve.*"
+
     msg = "#{emoji}  `#{driver}` radio: #{transcript_msg}\n#{disclaimer}"
 
     F1Bot.ExternalApi.Discord.post_message(msg)

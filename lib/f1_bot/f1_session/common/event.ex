@@ -10,6 +10,7 @@ defmodule F1Bot.F1Session.Common.Event do
     field(:scope, binary(), enforce: true)
     field(:payload, any(), enforce: true)
     field(:timestamp, integer())
+    field(:sort_key, {integer(), integer()})
     field(:meta, map())
   end
 
@@ -27,10 +28,13 @@ defmodule F1Bot.F1Session.Common.Event do
           timestamp
       end
 
+    sort_key = {timestamp, :rand.uniform(1_000_000_000)}
+
     %__MODULE__{
       scope: scope,
       payload: payload,
-      timestamp: timestamp
+      timestamp: timestamp,
+      sort_key: sort_key,
     }
   end
 
