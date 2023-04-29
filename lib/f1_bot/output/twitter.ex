@@ -85,13 +85,13 @@ defmodule F1Bot.Output.Twitter do
             sector: sector,
             sector_time: sector_time,
             sector_delta: sector_delta,
-            type: :overall
+            type: fastest_type
           }
         },
         state
       )
       when sector_delta != nil do
-    if Common.should_post_stats(e) do
+    if Common.should_post_stats(e) and fastest_type == :overall do
       driver = Common.get_driver_name_by_number(e, driver_number)
 
       sector_time = Format.format_lap_time(sector_time)
