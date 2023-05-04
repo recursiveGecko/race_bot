@@ -16,6 +16,7 @@ defmodule F1Bot.PubSub do
   end
 
   def subscribe(topic, opts \\ []) do
+    Logger.debug("[#{inspect(self())}] Subscribing to topic: #{topic} with opts: #{inspect(opts)}")
     PubSub.subscribe(__MODULE__, topic, opts)
   end
 
@@ -28,8 +29,6 @@ defmodule F1Bot.PubSub do
     for e <- events do
       topic = topic_for_event(e.scope)
       broadcast(topic, e)
-
-      Logger.debug("Broadcasting event: #{topic}, payload: #{inspect(e.payload, limit: 3)}")
     end
 
     if rebroadcast_delayed do
@@ -38,6 +37,7 @@ defmodule F1Bot.PubSub do
   end
 
   def broadcast(topic, message) do
+    Logger.debug("Broadcasting event: #{topic}, payload: #{inspect(message, limit: 3)}")
     PubSub.broadcast(__MODULE__, topic, message)
   end
 

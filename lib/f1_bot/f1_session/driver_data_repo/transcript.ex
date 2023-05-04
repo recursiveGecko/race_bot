@@ -7,14 +7,15 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
 
   embedded_schema do
     field :driver_number, :integer
+    field :length_sec, :float
     field :utc_date, :utc_datetime
     field :message, :string
   end
 
   def validate(params) do
     %__MODULE__{}
-    |> cast(params, [:driver_number, :utc_date, :message])
-    |> validate_required([:driver_number, :utc_date, :message])
+    |> cast(params, [:driver_number, :utc_date, :message, :length_sec])
+    |> validate_required([:driver_number, :utc_date, :message, :length_sec])
     |> apply_action(:validate)
   end
 

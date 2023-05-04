@@ -14,11 +14,17 @@ defmodule F1Bot.Authentication.ApiClient do
     field(:scopes, {:array, Ecto.Enum}, values: @scopes)
   end
 
-  def create_changeset(params) do
-    %__MODULE__{}
+  def create_changeset(data \\ %__MODULE__{}, params) do
+    data
     |> cast(params, [:client_name, :scopes])
     |> validate_required([:client_name, :scopes])
     |> put_change(:client_secret, generate_secret())
+  end
+
+  def update_changeset(data, params) do
+    data
+    |> cast(params, [:scopes])
+    |> validate_required([:scopes])
   end
 
   def generate_secret() do
@@ -33,5 +39,9 @@ defmodule F1Bot.Authentication.ApiClient do
     rescue
       _e -> false
     end
+  end
+
+  def token(this = %__MODULE__{}) do
+    "#{this.client_name}:#{this.client_secret}"
   end
 end

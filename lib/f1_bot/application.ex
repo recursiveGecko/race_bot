@@ -23,7 +23,8 @@ defmodule F1Bot.Application do
         F1Bot.Output.Twitter,
         F1Bot.F1Session.Server,
         F1BotWeb.Supervisor,
-        F1Bot.Replay.Server
+        F1Bot.Replay.Server,
+        F1Bot.TranscriberService,
       ]
       |> add_if_feature_flag_enabled(:connect_to_signalr, {
         F1Bot.ExternalApi.SignalR.Client,

@@ -14,11 +14,14 @@ defmodule F1Bot.Authentication do
     |> Repo.insert()
   end
 
+  def list_all_api_clients() do
+    Repo.all(ApiClient)
+  end
+
   def find_api_client_by_name(name) do
     query =
-      from(c in ApiClient,
-        where: c.client_name == ^name
-      )
+      ApiClient
+      |> where([c], c.client_name == ^name)
 
     case Repo.one(query) do
       nil -> {:error, :not_found}
@@ -26,11 +29,16 @@ defmodule F1Bot.Authentication do
     end
   end
 
+  def update_api_client_scopes(data = %ApiClient{}, scopes) do
+    data
+    |> ApiClient.update_changeset(%{scopes: scopes})
+    |> Repo.update()
+  end
+
   def delete_api_client_by_name(name) do
     query =
-      from(c in ApiClient,
-        where: c.client_name == ^name
-      )
+      ApiClient
+      |> where([c], c.client_name == ^name)
 
     {count, _} = Repo.delete_all(query)
     count > 0

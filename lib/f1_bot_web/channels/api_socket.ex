@@ -6,6 +6,7 @@ defmodule F1BotWeb.ApiSocket do
   alias F1Bot.Authentication.ApiClient
 
   channel("transcriber_service", F1BotWeb.TranscriberServiceChannel)
+  channel("radio_transcript:*", F1BotWeb.RadioTranscriptChannel)
 
   @impl true
   def connect(params, socket, _connect_info) do
@@ -47,6 +48,16 @@ defmodule F1BotWeb.ApiSocket do
       e ->
         Logger.warn("ApiSocket: Unknown error #{inspect(e)}")
         {:error, :unauthorized}
+    end
+  end
+
+  def client_has_scope?(socket, scope) do
+    case socket.assigns[:authenticated_api_client] do
+      %F1Bot.Authentication.ApiClient{scopes: scopes} ->
+        scope in scopes
+
+      _ ->
+        false
     end
   end
 end
