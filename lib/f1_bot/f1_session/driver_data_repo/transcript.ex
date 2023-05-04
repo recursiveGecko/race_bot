@@ -3,6 +3,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
   import Ecto.Changeset
   alias F1Bot.F1Session.Common.Event
 
+  @derive Jason.Encoder
   @primary_key false
 
   embedded_schema do

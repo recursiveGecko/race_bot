@@ -5,12 +5,14 @@ defmodule F1Bot.TranscriberService do
   defmodule Status do
     use Ecto.Schema
     import Ecto.Changeset
-
+    @derive Jason.Encoder
     @primary_key false
+
     embedded_schema do
       field(:online, :boolean, default: true)
 
       embeds_many :drivers, DriverStatus, primary_key: false do
+        @derive Jason.Encoder
         field(:driver_number, :integer)
         field(:online, :boolean)
       end
@@ -86,7 +88,7 @@ defmodule F1Bot.TranscriberService do
   def handle_info(:timeout_watchdog, state) do
     new_state = check_update_status(state)
 
-    maybe_broadcast_update(state, new_state)
+    maybe_broadcast_update(state, new_state, true)
     {:noreply, new_state}
   end
 
@@ -112,9 +114,13 @@ defmodule F1Bot.TranscriberService do
     %{state | status: status}
   end
 
-  defp maybe_broadcast_update(_old_state, new_state) do
-    status = state_to_status(new_state)
-    F1BotWeb.Endpoint.broadcast("radio_transcript:status", "status", status)
+  defp maybe_broadcast_update(old_state, new_state, force \\ false) do
+    if old_state.status != new_state.status or force do
+      status = state_to_status(new_state)
+      F1BotWeb.Endpoint.broadcast("radio_transcript:status", "status", status)
+    end
+
+    :ok
   end
 
   defp state_to_status(state) do
