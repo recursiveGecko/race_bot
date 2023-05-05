@@ -84,6 +84,9 @@ F1Bot.Replay.Server.html
 F1Bot.Replay.html
 F1Bot.Repo.html
 F1Bot.Time.html
+F1Bot.TranscriberService.Status.DriverStatus.html
+F1Bot.TranscriberService.Status.html
+F1Bot.TranscriberService.html
 F1Bot.html
 F1BotWeb.ApiSocket.html
 F1BotWeb.Component.ChartJS.html
@@ -108,6 +111,7 @@ F1BotWeb.Live.Chart.html
 F1BotWeb.Live.Telemetry.html
 F1BotWeb.LiveHelpers.html
 F1BotWeb.Plug.UserUUID.html
+F1BotWeb.RadioTranscriptChannel.html
 F1BotWeb.Router.html
 F1BotWeb.Supervisor.html
 F1BotWeb.Telemetry.html
@@ -141,8 +145,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_items-7D2F796A.js
-dist/sidebar_items-8FE27E89.js
+dist/search_items-F6BD9C12.js
+dist/sidebar_items-411FBB16.js
 index.html
 license.html
 readme.html

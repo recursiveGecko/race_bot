@@ -7,7 +7,7 @@
     <meta name="generator" content="ExDoc v0.29.1">
     <meta name="project" content="f1_bot v0.5.1">
 
-    <title>F1Bot.F1Session.DriverDataRepo.Stints — f1_bot v0.5.1</title>
+    <title>F1Bot.TranscriberService — f1_bot v0.5.1</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
@@ -98,21 +98,16 @@ f1_bot
 </button>
 
 
-    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L1" title="View Source" class="icon-action" rel="help">
+    <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/transcriber_service.ex#L1" title="View Source" class="icon-action" rel="help">
       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
       <span class="sr-only">View Source</span>
     </a>
 
-  <span translate="no">F1Bot.F1Session.DriverDataRepo.Stints</span> 
+  <span translate="no">F1Bot.TranscriberService</span> 
   <small class="app-vsn" translate="no">(f1_bot v0.5.1)</small>
 
 </h1>
 
-
-  <section id="moduledoc">
-<p>Stores all information about driver's stints in the current session,
-e.g. tyre compount and tyre age.</p>
-  </section>
 
 
   <section id="summary" class="details-list">
@@ -123,20 +118,6 @@ e.g. tyre compount and tyre age.</p>
       </a>
       Summary
     </h1>
-<div class="summary-types summary">
-  <h2>
-    <a href="#types">Types</a>
-  </h2>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#t:t/0" translate="no">t()</a>
-
-      </div>
-
-    </div>
-
-</div>
 <div class="summary-functions summary">
   <h2>
     <a href="#functions">Functions</a>
@@ -144,7 +125,17 @@ e.g. tyre compount and tyre age.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#current_stint_number?/2" translate="no">current_stint_number?(self, stint_number)</a>
+        <a href="#child_spec/1" translate="no">child_spec(init_arg)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ping/0" translate="no">ping()</a>
 
       </div>
 
@@ -152,7 +143,7 @@ e.g. tyre compount and tyre age.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#find_stint/2" translate="no">find_stint(self, stint_number)</a>
+        <a href="#start_link/1" translate="no">start_link(init_args)</a>
 
       </div>
 
@@ -160,7 +151,7 @@ e.g. tyre compount and tyre age.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#fix_stint_data/2" translate="no">fix_stint_data(self, laps)</a>
+        <a href="#status/0" translate="no">status()</a>
 
       </div>
 
@@ -168,39 +159,7 @@ e.g. tyre compount and tyre age.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#last_stint/1" translate="no">last_stint(self)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#new/0" translate="no">new()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#normalize/1" translate="no">normalize(self)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#push_stint_data/3" translate="no">push_stint_data(self, stint_data, current_lap_number)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#sort_by_number/2" translate="no">sort_by_number(stints, direction \\ :asc)</a>
+        <a href="#update_status/1" translate="no">update_status(status)</a>
 
       </div>
 
@@ -210,49 +169,6 @@ e.g. tyre compount and tyre age.</p>
 
   </section>
 
-
-  <section id="types" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#types">
-        <i class="ri-link-m" aria-hidden="true"></i>
-        <span class="sr-only">Link to this section</span>
-      </a>
-Types
-    </h1>
-    <div class="types-list">
-<section class="detail" id="t:t/0">
-
-  <div class="detail-header">
-    <a href="#t:t/0" class="detail-link" title="Link to this type">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this type</span>
-    </a>
-    <h1 class="signature" translate="no">t()</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L10" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@type</span> t() :: %F1Bot.F1Session.DriverDataRepo.Stints{
-  data: [<a href="F1Bot.F1Session.DriverDataRepo.Stint.html#t:t/0">F1Bot.F1Session.DriverDataRepo.Stint.t</a>()]
-}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-
-    </div>
-  </section>
 
   <section id="functions" class="details-list">
     <h1 class="section-heading">
@@ -263,16 +179,38 @@ Types
 Functions
     </h1>
     <div class="functions-list">
-<section class="detail" id="current_stint_number?/2">
+<section class="detail" id="child_spec/1">
 
   <div class="detail-header">
-    <a href="#current_stint_number?/2" class="detail-link" title="Link to this function">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">current_stint_number?(self, stint_number)</h1>
+    <h1 class="signature" translate="no">child_spec(init_arg)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L81" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/transcriber_service.ex#L2" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="ping/0">
+
+  <div class="detail-header">
+    <a href="#ping/0" class="detail-link" title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">ping()</h1>
+
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/transcriber_service.ex#L63" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -285,16 +223,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="find_stint/2">
+<section class="detail" id="start_link/1">
 
   <div class="detail-header">
-    <a href="#find_stint/2" class="detail-link" title="Link to this function">
+    <a href="#start_link/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">find_stint(self, stint_number)</h1>
+    <h1 class="signature" translate="no">start_link(init_args)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L91" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/transcriber_service.ex#L43" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -307,16 +245,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="fix_stint_data/2">
+<section class="detail" id="status/0">
 
   <div class="detail-header">
-    <a href="#fix_stint_data/2" class="detail-link" title="Link to this function">
+    <a href="#status/0" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">fix_stint_data(self, laps)</h1>
+    <h1 class="signature" translate="no">status()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L109" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/transcriber_service.ex#L59" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -329,106 +267,16 @@ Functions
 
   </section>
 </section>
-<section class="detail" id="last_stint/1">
+<section class="detail" id="update_status/1">
 
   <div class="detail-header">
-    <a href="#last_stint/1" class="detail-link" title="Link to this function">
+    <a href="#update_status/1" class="detail-link" title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">last_stint(self)</h1>
+    <h1 class="signature" translate="no">update_status(status)</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L88" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="new/0">
-
-  <div class="detail-header">
-    <a href="#new/0" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">new()</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L14" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="normalize/1">
-
-  <div class="detail-header">
-    <a href="#normalize/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">normalize(self)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L102" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="push_stint_data/3">
-
-  <div class="detail-header">
-    <a href="#push_stint_data/3" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">push_stint_data(self, stint_data, current_lap_number)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L18" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="sort_by_number/2">
-
-    <span id="sort_by_number/1"></span>
-
-  <div class="detail-header">
-    <a href="#sort_by_number/2" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">sort_by_number(stints, direction \\ :asc)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/f1_session/driver_data_repo/stints.ex#L98" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/transcriber_service.ex#L67" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
