@@ -74,7 +74,6 @@ defmodule Mix.Tasks.Backtest do
     Application.put_env(:f1_bot, :external_apis_enabled, false)
     Application.put_env(:f1_bot, :discord_api_module, F1Bot.ExternalApi.Discord.Console)
     Application.put_env(:f1_bot, :twitter_api_module, F1Bot.ExternalApi.Twitter.Console)
-    Application.put_env(:f1_bot, :extwitter_config, [])
 
     Finch.start_link(name: __MODULE__)
     {:ok, _} = Application.ensure_all_started(:f1_bot)
