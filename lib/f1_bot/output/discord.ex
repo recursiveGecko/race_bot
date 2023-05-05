@@ -206,7 +206,7 @@ defmodule F1Bot.Output.Discord do
 
     msg = "#{emoji} `#{driver}` radio (AI): #{transcript_msg} ||*(#{disclaimer})*||"
 
-    F1Bot.ExternalApi.Discord.post_message(msg)
+    F1Bot.ExternalApi.Discord.post_message({:radio, msg})
 
     {:noreply, state}
   end

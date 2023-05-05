@@ -2,9 +2,9 @@ defmodule F1Bot.ExternalApi.Discord do
   @moduledoc ""
   @callback post_message(String.t()) :: :ok | {:error, any()}
 
-  def post_message(message) do
+  def post_message(message_or_tuple) do
     impl = F1Bot.get_env(:discord_api_module, F1Bot.ExternalApi.Discord.Console)
-    impl.post_message(message)
+    impl.post_message(message_or_tuple)
   end
 
   def get_emoji_or_default(emoji, default) do
