@@ -192,7 +192,8 @@ defmodule F1Bot.Output.Discord do
           payload: %{
             transcript: %Transcript{
               driver_number: driver_number,
-              message: transcript_msg
+              message: transcript_msg,
+              utc_date: utc_date,
             }
           }
         },
@@ -201,10 +202,10 @@ defmodule F1Bot.Output.Discord do
     driver = Common.get_driver_name_by_number(e, driver_number)
     emoji = ":studio_microphone:"
 
-    disclaimer =
-      "Experimental and often wrong. Reach out if you think you could help."
+    sec_ago = DateTime.diff(DateTime.utc_now(), utc_date, :second)
+    rel_time = "#{sec_ago}s ago"
 
-    msg = "#{emoji} `#{driver}` radio (AI): #{transcript_msg} ||*(#{disclaimer})*||"
+    msg = "#{emoji} `#{driver}` radio (AI): #{transcript_msg} (`#{rel_time}`)"
 
     F1Bot.ExternalApi.Discord.post_message({:radio, msg})
 
