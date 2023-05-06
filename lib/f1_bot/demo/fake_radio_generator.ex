@@ -48,7 +48,9 @@ defmodule F1Bot.Demo.FakeRadioGenerator do
       utc_date: utc_then,
       playhead_utc_date: utc_then,
       estimated_real_date: utc_then,
-      message: msg
+      message: msg,
+      meeting_session_key: 0,
+      meeting_key: 0
     }
 
     Server.process_transcript(transcript)
@@ -88,7 +90,9 @@ defmodule F1Bot.Demo.FakeRadioGenerator do
       utc_date: utc_then,
       playhead_utc_date: utc_then,
       estimated_real_date: utc_then,
-      message: msg
+      message: msg,
+      meeting_session_key: 0,
+      meeting_key: 0
     }
 
     Server.process_transcript(transcript)

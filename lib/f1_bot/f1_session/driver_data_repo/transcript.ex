@@ -12,6 +12,8 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
     field(:utc_date, :utc_datetime)
     field(:estimated_real_date, :utc_datetime)
     field(:playhead_utc_date, :utc_datetime)
+    field(:meeting_session_key, :integer)
+    field(:meeting_key, :integer)
     field(:message, :string)
   end
 
@@ -23,13 +25,17 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
       :playhead_utc_date,
       :estimated_real_date,
       :message,
-      :duration_sec
+      :duration_sec,
+      :meeting_session_key,
+      :meeting_key
     ])
     |> validate_required([
       :driver_number,
       :utc_date,
       :message,
-      :duration_sec
+      :duration_sec,
+      :meeting_session_key,
+      :meeting_key
     ])
     |> apply_action(:validate)
   end
