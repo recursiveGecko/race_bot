@@ -55,8 +55,8 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-mix-${{ github.ref_name }}
-          restore-keys: ${{ runner.os }}-mix-
+          key: ${{ runner.os }}-buildx-${{ github.ref_name }}
+          restore-keys: ${{ runner.os }}-buildx
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
@@ -74,8 +74,8 @@ jobs:
         with:
           push: true
           tags: "${{env.IMAGE_ID}}:latest,${{env.IMAGE_ID}}:${{ github.sha }},${{env.IMAGE_ID}}:${{ github.ref_name }}"
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache
+          cache-from: type=local,src=/tmp/buildx-cache
+          cache-to: type=local,mode=max,dest=/tmp/buildx-cache
 
   deploy:
     runs-on: ubuntu-latest
