@@ -11,12 +11,12 @@ RUN useradd -m app
 RUN mkdir /app
 WORKDIR /app
 
-ADD mix.exs /app
-ADD mix.lock /app
-ADD config /app/config
+COPY mix.exs /app
+COPY mix.lock /app
+COPY config /app/config
 RUN mix deps.get && mix deps.compile
 
-ADD . /app 
+COPY . /app 
 RUN mix assets.setup && mix assets.deploy && mix release && chown -R app:app /app
 
 USER app
