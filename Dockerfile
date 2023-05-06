@@ -47,11 +47,13 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-WORKDIR /app
-RUN chown nobody /app
+RUN useradd --create-home --uid 1000 app
 
-COPY --from=build --chown=nobody:root /app/_build/${MIX_ENV}/rel/f1bot ./
+WORKDIR /app
+RUN chown app /app
+
+COPY --from=build --chown=app:root /app/_build/${MIX_ENV}/rel/f1bot ./
 COPY entrypoint.sh scripts LICENSE.md ./
 
-USER nobody
+USER app
 CMD ["/app/entrypoint.sh"]
