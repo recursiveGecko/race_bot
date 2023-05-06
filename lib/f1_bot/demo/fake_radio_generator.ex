@@ -1,6 +1,7 @@
 defmodule F1Bot.Demo.FakeRadioGenerator do
   use GenServer
 
+  alias F1Bot.F1Session.Server
   alias F1Bot.F1Session.DriverDataRepo.Transcript
   alias F1Bot.DataTransform.Format
 
@@ -50,9 +51,8 @@ defmodule F1Bot.Demo.FakeRadioGenerator do
       message: msg
     }
 
-    F1Bot.PubSub.broadcast_events([
-      Transcript.to_event(transcript)
-    ])
+    Server.process_transcript(transcript)
+    Transcript.broadcast_to_channels(transcript)
 
     {:noreply, state}
   end
@@ -91,9 +91,8 @@ defmodule F1Bot.Demo.FakeRadioGenerator do
       message: msg
     }
 
-    F1Bot.PubSub.broadcast_events([
-      Transcript.to_event(transcript)
-    ])
+    Server.process_transcript(transcript)
+    Transcript.broadcast_to_channels(transcript)
 
     {:noreply, state}
   end

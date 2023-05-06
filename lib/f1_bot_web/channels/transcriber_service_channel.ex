@@ -46,19 +46,6 @@ defmodule F1BotWeb.TranscriberServiceChannel do
   defp process_transcript(transcript = %Transcript{}, _socket) do
     Logger.debug("Received transcript: #{inspect(transcript)}")
     Server.process_transcript(transcript)
-
-    broadcast_to_topics = [
-      "radio_transcript:#{transcript.driver_number}",
-      "radio_transcript:all"
-    ]
-
-    for topic <- broadcast_to_topics do
-      F1BotWeb.Endpoint.broadcast_from(
-        self(),
-        topic,
-        "transcript",
-        transcript
-      )
-    end
+    Transcript.broadcast_to_channels(transcript)
   end
 end

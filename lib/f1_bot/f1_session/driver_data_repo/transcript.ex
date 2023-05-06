@@ -46,4 +46,20 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
     ts = DateTime.to_unix(date, :millisecond)
     Event.new("driver:transcript", %{transcript: this}, ts)
   end
+
+  def broadcast_to_channels(transcript = %__MODULE__{}) do
+    broadcast_to_topics = [
+      "radio_transcript:#{transcript.driver_number}",
+      "radio_transcript:all"
+    ]
+
+    for topic <- broadcast_to_topics do
+      F1BotWeb.Endpoint.broadcast_from(
+        self(),
+        topic,
+        "transcript",
+        transcript
+      )
+    end
+  end
 end
