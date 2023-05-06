@@ -55,7 +55,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: /tmp/buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.ref_name }}
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: ${{ runner.os }}-buildx
 
       - name: Set up Docker Buildx

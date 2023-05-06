@@ -22,7 +22,7 @@ RUN mix deps.compile
 COPY priv priv
 COPY lib lib
 COPY assets assets
-COPY tsconfig.json LICENSE.md package*json ./
+COPY tsconfig.json package*json ./
 RUN mix assets.setup && \
     mix assets.deploy && \
     mix compile
@@ -51,7 +51,7 @@ WORKDIR /app
 RUN chown nobody /app
 
 COPY --from=build --chown=nobody:root /app/_build/${MIX_ENV}/rel/f1bot ./
-COPY entrypoint.sh scripts ./
+COPY entrypoint.sh scripts LICENSE.md ./
 
 USER nobody
 CMD ["/app/entrypoint.sh"]
