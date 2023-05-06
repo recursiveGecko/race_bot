@@ -7,6 +7,8 @@ F1Bot.Authentication.html
 F1Bot.DelayedEvents.Rebroadcaster.html
 F1Bot.DelayedEvents.Supervisor.html
 F1Bot.DelayedEvents.html
+F1Bot.Demo.FakeRadioGenerator.html
+F1Bot.Demo.Supervisor.html
 F1Bot.Ets.html
 F1Bot.ExternalApi.Discord.Commands.Definition.html
 F1Bot.ExternalApi.Discord.Commands.Graph.html
@@ -145,8 +147,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_items-F6BD9C12.js
-dist/sidebar_items-7E944C28.js
+dist/search_items-54439BDB.js
+dist/sidebar_items-3B93859E.js
 index.html
 license.html
 readme.html
