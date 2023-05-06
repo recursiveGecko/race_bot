@@ -6,7 +6,7 @@ defmodule F1Bot.Application do
 
   @impl true
   def start(_type, _args) do
-    if F1Bot.demo_mode_url() != nil do
+    if F1Bot.demo_mode?() do
       Logger.info("[DEMO] Starting in demo mode with url: #{F1Bot.demo_mode_url()}")
     end
 
@@ -44,6 +44,7 @@ defmodule F1Bot.Application do
         Task,
         fn -> F1Bot.reload_session(true) end
       })
+      |> add_if_demo_mode_enabled(F1Bot.Demo.Supervisor)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -71,7 +72,15 @@ defmodule F1Bot.Application do
   end
 
   defp add_if_feature_flag_enabled(children, feature_flag, child) do
-    if feature_flag_enabled?(feature_flag) and F1Bot.demo_mode_url() == nil do
+    if feature_flag_enabled?(feature_flag) and not F1Bot.demo_mode?() do
+      children ++ [child]
+    else
+      children
+    end
+  end
+
+  defp add_if_demo_mode_enabled(children, child) do
+    if F1Bot.demo_mode?() do
       children ++ [child]
     else
       children

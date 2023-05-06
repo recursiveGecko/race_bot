@@ -14,8 +14,13 @@ end
 
 list_to_int = fn list -> for x <- list, do: String.to_integer(x) end
 
-demo_mode_url = System.get_env("DEMO_MODE_URL", "")
-demo_mode_enabled = String.starts_with?(demo_mode_url, "http")
+demo_mode_url =
+  case System.get_env("DEMO_MODE_URL", "") |> String.trim() do
+    url = "http" <> _rest -> url
+    _ -> nil
+  end
+
+demo_mode_enabled = demo_mode_url != nil
 
 # Configure application for demo mode
 if demo_mode_enabled do
@@ -47,12 +52,11 @@ if config_env() == :prod do
       discord_api_module: F1Bot.ExternalApi.Discord.Live,
       twitter_api_module: F1Bot.ExternalApi.Twitter.Live
 
-    config :extwitter, :oauth, [
-        consumer_key: System.fetch_env!("TWITTER_CONSUMER_KEY"),
-        consumer_secret: System.fetch_env!("TWITTER_CONSUMER_SECRET"),
-        access_token: System.fetch_env!("TWITTER_ACCESS_TOKEN"),
-        access_token_secret: System.fetch_env!("TWITTER_ACCESS_TOKEN_SECRET")
-     ]
+    config :extwitter, :oauth,
+      consumer_key: System.fetch_env!("TWITTER_CONSUMER_KEY"),
+      consumer_secret: System.fetch_env!("TWITTER_CONSUMER_SECRET"),
+      access_token: System.fetch_env!("TWITTER_ACCESS_TOKEN"),
+      access_token_secret: System.fetch_env!("TWITTER_ACCESS_TOKEN_SECRET")
 
     config :f1_bot,
       discord_channel_ids_messages:

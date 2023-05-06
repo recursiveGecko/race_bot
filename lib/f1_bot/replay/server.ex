@@ -12,7 +12,7 @@ defmodule F1Bot.Replay.Server do
   def init(_init_arg) do
     state = %{
       url: nil,
-      demo_mode: false,
+      looping: false,
       in_progress: false,
       initial_replay_state: nil,
       replay_state: nil,
@@ -22,18 +22,12 @@ defmodule F1Bot.Replay.Server do
       playback_rate: 1
     }
 
-    state =
-      if F1Bot.demo_mode_url() != nil do
-        start_demo_mode(state)
-      else
-        state
-      end
-
     {:ok, state}
   end
 
-  def start_replay(url, playback_rate \\ 1) do
-    GenServer.call(__MODULE__, {:start_replay, url, playback_rate}, 60_000)
+  def start_replay(url, playback_rate \\ 1, looping \\ false)
+      when is_binary(url) and is_integer(playback_rate) and is_boolean(looping) do
+    GenServer.call(__MODULE__, {:start_replay, url, playback_rate, looping}, 60_000)
   end
 
   def stop_replay() do
@@ -45,13 +39,14 @@ defmodule F1Bot.Replay.Server do
   end
 
   @impl true
-  def handle_call({:start_replay, url, playback_rate}, _from, state) do
+  def handle_call({:start_replay, url, playback_rate, looping}, _from, state) do
     if state.in_progress do
       {:reply, {:error, :replay_in_progress}, state}
     else
       state =
         state
         |> put_in([:playback_rate], playback_rate)
+        |> put_in([:looping], looping)
         |> initialize_replay(url)
         |> skip_to_start_and_start_playing()
 
@@ -92,13 +87,6 @@ defmodule F1Bot.Replay.Server do
     else
       {:noreply, state}
     end
-  end
-
-  defp start_demo_mode(state) do
-    state
-    |> Map.put(:demo_mode, true)
-    |> initialize_replay(F1Bot.demo_mode_url())
-    |> skip_to_start_and_start_playing()
   end
 
   defp initialize_replay(state, url) do
@@ -211,8 +199,8 @@ defmodule F1Bot.Replay.Server do
       F1Bot.F1Session.Server.set_local_time_mode(:real)
       state = stop_ticks(state)
 
-      if state.demo_mode do
-        Logger.info("[Replay Server] Demo mode enabled, restarting.")
+      if state.looping do
+        Logger.info("[Replay Server] Looping mode enabled, restarting.")
         restart_from_initial(state)
       else
         state
