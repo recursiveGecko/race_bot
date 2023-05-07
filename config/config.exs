@@ -69,11 +69,11 @@ config :phoenix, :json_library, Jason
 config :phoenix, :filter_parameters, [
   "password",
   "secret",
-  "secret_key"
+  "secret_key",
   "token",
   "secret_token",
   "client_secret",
-  "nonce",
+  "nonce"
 ]
 
 config :gnuplot,
