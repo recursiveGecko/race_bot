@@ -44,7 +44,7 @@ defmodule F1BotWeb.TranscriberServiceChannel do
   end
 
   defp process_transcript(transcript = %Transcript{}, _socket) do
-    Logger.debug("Received transcript: #{inspect(transcript)}")
+    Logger.info("Received transcript: #{inspect(transcript)}")
     Server.process_transcript(transcript)
     Transcript.broadcast_to_channels(transcript)
   end
