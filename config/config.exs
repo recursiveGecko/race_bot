@@ -66,6 +66,15 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+config :phoenix, :filter_parameters, [
+  "password",
+  "secret",
+  "secret_key"
+  "token",
+  "secret_token",
+  "client_secret",
+  "nonce",
+]
 
 config :gnuplot,
   timeout: {3000, :ms}
