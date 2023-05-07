@@ -43,6 +43,7 @@ defmodule F1Bot.Demo.FakeRadioGenerator do
     utc_then = DateTime.utc_now()
 
     transcript = %Transcript{
+      id: Ecto.UUID.generate(),
       driver_number: driver_number,
       duration_sec: 5,
       utc_date: utc_then,
