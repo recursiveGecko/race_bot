@@ -4,7 +4,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
   alias F1Bot.F1Session.Common.Event
 
   @derive Jason.Encoder
-  @primary_key false
+  @primary_key {:id, Ecto.UUID, []}
 
   embedded_schema do
     field(:driver_number, :integer)
@@ -37,6 +37,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
       :meeting_session_key,
       :meeting_key
     ])
+    |> put_change(:id, Ecto.UUID.generate())
     |> apply_action(:validate)
   end
 
