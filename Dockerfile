@@ -3,7 +3,7 @@ FROM elixir:1.14-slim AS build
 ENV MIX_ENV=prod
 
 RUN apt-get update && \
-    apt-get install -y build-essential git gnuplot npm && \
+    apt-get install -y build-essential git npm && \
     apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 WORKDIR /app
@@ -36,7 +36,7 @@ RUN mix release
 FROM debian:11-slim
 
 RUN apt-get update -y && \
-    apt-get install -y libstdc++6 openssl libncurses5 locales gnuplot && \
+    apt-get install -y libstdc++6 openssl libncurses5 locales && \
     apt-get clean && \
     rm -f /var/lib/apt/lists/*_*
 
