@@ -52,8 +52,8 @@ RUN useradd --create-home --uid 1000 app
 WORKDIR /app
 RUN chown app /app
 
-COPY --from=build --chown=app:root /app/_build/${MIX_ENV}/rel/f1bot ./
-COPY entrypoint.sh scripts LICENSE.md ./
+COPY --from=build --chown=app:root /app/_build/${MIX_ENV}/rel/f1bot /app/
+COPY entrypoint.sh scripts LICENSE.md /app/
 
 # Entrypoint drops privileges to app user
 USER root
