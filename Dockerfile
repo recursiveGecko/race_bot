@@ -55,5 +55,6 @@ RUN chown app /app
 COPY --from=build --chown=app:root /app/_build/${MIX_ENV}/rel/f1bot ./
 COPY entrypoint.sh scripts LICENSE.md ./
 
-USER app
+# Entrypoint drops privileges to app user
+USER root
 CMD ["/app/entrypoint.sh"]

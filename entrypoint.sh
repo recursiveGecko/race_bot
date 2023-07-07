@@ -2,7 +2,10 @@
 
 set -xe
 
-echo "::: Running migrations and starting the release :::"
+# Fix permissions in Docker Desktop (https://github.com/docker/for-win/issues/2476)
+chown -R app:app /data
 
+echo "::: Running migrations and starting the release :::"
 bin/f1bot eval 'F1Bot.Release.migrate()'
-exec bin/f1bot start
+
+exec setpriv --reuid=app --regid=app --clear-groups /app/bin/f1bot start

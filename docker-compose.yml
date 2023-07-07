@@ -4,7 +4,16 @@ services:
         build:
             context: "."
         image: f1bot
-        # network_mode: host
+        environment:
+            - DATABASE_PATH=/data/f1bot.db
+            - PHX_SERVER="true"
+            - PORT=4000
+        ports:
+            - "4000:4000"
         env_file: .env
         restart: unless-stopped
         container_name: "f1bot"
+        volumes:
+            - data:/data
+volumes:
+    data:
