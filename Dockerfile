@@ -55,6 +55,10 @@ RUN chown app /app
 COPY --from=build --chown=app:root /app/_build/${MIX_ENV}/rel/f1bot /app/
 COPY entrypoint.sh scripts LICENSE.md /app/
 
-# Entrypoint drops privileges to app user
+# Entrypoint drops privileges to the `app` user
 USER root
-CMD ["/app/entrypoint.sh"]
+
+# Explicitly invoke `bash` to ensure that the entrypoint script can
+# run even without the `execute` bit set.
+# This happens when the repo is cloned on a Windows filesystem. 
+CMD ["/bin/bash", "/app/entrypoint.sh"]

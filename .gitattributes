@@ -1,2 +1,3 @@
 # Force GitHub code highlighting on Surface UI files, incorrect but better than nothing.
 *.sface linguist-language=heex
+* text=auto eol=lf
