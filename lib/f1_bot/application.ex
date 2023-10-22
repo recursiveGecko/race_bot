@@ -10,7 +10,7 @@ defmodule F1Bot.Application do
       Logger.info("[DEMO] Starting in demo mode with url: #{F1Bot.demo_mode_url()}")
     end
 
-    start_if_feature_flag_enabled(:start_discord, :nostrum)
+    # start_if_feature_flag_enabled(:start_discord, :nostrum)
 
     children =
       [
@@ -24,7 +24,7 @@ defmodule F1Bot.Application do
         F1Bot.F1Session.Server,
         F1BotWeb.Supervisor,
         F1Bot.Replay.Server,
-        F1Bot.TranscriberService,
+        F1Bot.TranscriberService
       ]
       |> add_if_feature_flag_enabled(:connect_to_signalr, {
         F1Bot.ExternalApi.SignalR.Client,
