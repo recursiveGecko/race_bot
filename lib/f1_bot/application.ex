@@ -65,7 +65,7 @@ defmodule F1Bot.Application do
     :ok
   end
 
-  defp start_if_feature_flag_enabled(feature_flag, application) do
+  def start_if_feature_flag_enabled(feature_flag, application) do
     if feature_flag_enabled?(feature_flag) do
       {:ok, _} = Application.ensure_all_started(application)
     end
