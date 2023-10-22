@@ -39,7 +39,7 @@ defmodule F1Bot.Application do
             end
         ]
       })
-      |> add_if_feature_flag_enabled(:start_discord, F1Bot.ExternalApi.Discord.Commands)
+      # |> add_if_feature_flag_enabled(:start_discord, F1Bot.ExternalApi.Discord.Commands)
       |> add_if_feature_flag_enabled(:auto_reload_session, {
         Task,
         fn -> F1Bot.reload_session(true) end
