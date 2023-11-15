@@ -110,7 +110,13 @@ defmodule F1Bot.MixProject do
       {:cowlib, "~> 2.12", override: true},
       {:jason, "~> 1.4"},
       {:finch, "~> 0.14.0"},
-      {:nostrum, "~> 0.6", runtime: false},
+      {
+        :nostrum,
+        # Includes https://github.com/Kraigie/nostrum/pull/522
+        git: "https://github.com/Kraigie/nostrum",
+        ref: "4fabfc5bf59878fdde118acd686f6a5e075b5f8e",
+        runtime: false
+      },
       {:certifi, "~> 2.9"},
       {:typed_struct, "~> 0.3.0"},
       {:timex, "~> 3.7"},

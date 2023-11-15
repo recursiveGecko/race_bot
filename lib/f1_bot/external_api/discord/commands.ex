@@ -15,16 +15,27 @@ defmodule F1Bot.ExternalApi.Discord.Commands do
 
   @callback handle_interaction(Interaction.t(), internal_args()) :: any()
 
-  def start_link do
-    Consumer.start_link(__MODULE__)
-  end
-
   def create_commands() do
+    command_mode = F1Bot.get_env(:discord_command_mode, :guild)
     server_ids = F1Bot.get_env(:discord_server_ids_commands, [])
 
-    for guild_id <- server_ids do
-      Logger.info("Creating commands for guild #{guild_id}")
-      Api.bulk_overwrite_guild_application_commands(guild_id, commands())
+    if command_mode == :global do
+      Logger.info("Creating global slash commands")
+
+      Api.bulk_overwrite_global_application_commands(commands())
+
+      for guild_id <- server_ids do
+        Logger.info("Removing guild-specific slash commands for guild #{guild_id}")
+        Api.bulk_overwrite_guild_application_commands(guild_id, [])
+      end
+    else
+      for guild_id <- server_ids do
+        Logger.info("Creating commands for guild #{guild_id}")
+        Api.bulk_overwrite_guild_application_commands(guild_id, commands())
+      end
+
+      Logger.info("Deleting global slash commands")
+      Api.bulk_overwrite_global_application_commands([])
     end
   end
 

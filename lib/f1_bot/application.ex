@@ -10,7 +10,7 @@ defmodule F1Bot.Application do
       Logger.info("[DEMO] Starting in demo mode with url: #{F1Bot.demo_mode_url()}")
     end
 
-    # start_if_feature_flag_enabled(:start_discord, :nostrum)
+    start_if_feature_flag_enabled(:start_discord, :nostrum)
 
     children =
       [
@@ -39,7 +39,7 @@ defmodule F1Bot.Application do
             end
         ]
       })
-      # |> add_if_feature_flag_enabled(:start_discord, F1Bot.ExternalApi.Discord.Commands)
+      |> add_if_feature_flag_enabled(:start_discord, F1Bot.ExternalApi.Discord.Commands)
       |> add_if_feature_flag_enabled(:auto_reload_session, {
         Task,
         fn -> F1Bot.reload_session(true) end
@@ -65,7 +65,7 @@ defmodule F1Bot.Application do
     :ok
   end
 
-  def start_if_feature_flag_enabled(feature_flag, application) do
+  defp start_if_feature_flag_enabled(feature_flag, application) do
     if feature_flag_enabled?(feature_flag) do
       {:ok, _} = Application.ensure_all_started(application)
     end

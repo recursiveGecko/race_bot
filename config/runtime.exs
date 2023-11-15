@@ -44,11 +44,16 @@ case System.fetch_env("DISCORD_TOKEN") do
     nil
 end
 
+config :f1_bot,
+  discord_channel_ids_messages: list_from_env.("DISCORD_CHANNEL_IDS_MESSAGES") |> list_to_int.(),
+  discord_server_ids_commands: list_from_env.("DISCORD_SERVER_IDS_COMMANDS") |> list_to_int.()
+
 if config_env() == :prod do
   unless demo_mode_enabled do
     config :f1_bot,
       connect_to_signalr: true,
       start_discord: true,
+      discord_command_type: :global,
       discord_api_module: F1Bot.ExternalApi.Discord.Live,
       twitter_api_module: F1Bot.ExternalApi.Twitter.Live
 
@@ -57,11 +62,6 @@ if config_env() == :prod do
       consumer_secret: System.fetch_env!("TWITTER_CONSUMER_SECRET"),
       access_token: System.fetch_env!("TWITTER_ACCESS_TOKEN"),
       access_token_secret: System.fetch_env!("TWITTER_ACCESS_TOKEN_SECRET")
-
-    config :f1_bot,
-      discord_channel_ids_messages:
-        list_from_env.("DISCORD_CHANNEL_IDS_MESSAGES") |> list_to_int.(),
-      discord_server_ids_commands: list_from_env.("DISCORD_SERVER_IDS_COMMANDS") |> list_to_int.()
   end
 
   database_path =
