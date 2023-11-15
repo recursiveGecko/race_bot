@@ -2,9 +2,8 @@ import Config
 require Logger
 
 # Handles both comma-separated values and multiline values with comments
-list_from_env = fn env_var ->
-  env_var
-  |> System.fetch_env!()
+str_to_list = fn str ->
+  str
   |> String.replace(~r/#.*/, "")
   |> String.replace("\n", ",")
   |> String.split(",")
@@ -45,8 +44,10 @@ case System.fetch_env("DISCORD_TOKEN") do
 end
 
 config :f1_bot,
-  discord_channel_ids_messages: list_from_env.("DISCORD_CHANNEL_IDS_MESSAGES") |> list_to_int.(),
-  discord_server_ids_commands: list_from_env.("DISCORD_SERVER_IDS_COMMANDS") |> list_to_int.()
+  discord_channel_ids_messages:
+    System.get_env("DISCORD_CHANNEL_IDS_MESSAGES", "") |> str_to_list.() |> list_to_int.(),
+  discord_server_ids_commands:
+    System.get_env("DISCORD_SERVER_IDS_COMMANDS", "") |> str_to_list.() |> list_to_int.()
 
 if config_env() == :prod do
   unless demo_mode_enabled do
