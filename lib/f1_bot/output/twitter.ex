@@ -19,19 +19,20 @@ defmodule F1Bot.Output.Twitter do
 
   @impl true
   def init(_init_arg) do
-    DelayedEvents.subscribe_with_delay(
-      [
-        "aggregate_stats:fastest_lap",
-        "aggregate_stats:fastest_sector",
-        "aggregate_stats:top_speed",
-        "driver:tyre_change",
-        "driver:transcript",
-        "session_status:started",
-        "race_control:message"
-      ],
-      25_000,
-      false
-    )
+    {:ok, _topics} =
+      DelayedEvents.subscribe_with_delay(
+        [
+          "aggregate_stats:fastest_lap",
+          "aggregate_stats:fastest_sector",
+          "aggregate_stats:top_speed",
+          "driver:tyre_change",
+          "driver:transcript",
+          "session_status:started",
+          "race_control:message"
+        ],
+        25_000,
+        false
+      )
 
     state = %{}
 
@@ -161,7 +162,9 @@ defmodule F1Bot.Output.Twitter do
             compound: compound,
             age: age
           },
-          session_status: session_status
+          meta: %{
+            session_status: session_status
+          }
         },
         state
       ) do
@@ -197,11 +200,12 @@ defmodule F1Bot.Output.Twitter do
               driver_number: driver_number,
               message: transcript_msg
             }
-          },
+          }
         },
         state
       ) do
     driver = Common.get_driver_name_by_number(e, driver_number)
+
     _msg =
       """
       🎙️ #{driver} radio (AI): #{transcript_msg}

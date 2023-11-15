@@ -22,7 +22,8 @@ defmodule F1Bot.F1Session.Common.Event do
           F1Bot.Time.unix_timestamp_now(:millisecond)
 
         timestamp < 1_000_000_000_000 ->
-          raise ArgumentError, "timestamp must be in milliseconds"
+          raise ArgumentError,
+                "timestamp must be in milliseconds (note: heuristic based on the value)"
 
         true ->
           timestamp
@@ -34,7 +35,7 @@ defmodule F1Bot.F1Session.Common.Event do
       scope: scope,
       payload: payload,
       timestamp: timestamp,
-      sort_key: sort_key,
+      sort_key: sort_key
     }
   end
 
@@ -60,7 +61,8 @@ defmodule F1Bot.F1Session.Common.Event do
   def attach_session_info(events, session = %F1Session{}) when is_list(events) do
     new_meta = %{
       lap_number: session.lap_counter.current,
-      session_type: session.session_info.type
+      session_type: session.session_info.type,
+      session_status: session.session_status
     }
 
     for e <- events do

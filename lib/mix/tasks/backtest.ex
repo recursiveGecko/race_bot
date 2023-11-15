@@ -71,9 +71,11 @@ defmodule Mix.Tasks.Backtest do
   def configure() do
     Application.put_env(:gnuplot, :timeout, {3000, :ms})
     Application.put_env(:f1_bot, :connect_to_signalr, false)
+    Application.put_env(:f1_bot, :start_discord, false)
     Application.put_env(:f1_bot, :external_apis_enabled, false)
     Application.put_env(:f1_bot, :discord_api_module, F1Bot.ExternalApi.Discord.Console)
     Application.put_env(:f1_bot, :twitter_api_module, F1Bot.ExternalApi.Twitter.Console)
+    Logger.configure(level: :info)
 
     Finch.start_link(name: __MODULE__)
     {:ok, _} = Application.ensure_all_started(:f1_bot)
