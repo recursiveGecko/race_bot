@@ -32,9 +32,6 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
     end
   end
 
-  # Silence Dialyzer warnings for bad &Api.create_followup_message/2 types
-  @dialyzer {:no_fail_call, do_create_summary: 3}
-  @dialyzer {:no_return, do_create_summary: 3}
   defp do_create_summary(interaction, options, internal_args) do
     flags = Map.get(internal_args, :flags, [])
 
@@ -50,8 +47,9 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
     embed_results =
       for driver_number <- options.drivers do
         with {:ok, driver_info} <- F1Bot.driver_info_by_number(driver_number),
-             {:ok, driver_data} <- F1Bot.driver_session_data(driver_number) do
-          summary = Summary.generate(driver_data, track_status_history)
+             {:ok, driver_data} <- F1Bot.driver_session_data(driver_number),
+             {:ok, best_stats} <- F1Bot.session_best_stats() do
+          summary = Summary.generate(driver_data, track_status_history, best_stats)
           embed = generate_summary_embed(session_info, driver_info, summary, use_emojis)
           {:ok, embed}
         else
@@ -93,10 +91,26 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
       },
       fields:
         [
-          %{inline: true, name: "Fastest S1", value: format_lap_time(stats.s1_time.fastest.value)},
-          %{inline: true, name: "Fastest S2", value: format_lap_time(stats.s2_time.fastest.value)},
-          %{inline: true, name: "Fastest S3", value: format_lap_time(stats.s3_time.fastest.value)},
-          %{inline: true, name: "Fastest lap", value: format_lap_time(stats.lap_time.fastest.value)},
+          %{
+            inline: true,
+            name: "Fastest S1",
+            value: format_lap_time(stats.s1_time.fastest.value)
+          },
+          %{
+            inline: true,
+            name: "Fastest S2",
+            value: format_lap_time(stats.s2_time.fastest.value)
+          },
+          %{
+            inline: true,
+            name: "Fastest S3",
+            value: format_lap_time(stats.s3_time.fastest.value)
+          },
+          %{
+            inline: true,
+            name: "Fastest lap",
+            value: format_lap_time(stats.lap_time.fastest.value)
+          },
           %{inline: true, name: "Top speed", value: format_speed(stats.top_speed.value)},
           %{
             inline: true,
