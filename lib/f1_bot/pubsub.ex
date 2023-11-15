@@ -16,7 +16,10 @@ defmodule F1Bot.PubSub do
   end
 
   def subscribe(topic, opts \\ []) do
-    Logger.debug("[#{inspect(self())}] Subscribing to topic: #{topic} with opts: #{inspect(opts)}")
+    Logger.debug(
+      "[#{inspect(self())}] Subscribing to topic: #{topic} with opts: #{inspect(opts)}"
+    )
+
     PubSub.subscribe(__MODULE__, topic, opts)
   end
 

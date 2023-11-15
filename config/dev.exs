@@ -46,7 +46,7 @@ config :f1_bot, F1BotWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"lib/f1_bot_web/(controllers|live|components)/.*(ex|heex|sface)$",
+      ~r"lib/f1_bot_web/(controllers|live|components)/.*(ex|heex|sface)$"
     ]
   ]
 
