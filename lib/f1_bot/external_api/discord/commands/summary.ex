@@ -155,7 +155,7 @@ defmodule F1Bot.ExternalApi.Discord.Commands.Summary do
     tyre_emoji =
       "#{stint.compound}_tyre"
       |> String.to_atom()
-      |> Discord.get_emoji()
+      |> Discord.get_emoji_with_env_override()
 
     tyre_ascii =
       stint.compound
