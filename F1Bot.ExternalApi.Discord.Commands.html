@@ -5,15 +5,15 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.29.1">
-    <meta name="project" content="f1_bot v0.5.1">
+    <meta name="project" content="f1_bot v0.6.0">
 
-    <title>F1Bot.ExternalApi.Discord.Commands — f1_bot v0.5.1</title>
+    <title>F1Bot.ExternalApi.Discord.Commands — f1_bot v0.6.0</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-3B93859E.js"></script>
+    <script src="dist/sidebar_items-B89F90FD.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -68,7 +68,7 @@
 f1_bot
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.5.1
+        v0.6.0
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -104,7 +104,7 @@ f1_bot
     </a>
 
   <span translate="no">F1Bot.ExternalApi.Discord.Commands</span> <small>behaviour</small>
-  <small class="app-vsn" translate="no">(f1_bot v0.5.1)</small>
+  <small class="app-vsn" translate="no">(f1_bot v0.6.0)</small>
 
 </h1>
 
@@ -157,9 +157,11 @@ f1_bot
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#child_spec/1" translate="no">child_spec(arg)</a>
+        <a href="#child_spec/1" translate="no">child_spec(init_arg)</a>
 
       </div>
+
+        <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
 
     </div>
 
@@ -181,25 +183,7 @@ f1_bot
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#handle_event/1" translate="no">handle_event(arg1)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/nostrum/0.6.1/Nostrum.Consumer.html#c:handle_event/1"><code class="inline">Nostrum.Consumer.handle_event/1</code></a>.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#start_link/0" translate="no">start_link()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#start_link/1" translate="no">start_link(event)</a>
+        <a href="#start_link/1" translate="no">start_link(opts)</a>
 
       </div>
 
@@ -283,7 +267,7 @@ Callbacks
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@callback</span> handle_interaction(<a href="https://hexdocs.pm/nostrum/0.6.1/Nostrum.Struct.Interaction.html#t:t/0">Nostrum.Struct.Interaction.t</a>(), <a href="#t:internal_args/0">internal_args</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()</pre>
+          <pre translate="no"><span class="attribute">@callback</span> handle_interaction(<a href="https://hexdocs.pm/nostrum/0.9.0-alpha3/Nostrum.Struct.Interaction.html#t:t/0">Nostrum.Struct.Interaction.t</a>(), <a href="#t:internal_args/0">internal_args</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()</pre>
 
       </div>
 
@@ -310,7 +294,7 @@ Functions
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">child_spec(arg)</h1>
+    <h1 class="signature" translate="no">child_spec(init_arg)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands.ex#L5" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -322,7 +306,7 @@ Functions
 
   <section class="docstring">
 
-
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
   </section>
 </section>
 <section class="detail" id="commands/0">
@@ -334,7 +318,7 @@ Functions
     </a>
     <h1 class="signature" translate="no">commands()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands.ex#L31" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands.ex#L42" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -356,50 +340,6 @@ Functions
     </a>
     <h1 class="signature" translate="no">create_commands()</h1>
 
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands.ex#L22" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="handle_event/1">
-
-  <div class="detail-header">
-    <a href="#handle_event/1" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">handle_event(arg1)</h1>
-
-      <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands.ex#L58" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Callback implementation for <a href="https://hexdocs.pm/nostrum/0.6.1/Nostrum.Consumer.html#c:handle_event/1"><code class="inline">Nostrum.Consumer.handle_event/1</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="start_link/0">
-
-  <div class="detail-header">
-    <a href="#start_link/0" class="detail-link" title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">start_link()</h1>
-
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands.ex#L18" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
@@ -420,7 +360,7 @@ Functions
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">start_link(event)</h1>
+    <h1 class="signature" translate="no">start_link(opts)</h1>
 
       <a href="https://github.com/recursiveGecko/race_bot/blob/master/lib/f1_bot/external_api/discord/commands.ex#L5" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
