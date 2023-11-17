@@ -20,6 +20,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
   def validate(params) do
     %__MODULE__{}
     |> cast(params, [
+      :id,
       :driver_number,
       :utc_date,
       :playhead_utc_date,
@@ -30,6 +31,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
       :meeting_key
     ])
     |> validate_required([
+      :id,
       :driver_number,
       :utc_date,
       :message,
@@ -37,7 +39,6 @@ defmodule F1Bot.F1Session.DriverDataRepo.Transcript do
       :meeting_session_key,
       :meeting_key
     ])
-    |> put_change(:id, Ecto.UUID.generate())
     |> apply_action(:validate)
   end
 
