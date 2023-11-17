@@ -46,12 +46,13 @@ defmodule F1BotWeb.TranscriberServiceChannelTest do
       read_only_socket: read_only_socket
     } do
       valid_transcript_data = %{
+        id: Ecto.UUID.generate(),
         driver_number: 999,
         utc_date: DateTime.utc_now() |> DateTime.to_iso8601(),
         message: "Hello world",
         duration_sec: 5.9,
         meeting_session_key: 0,
-        meeting_key: 0,
+        meeting_key: 0
       }
 
       {:ok, transcript} = Transcript.validate(valid_transcript_data)
