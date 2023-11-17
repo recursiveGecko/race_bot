@@ -69,6 +69,7 @@ job "f1bot-____INSERT_ENV_HERE____" {
           TWITTER_ACCESS_TOKEN_SECRET="{{key "${local.config_scope}/TWITTER_ACCESS_TOKEN_SECRET"}}"
 
           DISCORD_CHANNEL_IDS_MESSAGES="{{key "${local.config_scope}/DISCORD_CHANNEL_IDS_MESSAGES" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
+          DISCORD_CHANNEL_IDS_RADIOS="{{key "${local.config_scope}/DISCORD_CHANNEL_IDS_RADIOS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
           DISCORD_SERVER_IDS_COMMANDS="{{key "${local.config_scope}/DISCORD_SERVER_IDS_COMMANDS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
 
           SECRET_KEY_BASE="{{key "${local.config_scope}/SECRET_KEY_BASE"}}"

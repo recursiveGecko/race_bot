@@ -46,6 +46,8 @@ end
 config :f1_bot,
   discord_channel_ids_messages:
     System.get_env("DISCORD_CHANNEL_IDS_MESSAGES", "") |> str_to_list.() |> list_to_int.(),
+  discord_channel_ids_radios:
+    System.get_env("DISCORD_CHANNEL_IDS_RADIOS", "") |> str_to_list.() |> list_to_int.(),
   discord_server_ids_commands:
     System.get_env("DISCORD_SERVER_IDS_COMMANDS", "") |> str_to_list.() |> list_to_int.()
 
