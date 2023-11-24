@@ -17,8 +17,16 @@ defmodule F1Bot.ExternalApi.Discord.Live do
         _ -> F1Bot.get_env(:discord_channel_ids_messages, [])
       end
 
+    Logger.info("[DISCORD] #{message} (to channels: #{inspect(channel_ids)})")
+
     for channel_id <- channel_ids do
-      Nostrum.Api.create_message(channel_id, message)
+      case Nostrum.Api.create_message(channel_id, message) do
+        {:ok, _result} ->
+          :ok
+
+        {:error, err} ->
+          Logger.error("Failed to post Discord message: #{inspect(err)}")
+      end
     end
 
     :ok
