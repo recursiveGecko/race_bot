@@ -20,7 +20,7 @@ defmodule F1Bot.Application do
         {Phoenix.PubSub, name: F1Bot.PubSub},
         F1Bot.DelayedEvents.Supervisor,
         F1Bot.Output.Discord,
-        F1Bot.Output.Twitter,
+        # F1Bot.Output.Twitter,
         F1Bot.F1Session.Server,
         F1BotWeb.Supervisor,
         F1Bot.Replay.Server,
