@@ -33,7 +33,7 @@ RUN mix release
 
 # =================================================
 
-FROM debian:11-slim
+FROM debian:12-slim
 
 RUN apt-get update -y && \
     apt-get install -y libstdc++6 openssl libncurses5 locales && \
