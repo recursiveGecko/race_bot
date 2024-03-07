@@ -150,7 +150,8 @@ defmodule F1Bot.MixProject do
       {:plug_cowboy, "~> 2.6"},
       {:heroicons, "~> 0.5.2"},
       # {:flame_on, "~> 0.5.2", only: :dev},
-      {:eflame, "~> 1.0"}
+      {:eflame, "~> 1.0"},
+      {:rexbug, ">= 2.0.0-rc1"}
     ]
   end
 end
