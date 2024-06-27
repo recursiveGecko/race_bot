@@ -46,6 +46,7 @@ node_modules/
 /tmp/
 
 .elixir_ls
+.lexical
 .vscode
 .idea
 .env
