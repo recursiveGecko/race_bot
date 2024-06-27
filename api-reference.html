@@ -5,15 +5,15 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.29.1">
-    <meta name="project" content="f1_bot v0.6.0">
+    <meta name="project" content="f1_bot v0.7.0">
 
-    <title>API Reference — f1_bot v0.6.0</title>
+    <title>API Reference — f1_bot v0.7.0</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-4C1C16EF.js"></script>
+    <script src="dist/sidebar_items-39742E1D.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -68,7 +68,7 @@
 f1_bot
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.6.0
+        v0.7.0
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -99,7 +99,7 @@ f1_bot
 
 
 
-  <span>API Reference <small class="app-vsn">f1_bot v0.6.0</small></span>
+  <span>API Reference <small class="app-vsn">f1_bot v0.7.0</small></span>
 </h1>
 
 
@@ -323,29 +323,9 @@ all received events by forming <a href="F1Bot.F1Session.LiveTimingHandlers.Packe
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="F1Bot.ExternalApi.Twitter.html" translate="no">F1Bot.ExternalApi.Twitter</a>
+    <a href="F1Bot.ExternalApi.SignalR.WSClient.html" translate="no">F1Bot.ExternalApi.SignalR.WSClient</a>
 
   </div>
-
-    <div class="summary-synopsis"></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.ExternalApi.Twitter.Console.html" translate="no">F1Bot.ExternalApi.Twitter.Console</a>
-
-  </div>
-
-    <div class="summary-synopsis"></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.ExternalApi.Twitter.Live.html" translate="no">F1Bot.ExternalApi.Twitter.Live</a>
-
-  </div>
-
-    <div class="summary-synopsis"></div>
 
 </div>
 <div class="summary-row">
@@ -730,7 +710,7 @@ The handler parses drivers' information and passes it on to the F1 session insta
 
     <div class="summary-synopsis"><p>GenServer that holds the live <a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> instance, acts as an entrypoint for
 incoming live timing packets and executes all side effects by passing event messages to
-<a href="F1Bot.Output.Discord.html"><code class="inline">F1Bot.Output.Discord</code></a> and <a href="F1Bot.Output.Twitter.html"><code class="inline">F1Bot.Output.Twitter</code></a> via PubSub.</p></div>
+<a href="F1Bot.Output.Discord.html"><code class="inline">F1Bot.Output.Discord</code></a> via PubSub.</p></div>
 
 </div>
 <div class="summary-row">
@@ -773,16 +753,6 @@ incoming live timing packets and executes all side effects by passing event mess
 
     <div class="summary-synopsis"><p>Listens for events published by <a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a>, composes messages for Discord
 and calls a configured Discord client (live or console) to send them.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="F1Bot.Output.Twitter.html" translate="no">F1Bot.Output.Twitter</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>Listens for events published by <a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a>, composes messages for Twitter
-and calls a configured Twitter client (live or console) to send them.</p></div>
 
 </div>
 <div class="summary-row">
@@ -1222,7 +1192,7 @@ when rendering root LiveViews but it is a required option when rendering a child
   </div>
 
     <div class="summary-synopsis"><p>Downloads archives of previous races and runs an offline backtest which prints all
-Twitter and Discord messages to console.</p></div>
+Discord messages to console.</p></div>
 
 </div>
 

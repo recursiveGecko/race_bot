@@ -5,15 +5,15 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.29.1">
-    <meta name="project" content="f1_bot v0.6.0">
+    <meta name="project" content="f1_bot v0.7.0">
 
-    <title>Race Bot — f1_bot v0.6.0</title>
+    <title>Race Bot — f1_bot v0.7.0</title>
     <link rel="stylesheet" href="dist/html-elixir-V2ETBPMB.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-IV5W3OL2.js"></script>
-    <script src="dist/sidebar_items-4C1C16EF.js"></script>
+    <script src="dist/sidebar_items-39742E1D.js"></script>
 
       <script src="docs_config.js"></script>
 
@@ -68,7 +68,7 @@
 f1_bot
       </a>
       <strong class="sidebar-projectVersion" translate="no">
-        v0.6.0
+        v0.7.0
       </strong>
     </div>
     <ul class="sidebar-listNav">
@@ -109,7 +109,7 @@ f1_bot
 
 <p><a href="https://recursivegecko.github.io/race_bot"><img src="https://img.shields.io/badge/pages-docs-informational" alt="Docs"/></a> 
 <a href="license.html"><img src="https://img.shields.io/github/license/recursiveGecko/race_bot" alt="License"/></a> 
-<a href="https://twitter.com/LiveRaceBot"><img src="https://img.shields.io/twitter/follow/LiveRaceBot?style=social" alt="Twitter"/></a></p><p>An <a href="https://elixir-lang.org/">Elixir</a> project dedicated to processing live data from Formula 1 races.</p><p><a href="https://racing.recursiveprojects.cloud/">Project's Website</a> displays live telemetry and analysis (Work in progress).</p><p><a href="https://racing-dev.recursiveprojects.cloud/">Development &amp; Demo Website</a> displays telemetry of previous events to demonstate the functionality.</p><h4><a href="https://twitter.com/LiveRaceBot/status/1528040470961692673">Guide for end users (Twitter)</a></h4><h4><a href="https://recursivegecko.github.io/race_bot">Documentation</a></h4><p><em>All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.</em></p><h2 id="requirements" class="section-heading">
+<a href="https://twitter.com/LiveRaceBot"><img src="https://img.shields.io/twitter/follow/LiveRaceBot?style=social" alt="Twitter"/></a></p><p>An <a href="https://elixir-lang.org/">Elixir</a> project dedicated to processing live data from Formula 1 races.</p><p><a href="https://racing.recursiveprojects.cloud/">Project's Website</a> displays live telemetry and analysis (Work in progress).</p><p><a href="https://racing-dev.recursiveprojects.cloud/">Development &amp; Demo Website</a> displays telemetry of previous events to demonstate the functionality.</p><h4><a href="https://recursivegecko.github.io/race_bot">Documentation</a></h4><p><em>All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.</em></p><h2 id="requirements" class="section-heading">
   <a href="#requirements" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">requirements</p>
   </a>
@@ -146,7 +146,7 @@ f1_bot
   </a>
   Intro
 </h2>
-<p>To get a general overview of the data flow and processing in this project, you can explore the project in this order:</p><p>Example packet: <code class="inline">SessionStatus</code> packet with status <code class="inline">started</code></p><ol><li><a href="F1Bot.ExternalApi.SignalR.Client.html"><code class="inline">F1Bot.ExternalApi.SignalR.Client</code></a> receives the packet from live timing API</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> calls the functional code to process this <code class="inline">Packet</code></li><li><a href="F1Bot.F1Session.LiveTimingHandlers.html"><code class="inline">F1Bot.F1Session.LiveTimingHandlers</code></a> determines and calls the handler module for this packet</li><li><a href="F1Bot.F1Session.LiveTimingHandlers.SessionStatus.html"><code class="inline">F1Bot.F1Session.LiveTimingHandlers.SessionStatus</code></a> calls <code class="inline">F1Session</code> function to update the state</li><li><a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> updates its state with new session status and returns its new state + a 'session status change' event</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> broadcasts the event via <a href="F1Bot.PubSub.html"><code class="inline">F1Bot.PubSub</code></a></li><li><a href="F1Bot.Output.Twitter.html"><code class="inline">F1Bot.Output.Twitter</code></a> receives the session status change event and composes a Tweet</li><li><a href="F1Bot.ExternalApi.Twitter.html"><code class="inline">F1Bot.ExternalApi.Twitter</code></a> chooses the configured Twitter client module (live or console for local testing)</li><li><a href="F1Bot.ExternalApi.Twitter.Console.html"><code class="inline">F1Bot.ExternalApi.Twitter.Console</code></a> outputs composed Tweet (&quot;F1 Session just started&quot;) to your console</li></ol><h2 id="contributing" class="section-heading">
+<p>To get a general overview of the data flow and processing in this project, you can explore the project in this order:</p><p>Example packet: <code class="inline">SessionStatus</code> packet with status <code class="inline">started</code></p><ol><li><a href="F1Bot.ExternalApi.SignalR.Client.html"><code class="inline">F1Bot.ExternalApi.SignalR.Client</code></a> receives the packet from live timing API</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> calls the functional code to process this <code class="inline">Packet</code></li><li><a href="F1Bot.F1Session.LiveTimingHandlers.html"><code class="inline">F1Bot.F1Session.LiveTimingHandlers</code></a> determines and calls the handler module for this packet</li><li><a href="F1Bot.F1Session.LiveTimingHandlers.SessionStatus.html"><code class="inline">F1Bot.F1Session.LiveTimingHandlers.SessionStatus</code></a> calls <code class="inline">F1Session</code> function to update the state</li><li><a href="F1Bot.F1Session.html"><code class="inline">F1Bot.F1Session</code></a> updates its state with new session status and returns its new state + a 'session status change' event</li><li><a href="F1Bot.F1Session.Server.html"><code class="inline">F1Bot.F1Session.Server</code></a> broadcasts the event via <a href="F1Bot.PubSub.html"><code class="inline">F1Bot.PubSub</code></a></li><li><a href="F1Bot.Output.Discord.html"><code class="inline">F1Bot.Output.Discord</code></a> receives the session status change event and composes a Discord message</li><li><a href="F1Bot.ExternalApi.Discord.html"><code class="inline">F1Bot.ExternalApi.Discord</code></a> chooses the configured Discord client module (live or console for local testing)</li><li><a href="F1Bot.ExternalApi.Discord.Console.html"><code class="inline">F1Bot.ExternalApi.Discord.Console</code></a> outputs composed message (&quot;F1 Session just started&quot;) to your console</li></ol><h2 id="contributing" class="section-heading">
   <a href="#contributing" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
   <p class="sr-only">contributing</p>
   </a>

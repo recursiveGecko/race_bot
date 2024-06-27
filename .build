@@ -23,9 +23,7 @@ F1Bot.ExternalApi.Discord.html
 F1Bot.ExternalApi.SignalR.Client.html
 F1Bot.ExternalApi.SignalR.Encoding.html
 F1Bot.ExternalApi.SignalR.Negotiation.html
-F1Bot.ExternalApi.Twitter.Console.html
-F1Bot.ExternalApi.Twitter.Live.html
-F1Bot.ExternalApi.Twitter.html
+F1Bot.ExternalApi.SignalR.WSClient.html
 F1Bot.F1Session.Clock.html
 F1Bot.F1Session.Common.Event.html
 F1Bot.F1Session.Common.TimeSeriesStore.html
@@ -75,7 +73,6 @@ F1Bot.F1Session.html
 F1Bot.LightCopy.html
 F1Bot.Output.Common.html
 F1Bot.Output.Discord.html
-F1Bot.Output.Twitter.html
 F1Bot.Plotting.Gap.html
 F1Bot.Plotting.LapTime.html
 F1Bot.Plotting.html
@@ -147,8 +144,8 @@ dist/merriweather-latin-ext-300-normal-K6L27CZ5.woff2
 dist/merriweather-vietnamese-300-italic-EHHNZPUO.woff2
 dist/merriweather-vietnamese-300-normal-U376L4Z4.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_items-CA9B9B2D.js
-dist/sidebar_items-4C1C16EF.js
+dist/search_items-A4E9724A.js
+dist/sidebar_items-39742E1D.js
 index.html
 license.html
 readme.html
