@@ -24,7 +24,6 @@ defmodule F1Bot.MixProject do
           include_executables_for: [:unix],
           applications: [
             runtime_tools: :permanent,
-            observer: :load,
             nostrum: :load
           ],
           strip_beams: false
@@ -39,11 +38,14 @@ defmodule F1Bot.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :tools],
-      included_applications: [:observer, :wx],
+      extra_applications: [:logger, :tools] ++ extra_applications(Mix.env()),
+      included_applications: [],
       mod: {F1Bot.Application, []}
     ]
   end
+
+  defp extra_applications(:dev), do: [:observer, :wx]
+  defp extra_applications(_env), do: []
 
   defp docs do
     [
