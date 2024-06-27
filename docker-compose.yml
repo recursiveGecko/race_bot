@@ -1,9 +1,8 @@
-version: "3.7"
-services: 
+services:
     f1bot:
         build:
             context: "."
-        image: f1bot
+        image: ghcr.io/recursivegecko/race_bot:master
         environment:
             - DATABASE_PATH=/data/f1bot.db
             - PHX_SERVER="true"
