@@ -63,11 +63,6 @@ job "f1bot-____INSERT_ENV_HERE____" {
         data = <<EOH
           DISCORD_TOKEN="{{key "${local.config_scope}/DISCORD_TOKEN"}}"
 
-          TWITTER_CONSUMER_KEY="{{key "${local.config_scope}/TWITTER_CONSUMER_KEY"}}"
-          TWITTER_CONSUMER_SECRET="{{key "${local.config_scope}/TWITTER_CONSUMER_SECRET"}}"
-          TWITTER_ACCESS_TOKEN="{{key "${local.config_scope}/TWITTER_ACCESS_TOKEN"}}"
-          TWITTER_ACCESS_TOKEN_SECRET="{{key "${local.config_scope}/TWITTER_ACCESS_TOKEN_SECRET"}}"
-
           DISCORD_CHANNEL_IDS_MESSAGES="{{key "${local.config_scope}/DISCORD_CHANNEL_IDS_MESSAGES" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
           DISCORD_CHANNEL_IDS_RADIOS="{{key "${local.config_scope}/DISCORD_CHANNEL_IDS_RADIOS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"
           DISCORD_SERVER_IDS_COMMANDS="{{key "${local.config_scope}/DISCORD_SERVER_IDS_COMMANDS" | regexReplaceAll "#.*" "" | replaceAll "\n" "," }}"

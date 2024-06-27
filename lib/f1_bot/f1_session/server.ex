@@ -2,7 +2,7 @@ defmodule F1Bot.F1Session.Server do
   @moduledoc """
   GenServer that holds the live `F1Bot.F1Session` instance, acts as an entrypoint for
   incoming live timing packets and executes all side effects by passing event messages to
-  `F1Bot.Output.Discord` and `F1Bot.Output.Twitter` via PubSub.
+  `F1Bot.Output.Discord` via PubSub.
   """
   use GenServer
   require Logger

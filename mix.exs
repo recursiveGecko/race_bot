@@ -66,7 +66,6 @@ defmodule F1Bot.MixProject do
         F1Bot.Output,
         F1Bot.Plotting,
         F1Bot.ExternalApi.Discord,
-        F1Bot.ExternalApi.Twitter,
         F1Bot.ExternalApi.SignalR
       ]
     ]
@@ -121,8 +120,6 @@ defmodule F1Bot.MixProject do
       {:contex, "~> 0.4.0"},
       {:mogrify, "~> 0.9.2"},
       {:gnuplot, "~> 1.22"},
-      {:extwitter, "~> 0.14.0"},
-      {:oauther, "~> 1.3"},
       {:scribe, "~> 0.10.0", only: :dev},
       {:kino, "~> 0.8.1", only: :dev},
       {:vega_lite, "~> 0.1.6", only: :dev},

@@ -3,7 +3,7 @@ defmodule F1Bot.F1Session do
   Holds all state related to a given F1 session and coordinates data processing across modules in `F1Bot.F1Session` scope.
 
   All code in this scope is fully functional, without side effects. To communicate with other components
-  that have side effects, such as posting to Twitter, it generates events that are processed by the caller, i.e.
+  that have side effects, such as posting to Discord, it generates events that are processed by the caller, i.e.
   `F1Bot.F1Session.Server`.
   """
   use TypedStruct

@@ -10,8 +10,6 @@ An [Elixir](https://elixir-lang.org/) project dedicated to processing live data 
 
 [Development & Demo Website](https://racing-dev.recursiveprojects.cloud/) displays telemetry of previous events to demonstate the functionality.
 
-#### [Guide for end users (Twitter)](https://twitter.com/LiveRaceBot/status/1528040470961692673)
-
 #### [Documentation](https://recursivegecko.github.io/race_bot)
 
 *All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.*
@@ -59,9 +57,9 @@ Example packet: `SessionStatus` packet with status `started`
 1. `F1Bot.F1Session.LiveTimingHandlers.SessionStatus` calls `F1Session` function to update the state
 1. `F1Bot.F1Session` updates its state with new session status and returns its new state + a 'session status change' event
 1. `F1Bot.F1Session.Server` broadcasts the event via `F1Bot.PubSub`
-1. `F1Bot.Output.Twitter` receives the session status change event and composes a Tweet
-1. `F1Bot.ExternalApi.Twitter` chooses the configured Twitter client module (live or console for local testing)
-1. `F1Bot.ExternalApi.Twitter.Console` outputs composed Tweet ("F1 Session just started") to your console
+1. `F1Bot.Output.Discord` receives the session status change event and composes a Discord message
+1. `F1Bot.ExternalApi.Discord` chooses the configured Discord client module (live or console for local testing)
+1. `F1Bot.ExternalApi.Discord.Console` outputs composed message ("F1 Session just started") to your console
 
 ## Contributing
 

@@ -9,8 +9,8 @@ defmodule F1Bot.Replay do
     * Silently replay the entire dataset in an inert/side-effect free fashion to obtain the
     final F1Session state for analysis purposes (see `F1Bot.reload_session/2`)
 
-    * Quickly replay the dataset while using mock implementations of Discord/Twitter modules which print
-    the output to console. This allows us to see what messages would be sent to Discord/Twitter
+    * Quickly replay the dataset while using mock implementations of Discord module which prints
+    the output to console. This allows us to see what messages would be sent to Discord
     if we were to run the bot in a live session (see `Mix.Tasks.Backtest`)
 
     * Fast forward to the session start (using `:replay_while_fn` to quickly process everything until we

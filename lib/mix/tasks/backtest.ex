@@ -2,7 +2,7 @@
 defmodule Mix.Tasks.Backtest do
   @moduledoc """
   Downloads archives of previous races and runs an offline backtest which prints all
-  Twitter and Discord messages to console.
+  Discord messages to console.
 
   Usage:
   ```
@@ -30,7 +30,7 @@ defmodule Mix.Tasks.Backtest do
       exclude_files_regex: ~r/\.z\./,
       # Broadcast events on the PubSub bus, this allows us to quickly review
       # the sanity of F1 packet processing logic by inspecting the console output
-      # for simulated Discord and Twitter messages.
+      # for simulated Discord messages.
       events_fn: &F1Bot.PubSub.broadcast_events/1,
       report_progress: true,
       processing_options: %ProcessingOptions{
@@ -74,7 +74,6 @@ defmodule Mix.Tasks.Backtest do
     Application.put_env(:f1_bot, :start_discord, false)
     Application.put_env(:f1_bot, :external_apis_enabled, false)
     Application.put_env(:f1_bot, :discord_api_module, F1Bot.ExternalApi.Discord.Console)
-    Application.put_env(:f1_bot, :twitter_api_module, F1Bot.ExternalApi.Twitter.Console)
     Logger.configure(level: :info)
 
     Finch.start_link(name: __MODULE__)

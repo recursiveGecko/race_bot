@@ -30,8 +30,7 @@ if demo_mode_enabled do
   config :f1_bot,
     connect_to_signalr: false,
     start_discord: false,
-    discord_api_module: F1Bot.ExternalApi.Discord.Console,
-    twitter_api_module: F1Bot.ExternalApi.Twitter.Console
+    discord_api_module: F1Bot.ExternalApi.Discord.Console
 end
 
 case System.fetch_env("DISCORD_TOKEN") do
@@ -57,14 +56,7 @@ if config_env() == :prod do
       connect_to_signalr: true,
       start_discord: true,
       discord_command_mode: :global,
-      discord_api_module: F1Bot.ExternalApi.Discord.Live,
-      twitter_api_module: F1Bot.ExternalApi.Twitter.Live
-
-    config :extwitter, :oauth,
-      consumer_key: System.fetch_env!("TWITTER_CONSUMER_KEY"),
-      consumer_secret: System.fetch_env!("TWITTER_CONSUMER_SECRET"),
-      access_token: System.fetch_env!("TWITTER_ACCESS_TOKEN"),
-      access_token_secret: System.fetch_env!("TWITTER_ACCESS_TOKEN_SECRET")
+      discord_api_module: F1Bot.ExternalApi.Discord.Live
   end
 
   database_path =
