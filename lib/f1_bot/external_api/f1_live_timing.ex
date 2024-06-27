@@ -69,7 +69,7 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
           File.read(cached_path)
 
         File.exists?(missing_path) ->
-          Logger.warn("404 from cache: #{url}")
+          Logger.warning("404 from cache: #{url}")
           {:error, :cached_404}
 
         true ->
@@ -182,7 +182,7 @@ defmodule F1Bot.ExternalApi.F1LiveTiming do
   end
 
   defp download_save_archive(url, file_path, missing_path) do
-    Logger.warn("Fetching from origin: #{url}")
+    Logger.warning("Fetching from origin: #{url}")
     # This is slow on purpose to promote caching
     Process.sleep(@req_sleep_time)
 

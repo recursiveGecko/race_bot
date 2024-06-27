@@ -56,7 +56,7 @@ defmodule F1Bot.DelayedEvents do
   end
 
   def clear_all_caches() do
-    Logger.warn("Clearing all delayed events caches")
+    Logger.warning("Clearing all delayed events caches")
 
     for delay_ms <- @available_delays do
       Rebroadcaster.clear_cache(delay_ms)

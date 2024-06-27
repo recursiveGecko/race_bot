@@ -186,21 +186,21 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
 
     cond do
       lap.time != nil ->
-        Logger.warn(
+        Logger.warning(
           "Received lap time for lap #{lap_number} but it already has a time. Lap: #{inspect(lap)}, Data: #{inspect(timing_data)}"
         )
 
         self
 
       lap_ts_age_ms > @max_data_fill_delay_ms ->
-        Logger.warn(
+        Logger.warning(
           "Received lap time for lap #{lap_number} but it is too old: #{lap_ts_age_ms}ms. Lap: #{inspect(lap)}, Data: #{inspect(timing_data)}"
         )
 
         self
 
       lap_num_diff > 1 ->
-        Logger.warn(
+        Logger.warning(
           "Received lap time for lap #{lap_number} but it is too old: #{lap_num_diff} laps. Lap: #{inspect(lap)}, Data: #{inspect(timing_data)}"
         )
 
@@ -268,7 +268,7 @@ defmodule F1Bot.F1Session.DriverDataRepo.Laps do
     lap_to_fill =
       cond do
         curr_lap_has_sector ->
-          Logger.warn(
+          Logger.warning(
             "Received sector #{sector_num} time but current lap already has a time. Lap: #{inspect(current_lap)}, Data: #{inspect(timing_data)}"
           )
 

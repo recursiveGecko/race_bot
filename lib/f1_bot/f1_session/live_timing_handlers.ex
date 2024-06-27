@@ -16,7 +16,11 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
   Ingestion point for processing received packets. Called by `F1Bot.F1Session.Server` for packets
   received from SignalR and by `F1Bot.Replay` when processing session replays.
   """
-  def process_live_timing_packet(session = %F1Session{}, packet = %Packet{}, options = %ProcessingOptions{}) do
+  def process_live_timing_packet(
+        session = %F1Session{},
+        packet = %Packet{},
+        options = %ProcessingOptions{}
+      ) do
     if not is_function(options.local_time_fn, 0) do
       raise ArgumentError, "local_time_fn/0 must be provided in Processing options"
     end
@@ -50,6 +54,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
       session: session,
       events: []
     }
+
     {:ok, result}
   end
 
@@ -59,6 +64,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
       session: session,
       events: []
     }
+
     {:ok, result}
   end
 
@@ -104,7 +110,7 @@ defmodule F1Bot.F1Session.LiveTimingHandlers do
   end
 
   defp process_for_topic(session, _packet = %Packet{topic: _topic}, _options) do
-    # Logger.warn("Received a message for unknown topic: #{topic}")
+    # Logger.warning("Received a message for unknown topic: #{topic}")
     result = %ProcessingResult{
       session: session,
       events: []

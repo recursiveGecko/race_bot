@@ -25,7 +25,7 @@ defmodule F1BotWeb.TranscriberServiceChannel do
         {:reply, :ok, socket}
 
       {:error, changeset = %Changeset{}} ->
-        Logger.warn("Received invalid transcript: #{inspect(changeset)}")
+        Logger.warning("Received invalid transcript: #{inspect(changeset)}")
         {:reply, {:error, :invalid_data}, socket}
     end
   end
@@ -38,7 +38,7 @@ defmodule F1BotWeb.TranscriberServiceChannel do
         {:reply, :ok, socket}
 
       {:error, changeset = %Changeset{}} ->
-        Logger.warn("Received invalid status update: #{inspect(changeset)}")
+        Logger.warning("Received invalid status update: #{inspect(changeset)}")
         {:reply, {:error, :invalid_data}, socket}
     end
   end

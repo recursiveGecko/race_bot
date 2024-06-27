@@ -30,23 +30,23 @@ defmodule F1BotWeb.ApiSocket do
       {:ok, client}
     else
       %{} ->
-        Logger.warn("ApiSocket: Missing token")
+        Logger.warning("ApiSocket: Missing token")
         {:error, :missing_token}
 
       parts = [_ | _] ->
-        Logger.warn("ApiSocket: Invalid token format (#{length(parts)} parts)")
+        Logger.warning("ApiSocket: Invalid token format (#{length(parts)} parts)")
         {:error, :invalid_token_format}
 
       {:error, :not_found} ->
-        Logger.warn("ApiSocket: Invalid client name")
+        Logger.warning("ApiSocket: Invalid client name")
         {:error, :unauthorized}
 
       false ->
-        Logger.warn("ApiSocket: Invalid client secret")
+        Logger.warning("ApiSocket: Invalid client secret")
         {:error, :unauthorized}
 
       e ->
-        Logger.warn("ApiSocket: Unknown error #{inspect(e)}")
+        Logger.warning("ApiSocket: Unknown error #{inspect(e)}")
         {:error, :unauthorized}
     end
   end

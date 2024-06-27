@@ -137,7 +137,7 @@ defmodule F1Bot.F1Session.Server do
   def handle_call({:set_local_time_mode, mode, extrapolation_rate}, _from, state = %{}) do
     use_last_packet = mode == :last_packet
 
-    Logger.warn(
+    Logger.warning(
       "Setting local time mode to :#{mode} (extrapolation at rate: #{inspect(extrapolation_rate)})"
     )
 
@@ -264,7 +264,7 @@ defmodule F1Bot.F1Session.Server do
             {result.session, result.events, result.reset_session}
 
           e ->
-            Logger.warn("Unable to process live timing packet: #{inspect(e)}")
+            Logger.warning("Unable to process live timing packet: #{inspect(e)}")
             {session, [], false}
         end
       rescue
@@ -277,7 +277,7 @@ defmodule F1Bot.F1Session.Server do
       end
 
     if do_reset_session do
-      Logger.warn("Session has been reset.")
+      Logger.warning("Session has been reset.")
       DelayedEvents.clear_all_caches()
     end
 
@@ -418,7 +418,7 @@ defmodule F1Bot.F1Session.Server do
         Timex.add(last_packet_ts, elapsed_duration)
 
       true ->
-        Logger.warn(
+        Logger.warning(
           "Unable to extrapolate local time from packet timestamp. Using current time instead."
         )
 
