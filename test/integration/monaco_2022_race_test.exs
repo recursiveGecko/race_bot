@@ -4,10 +4,12 @@ defmodule Integration.Monaco2022RaceTest do
   solved. If the issue being tested here re-appears, a better solution should be found.
   """
   use ExUnit.Case, async: true
-  @moduletag :skip_inconclusive
 
   alias F1Bot.F1Session
   alias F1Bot.Replay
+
+  @moduletag :skip_inconclusive
+  @moduletag :uses_live_timing_data
 
   setup_all context do
     replay_options = %Replay.Options{
@@ -15,7 +17,7 @@ defmodule Integration.Monaco2022RaceTest do
     }
 
     {:ok, %{session: session}} =
-      "http://livetiming.formula1.com/static/2022/2022-05-29_Monaco_Grand_Prix/2022-05-29_Race"
+      "https://livetiming.formula1.com/static/2022/2022-05-29_Monaco_Grand_Prix/2022-05-29_Race"
       |> Replay.start_replay(replay_options)
 
     Map.put(context, :session, session)

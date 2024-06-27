@@ -4,13 +4,15 @@ defmodule Integration.Miami2022QualiTest do
   alias F1Bot.F1Session
   alias F1Bot.Replay
 
+  @moduletag :uses_live_timing_data
+
   setup_all context do
     replay_options = %Replay.Options{
       exclude_files_regex: ~r/\.z\./
     }
 
     {:ok, %{session: session}} =
-      "http://livetiming.formula1.com/static/2022/2022-05-08_Miami_Grand_Prix/2022-05-07_Qualifying"
+      "https://livetiming.formula1.com/static/2022/2022-05-08_Miami_Grand_Prix/2022-05-07_Qualifying"
       |> Replay.start_replay(replay_options)
 
     Map.put(context, :session, session)

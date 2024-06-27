@@ -4,6 +4,8 @@ defmodule Integration.Monza2022RaceTest do
   alias F1Bot.F1Session
   alias F1Bot.Replay
 
+  @moduletag :uses_live_timing_data
+
   setup_all context do
     replay_options = %Replay.Options{
       exclude_files_regex: ~r/\.z\./

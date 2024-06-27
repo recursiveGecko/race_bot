@@ -8,13 +8,15 @@ defmodule Integration.Canada2022QualiTest do
   use ExUnit.Case, async: true
   alias F1Bot.Replay
 
+  @moduletag :uses_live_timing_data
+
   setup_all context do
     replay_options = %Replay.Options{
       exclude_files_regex: ~r/\.z\./
     }
 
     {:ok, %{session: session}} =
-      "http://livetiming.formula1.com/static/2022/2022-06-19_Canadian_Grand_Prix/2022-06-18_Qualifying/"
+      "https://livetiming.formula1.com/static/2022/2022-06-19_Canadian_Grand_Prix/2022-06-18_Qualifying/"
       |> Replay.start_replay(replay_options)
 
     {:ok, fastest_lap} = "1:21.299" |> F1Bot.DataTransform.Parse.parse_lap_time()
