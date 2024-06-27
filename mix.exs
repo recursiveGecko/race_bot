@@ -39,7 +39,8 @@ defmodule F1Bot.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :tools, :observer, :wx],
+      extra_applications: [:logger, :tools],
+      included_applications: [:observer, :wx],
       mod: {F1Bot.Application, []}
     ]
   end
