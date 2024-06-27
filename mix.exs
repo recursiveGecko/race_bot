@@ -130,7 +130,7 @@ defmodule F1Bot.MixProject do
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.29", runtime: false, override: true},
       {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev},
-      {:phoenix, "~> 1.7", override: true},
+      {:phoenix, "~> 1.7"},
       {:phoenix_pubsub, "~> 2.1"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.3"},
