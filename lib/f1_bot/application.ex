@@ -15,6 +15,7 @@ defmodule F1Bot.Application do
     children =
       [
         {Finch, name: F1Bot.Finch},
+        {DynamicSupervisor, name: F1Bot.DynamicSupervisor, strategy: :one_for_one},
         F1BotWeb.Telemetry,
         F1Bot.Repo,
         {Phoenix.PubSub, name: F1Bot.PubSub},
@@ -29,9 +30,11 @@ defmodule F1Bot.Application do
       |> add_if_feature_flag_enabled(:connect_to_signalr, {
         F1Bot.ExternalApi.SignalR.Client,
         [
+          scheme: "https",
           hostname: "livetiming.formula1.com",
-          path: "/signalr",
-          port: 80,
+          base_path: "/signalr",
+          user_agent: "",
+          port: 443,
           hub: "Streaming",
           topics:
             case F1Bot.fetch_env(:signalr_topics) do

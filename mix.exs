@@ -5,7 +5,7 @@ defmodule F1Bot.MixProject do
     [
       app: :f1_bot,
       version: "0.6.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       source_url: "https://github.com/recursiveGecko/race_bot",
       homepage_url: "https://github.com/recursiveGecko/race_bot",
@@ -39,7 +39,7 @@ defmodule F1Bot.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :tools],
+      extra_applications: [:logger, :tools, :observer, :wx],
       mod: {F1Bot.Application, []}
     ]
   end
@@ -104,12 +104,9 @@ defmodule F1Bot.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
-      {:gun, "~> 2.0", override: true},
-      {:cowlib, "~> 2.12", override: true},
       {:jason, "~> 1.4"},
-      {:finch, "~> 0.14.0"},
+      {:finch, "~> 0.18.0"},
+      {:fresh, "~> 0.4.4"},
       {
         :nostrum,
         # Includes https://github.com/Kraigie/nostrum/pull/522

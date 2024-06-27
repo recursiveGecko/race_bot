@@ -16,6 +16,8 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
   alias F1Bot.ExternalApi.SignalR
   alias F1Bot.F1Session.LiveTimingHandlers.{Packet, ProcessingOptions}
 
+  @supervisor F1Bot.DynamicSupervisor
+
   # Must be a string, otherwise pattern matching won't work - server responds with a string
   @subscribe_command_id "0"
 
@@ -23,26 +25,43 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
+  def ws_handle_connected() do
+    GenServer.call(__MODULE__, {:ws_handle_connected})
+  end
+
+  def ws_handle_message(message) do
+    GenServer.call(__MODULE__, {:ws_handle_message, message})
+  end
+
   @impl true
   def init(opts) do
+    {:ok, nil, {:continue, {:after_init, opts}}}
+  end
+
+  @impl true
+  def handle_continue({:after_init, opts}, _state) do
+    Logger.info("SignalR: Sleeping for 2 seconds")
+    Process.sleep(2000)
+
     %{
       data: negotiation_data,
       cookies: cookies
     } = do_negotiate_signalr_conn(opts)
 
-    path = Keyword.fetch!(opts, :path)
+    base_path = Keyword.fetch!(opts, :base_path)
 
     # Sanity check, make sure server doesn't want us to connect to a different path than originally specified
-    ^path = Map.fetch!(negotiation_data, "Url")
+    ^base_path = Map.fetch!(negotiation_data, "Url")
 
     state =
       %{
-        conn_pid: nil,
-        stream_ref: nil,
+        ws_client_pid: nil,
         state: :disconnected,
-        hostname: Keyword.fetch!(opts, :hostname) |> String.to_charlist(),
+        hostname: Keyword.fetch!(opts, :hostname),
+        scheme: Keyword.fetch!(opts, :scheme),
         port: Keyword.fetch!(opts, :port),
-        path: path |> String.to_charlist(),
+        base_path: base_path,
+        user_agent: Keyword.fetch!(opts, :user_agent),
         signalr_params: %{
           conn_id: Map.fetch!(negotiation_data, "ConnectionId"),
           conn_token: Map.fetch!(negotiation_data, "ConnectionToken"),
@@ -55,50 +74,38 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
         last_keepalive: nil,
         keepalive_timeout: Map.fetch!(negotiation_data, "KeepAliveTimeout")
       }
-      |> do_connect_ws()
 
-    {:ok, state}
-  end
-
-  @impl true
-  def handle_info(
-        {:gun_upgrade, conn_pid, stream_ref, ["websocket"], _headers},
-        state = %{conn_pid: conn_pid, stream_ref: stream_ref}
-      ) do
-    Logger.info("Connection upgraded to websocket")
-    state = do_initialize_signalr(state)
+    state = do_connect_ws(state)
     {:noreply, state}
   end
 
   @impl true
-  def handle_info(
-        {:gun_response, _conn_pid, _stream_ref, _is_fin, _status, _headers},
-        state = %{state: :connecting_ws}
-      ) do
-    Logger.error("Server refused Websocket upgrade")
-    {:stop, :server_refused_websocket, state}
+  def handle_call({:ws_handle_connected}, _from, state) do
+    Logger.info("SignalR: Connected to websocket")
+
+    state = do_await_signalr_init(state)
+    {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_call({:ws_handle_message, message}, _from, state) do
+    state = do_handle_message(message, state)
+    {:reply, :ok, state}
   end
 
   @impl true
   def handle_info(
-        {:gun_ws, _conn_pid, _stream_ref, {:text, "{}"}},
-        state = %{state: :subscribed}
+        :signalr_init_timeout,
+        state = %{state: :awaiting_signalr_init}
       ) do
-    Logger.debug("Received SignalR keep-alive")
-    state = %{state | last_keepalive: DateTime.utc_now()}
-    {:noreply, state}
+    {:stop, :signalr_init_timeout, state}
   end
 
   @impl true
-  def handle_info({:gun_ws, _conn_pid, _conn_ref, {:text, message}}, state) do
-    message = Jason.decode!(message)
-    state = maybe_update_client_state(state, message)
-
-    if state.state == :subscribed do
-      maybe_handle_subscription_message(state, message)
-      maybe_handle_init_response(state, message)
-    end
-
+  def handle_info(
+        :signalr_init_timeout,
+        state = %{state: _anything}
+      ) do
     {:noreply, state}
   end
 
@@ -107,7 +114,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
         :signalr_subscribe_timeout,
         state = %{state: :awaiting_signalr_subscription}
       ) do
-    {:stop, :signalr_handshake_timeout, state}
+    {:stop, :signalr_subscribe_timeout, state}
   end
 
   @impl true
@@ -138,27 +145,6 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
     end
   end
 
-  @impl true
-  def handle_info(
-        {:gun_down, _pid, _proto, reason, _},
-        state
-      ) do
-    {:stop, {:gun_down, reason}, state}
-  end
-
-  @impl true
-  def handle_info(
-        {:gun_error, _pid, reason},
-        state
-      ) do
-    {:stop, {:gun_error, reason}, state}
-  end
-
-  defp send_ws_message(%{conn_pid: pid, stream_ref: ref}, message) when pid != nil do
-    msg_json = Jason.encode!(message)
-    :gun.ws_send(pid, ref, {:text, msg_json})
-  end
-
   defp do_negotiate_signalr_conn(opts) do
     extra_negotiation_opts = [conn_data: make_conn_data(opts)]
 
@@ -173,12 +159,6 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
   end
 
   defp do_connect_ws(state) do
-    Logger.info("Connecting to SignalR via websocket")
-
-    if state.conn_pid != nil do
-      :gun.close(state.conn_pid)
-    end
-
     query =
       %{
         transport: "webSockets",
@@ -191,24 +171,67 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
     cookies_header =
       state.signalr_params.cookies
       |> Enum.map_join("; ", fn {name, val} -> "#{name}=#{val}" end)
-      |> String.to_charlist()
 
     headers = [
-      {"cookie", cookies_header}
+      {"cookie", cookies_header},
+      {"user-agent", state.user_agent}
     ]
 
-    path = "#{state.path}/connect?#{query}"
+    ws_scheme =
+      case state.scheme do
+        "https" -> "wss"
+        "http" -> "ws"
+      end
 
-    {:ok, pid} = :gun.open(state.hostname, state.port)
-    {:ok, _} = :gun.await_up(pid, 2000)
-    stream_ref = :gun.ws_upgrade(pid, path, headers)
+    uri = "#{ws_scheme}://#{state.hostname}:#{state.port}#{state.base_path}/connect?#{query}"
+    ws_state = %{client_pid: self()}
+    ws_opts = [name: SignalR.WSClient.name(), headers: headers]
 
-    %{state | conn_pid: pid, stream_ref: stream_ref, state: :connecting_ws}
+    Logger.info("SignalR: Connecting to websocket at '#{uri}'")
+
+    {:ok, ws_client_pid} =
+      DynamicSupervisor.start_child(
+        @supervisor,
+        {SignalR.WSClient, [uri: uri, state: ws_state, opts: ws_opts]}
+      )
+
+    Process.link(ws_client_pid)
+    Logger.info("SignalR: Client started at #{inspect(ws_client_pid)}")
+
+    %{state | ws_client_pid: ws_client_pid, state: :connecting_ws}
   end
 
-  defp do_initialize_signalr(state) do
+  defp do_handle_message(_message = {:text, "{}"}, state) do
+    Logger.debug("SignalR: Received keep-alive")
+    %{state | last_keepalive: DateTime.utc_now()}
+  end
+
+  defp do_handle_message(_message = {:text, json}, state) do
+    data = Jason.decode!(json)
+    state = maybe_update_client_state(state, data)
+
+    if state.state == :subscribed do
+      maybe_handle_subscribe_response(state, data)
+      maybe_handle_subscription_message(state, data)
+    end
+
+    state
+  end
+
+  defp send_ws_message(_state, message) do
+    json = Jason.encode!(message)
+    SignalR.WSClient.send({:text, json})
+  end
+
+  # Set up a timer that waits for the first message to be sent by the server, indicating successful connection
+  defp do_await_signalr_init(state) do
+    :timer.send_after(3000, :signalr_init_timeout)
+    %{state | state: :awaiting_signalr_init}
+  end
+
+  defp do_subscribe_signalr(state) do
     topics_str = state.topics |> Enum.join(",")
-    Logger.info("Initializing SignalR topics: #{topics_str}")
+    Logger.info("SignalR: Subscribing to topics: #{topics_str}")
 
     msg = %{
       # Reverse engineered from official app
@@ -222,10 +245,17 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
     }
 
     send_ws_message(state, msg)
-    :timer.send_after(1000, :signalr_subscribe_timeout)
+    :timer.send_after(3000, :signalr_subscribe_timeout)
 
-    state = %{state | state: :awaiting_signalr_subscription}
-    state
+    %{state | state: :awaiting_signalr_subscription}
+  end
+
+  defp maybe_update_client_state(
+         state = %{state: :awaiting_signalr_init},
+         _message = %{"C" => _, "S" => 1}
+       ) do
+    Logger.info("SignalR: connection initialized")
+    do_subscribe_signalr(state)
   end
 
   defp maybe_update_client_state(
@@ -237,7 +267,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
       |> Map.keys()
       |> Enum.join(",")
 
-    Logger.info("SignalR status changed to subscribed. Topics: #{subscribed_topics}")
+    Logger.info("SignalR: status changed to subscribed. Topics: #{subscribed_topics}")
     :timer.send_interval(1000, :check_keepalive)
     %{state | state: :subscribed, last_keepalive: DateTime.utc_now()}
   end
@@ -274,7 +304,7 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
     :ignore
   end
 
-  defp maybe_handle_init_response(
+  defp maybe_handle_subscribe_response(
          _state,
          _message = %{"R" => results, "I" => @subscribe_command_id}
        ) do
@@ -290,15 +320,16 @@ defmodule F1Bot.ExternalApi.SignalR.Client do
     end
   end
 
-  defp maybe_handle_init_response(_state, _message) do
+  defp maybe_handle_subscribe_response(_state, _message) do
     :ignore
   end
 
   defp process_packet(payload = %Packet{}) do
     options = %ProcessingOptions{
       ignore_reset: false,
-      log_stray_packets: true,
+      log_stray_packets: true
     }
+
     F1Bot.F1Session.Server.process_live_timing_packet(payload, options)
   end
 end

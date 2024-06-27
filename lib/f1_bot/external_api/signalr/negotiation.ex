@@ -7,6 +7,8 @@ defmodule F1Bot.ExternalApi.SignalR.Negotiation do
   """
   @finch_instance F1Bot.Finch
 
+  require Logger
+
   def negotiate(opts) do
     connection_data =
       opts
@@ -20,19 +22,25 @@ defmodule F1Bot.ExternalApi.SignalR.Negotiation do
       }
       |> URI.encode_query()
 
-    root_path = Keyword.fetch!(opts, :path)
+    base_path = Keyword.fetch!(opts, :base_path)
 
     url =
       %URI{
-        scheme: "http",
+        scheme: Keyword.fetch!(opts, :scheme),
         host: Keyword.fetch!(opts, :hostname),
         port: Keyword.fetch!(opts, :port),
-        path: "#{root_path}/negotiate",
+        path: "#{base_path}/negotiate",
         query: query
       }
       |> URI.to_string()
 
-    Finch.build(:get, url)
+    Logger.info("Negotiating SignalR at '#{url}'")
+
+    headers = [
+      {"user-agent", Keyword.fetch!(opts, :user_agent)}
+    ]
+
+    Finch.build(:get, url, headers)
     |> Finch.request(@finch_instance, receive_timeout: 2000)
     |> parse_response()
   end
