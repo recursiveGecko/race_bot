@@ -4,7 +4,7 @@ defmodule F1Bot.MixProject do
   def project do
     [
       app: :f1_bot,
-      version: "0.6.0",
+      version: "0.7.0",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       source_url: "https://github.com/recursiveGecko/race_bot",
