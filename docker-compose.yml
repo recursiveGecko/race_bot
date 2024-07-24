@@ -2,17 +2,17 @@ services:
     f1bot:
         build:
             context: "."
-        image: ghcr.io/recursivegecko/race_bot:master
+        image: "${DOCKER_IMAGE:-ghcr.io/recursivegecko/race_bot:master}"
         environment:
             - DATABASE_PATH=/data/f1bot.db
             - PHX_SERVER="true"
             - PORT=4000
         ports:
-            - "4000:4000"
+            - "${DOCKER_BIND_PORT:-4000}:4000"
         env_file: .env
         restart: unless-stopped
-        container_name: "f1bot"
+        container_name: "${DOCKER_CONTAINER_NAME:-f1bot}"
         volumes:
-            - data:/data
+            - "${DOCKER_DATA_VOLUME:-data}:/data"
 volumes:
     data:
